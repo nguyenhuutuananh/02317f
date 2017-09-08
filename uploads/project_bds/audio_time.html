@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<body>
+    <h2>Control Buttons</h2>
+    <button id="play">Play</button>
+    <button id="pause">Pause</button>
+    <button id="restart">Restart</button>
+    <hr>
+    <h2>Playing Information</h2>
+    <div id="currentTime">0</div>
+</body>
+<script>
+$(document).ready(function() {
+    var audioElement = document.createElement('audio');
+    audioElement.setAttribute('src', 'https://www.w3schools.com/jsref/horse.mp3');
+    
+    // audioElement.addEventListener('ended', function() {
+    //     this.play();
+    // }, false); // delay load
+    
+    audioElement.addEventListener("canplay",function(){
+    });
+    
+    
+    $('#play').click(function() {
+        audioElement.play();
+    });
+    setInterval(function(){ 
+    	audioElement.play();
+    }, 30000);
+    
+    $('#pause').click(function() {
+        audioElement.pause();
+    });
+    
+    $('#restart').click(function() {
+        audioElement.currentTime = 0;
+    });
+});
+</script>
+</html>
