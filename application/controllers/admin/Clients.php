@@ -107,8 +107,8 @@ class Clients extends Admin_controller
             $colums=$this->db->get('tblorder_table_clients')->row();
             if($colums)
             {
-                $data['get_colum']=$colums->value;
-                // print_r(json_decode($data['get_colum']));
+                $data['get_column']=json_decode($colums->value);
+                // print_r($data['get_column']);
                 // exit();
             }
             $this->load->view('admin/clients/setup_table_clients',$data);
@@ -123,6 +123,8 @@ class Clients extends Admin_controller
         $type = $this->input->post('type');
         $active = $this->input->post('active');
         $jenactive = json_encode($active);
+        print_r($jenactive);
+        exit();
         $this->db->where('id', $type);
         $order = $this->db->get('tblorder_table_clients')->row();
         if (!$order) {
@@ -137,6 +139,155 @@ class Clients extends Admin_controller
         echo $jenactive;
         echo 'Cập nhật thành công';
     }
-
-
+    public function test() {
+        $columns = new stdClass();
+        $columns->client_take_care = array(
+            (object)array(
+                'title_th'   => 'Ngày liên hệ',
+                'id'         => 'date_contact',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'Nguồn',
+                'id'         => 'source_name',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'Đối tác',
+                'id'         => 'partner',
+                'childs' => [
+                    (object)array(
+                        'title_th' => 'Phân loại Đối tác',
+                        'id'       => 'id_partner',
+                    ),
+                    (object)array(
+                        'title_th' => 'Họ Tên(Đối tác)',
+                        'id'       => 'name_partner',
+                    ),
+                    (object)array(
+                        'title_th' => 'Số điện thoại(Đối tác)',
+                        'id'       => 'phone_partner',
+                    ),
+                    (object)array(
+                        'title_th' => 'Email(Đối tác)',
+                        'id'       => 'email_partner',
+                    ),
+                ],
+            ),
+            (object)array(
+                'title_th'   => 'Khách hàng',
+                'id'         => 'clients',
+                'childs' => [
+                    (object)array(
+                        'title_th' => 'Tên khách hàng',
+                        'id'       => 'company',
+                    ),
+                    (object)array(
+                        'title_th' => 'Số điện thoại(KH)',
+                        'id'       => 'phonenumber',
+                    ),
+                    (object)array(
+                        'title_th' => 'Email(KH)',
+                        'id'       => 'email',
+                    ),
+                    (object)array(
+                        'title_th' => 'Quốc tịch',
+                        'id'       => 'name_country',
+                    ),
+                ],
+            ),
+            (object)array(
+                'title_th'   => 'Yêu cầu khu vực/DA',
+                'id'         => 'area',
+                'childs' => [
+                    (object)array(
+                        'title_th' => 'Loại bds',
+                        'id'       => 'name_menu_bds',
+                    ),
+                    (object)array(
+                        'title_th' => 'Quận khu vực',
+                        'id'       => 'province_name',
+                    ),
+                    (object)array(
+                        'title_th' => 'DA',
+                        'id'       => 'name_bds',
+                    ),
+                ],
+            ),
+            (object)array(
+                'title_th'   => 'Thời gian',
+                'id'         => 'time',
+                'childs' => [
+                    (object)array(
+                        'title_th' => 'PN',
+                        'id'       => 'pn',
+                    ),
+                    (object)array(
+                        'title_th' => 'DT',
+                        'id'       => 'area',
+                    ),
+                    (object)array(
+                        'title_th' => 'Ngân sách khoản',
+                        'id'       => 'budget',
+                    ),
+                ],
+            ),
+            (object)array(
+                'title_th'   => 'Yêu cầu chi tiết sản phẩm',
+                'id'         => 'detail',
+                'childs' => [
+                    (object)array(
+                        'title_th' => 'Ngày move in',
+                        'id'       => 'date_movein',
+                    ),
+                    (object)array(
+                        'title_th' => 'Thời gian thuê',
+                        'id'       => 'date_tax',
+                    ),
+                ],
+            ),
+            (object)array(
+                'title_th'   => 'Loại khách hàng',
+                'id'         => 'class_client_name',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'Nhu cầu',
+                'id'         => 'name_exigency',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'Mục đích',
+                'id'         => 'name_purpose',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'Yêu cầu khác',
+                'id'         => 'requirements',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'Trạng thái',
+                'id'         => 'name_status',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'NV GD',
+                'id'         => 'nvgd',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'DK SP',
+                'id'         => 'dksp',
+                'childs' => [],
+            ),
+            (object)array(
+                'title_th'   => 'ĐK khách hàng',
+                'id'         => 'dkkh',
+                'childs' => [],
+            ),
+        );
+        print_r(json_encode($columns));
+        exit();
+    }
 }

@@ -449,7 +449,8 @@ class Utilities extends Admin_controller
             'shortname' => 'is_not_staff',
             'name' => _l('is_not_staff_member')
         );
-
+        // print_r($data['permissions']);
+        // exit();
         $data['jquery_migrate_assets'] = true;
         $data['title']                 = _l('main_menu');
         $this->load->view('admin/utilities/main_menu', $data);

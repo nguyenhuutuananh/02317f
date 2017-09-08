@@ -1,0 +1,148 @@
+{
+    "client_take_care": [
+        {
+            "title_th": "Ngày liên hệ",
+            "id": "date_contact",
+            "childs": []
+        },
+        {
+            "title_th": "Nguồn",
+            "id": "source_name",
+            "childs": []
+        },
+        {
+            "title_th": "Đối tác",
+            "id": "partner",
+            "childs": [
+                {
+                    "title_th": "Phân loại Đối tác",
+                    "id": "id_partner"
+                },
+                {
+                    "title_th": "Họ Tên(Đối tác)",
+                    "id": "name_partner"
+                },
+                {
+                    "title_th": "Số điện thoại(Đối tác)",
+                    "id": "phone_partner"
+                },
+                {
+                    "title_th": "Email(Đối tác)",
+                    "id": "email_partner"
+                }
+            ]
+        },
+        {
+            "title_th": "Khách hàng",
+            "id": "clients",
+            "childs": [
+                {
+                    "title_th": "Tên khách hàng",
+                    "id": "company"
+                },
+                {
+                    "title_th": "Số điện thoại(KH)",
+                    "id": "phonenumber"
+                },
+                {
+                    "title_th": "Email(KH)",
+                    "id": "email"
+                },
+                {
+                    "title_th": "Quốc tịch",
+                    "id": "name_country"
+                }
+            ]
+        },
+        {
+            "title_th": "Yêu cầu khu vực/DA",
+            "id": "area",
+            "childs": [
+                {
+                    "title_th": "Loại bds",
+                    "id": "name_menu_bds"
+                },
+                {
+                    "title_th": "Quận khu vực",
+                    "id": "province_name"
+                },
+                {
+                    "title_th": "DA",
+                    "id": "name_bds"
+                }
+            ]
+        },
+        {
+            "title_th": "Thời gian",
+            "id": "time",
+            "childs": [
+                {
+                    "title_th": "PN",
+                    "id": "pn"
+                },
+                {
+                    "title_th": "DT",
+                    "id": "area"
+                },
+                {
+                    "title_th": "Ngân sách khoản",
+                    "id": "budget"
+                }
+            ]
+        },
+        {
+            "title_th": "Yêu cầu chi tiết sản phẩm",
+            "id": "detail",
+            "childs": [
+                {
+                    "title_th": "Ngày move in",
+                    "id": "date_movein"
+                },
+                {
+                    "title_th": "Thời gian thuê",
+                    "id": "date_tax"
+                }
+            ]
+        },
+        {
+            "title_th": "Loại khách hàng",
+            "id": "class_client_name",
+            "childs": []
+        },
+        {
+            "title_th": "Nhu cầu",
+            "id": "name_exigency",
+            "childs": []
+        },
+        {
+            "title_th": "Mục đích",
+            "id": "name_purpose",
+            "childs": []
+        },
+        {
+            "title_th": "Yêu cầu khác",
+            "id": "requirements",
+            "childs": []
+        },
+        {
+            "title_th": "Trạng thái",
+            "id": "name_status",
+            "childs": []
+        },
+        {
+            "title_th": "NV GD",
+            "id": "nvgd",
+            "childs": []
+        },
+        {
+            "title_th": "DK SP",
+            "id": "dksp",
+            "childs": []
+        },
+        {
+            "title_th": "ĐK khách hàng",
+            "id": "dkkh",
+            "childs": []
+        }
+    ]
+}

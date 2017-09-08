@@ -1,0 +1,108 @@
+{"client_take_care" : [{ 
+            "title_th": "", 
+            "id": "", 
+            "permission":"" 
+        }
+    ]
+}
+{
+	"client_take_care": [{
+			"title_th": "Ngày liên hệ",
+			"id": "date_contact",
+			"permission": []
+		},
+		{
+			"title_th": "Nguồn",
+			"id": "source_name",
+			"permission": []
+		}
+	]
+}
+{
+    "1": {
+        "permission": "Ngày liên hệ",
+        "id": "date_contact"
+    },
+    "2": {
+        "title_th": "Nguồn",
+        "id": "source_name"
+    },
+    "3": {
+        "title_th": "Đối tác",
+        "permission": {
+            "id_partner": "Phân loại Đối tác",
+            "name_partner": "Họ Tên(Đối tác)",
+            "phone_partner": "Số điện thoại(Đối tác)",
+            "email_partner": "Email(Đối tác)"
+        },
+        "id": "partner"
+    },
+    "4": {
+        "permission": {
+            "title_th": "Khách hàng",
+            "company": "Tên khách hàng",
+            "phonenumber": "Số điện thoại(KH)",
+            "email": "Email(KH)",
+            "name_country": "Quốc tịch"
+        },
+        "id": "clients"
+    },
+    "5": {
+        "permission": {
+            "title_th": "Yêu cầu khu vực/DA",
+            "name_menu_bds": "Loại bds",
+            "province_name": "Quận khu vực",
+            "name_bds": "DA"
+        },
+        "id": "area"
+    },
+    "6": {
+        "permission": {
+            "title_th": "Thời gian",
+            "date_movein": "Ngày move in",
+            "date_tax": "Thời gian thuê"
+        },
+        "id": "time"
+    },
+    "7": {
+        "permission": {
+            "title_th": "Yêu cầu chi tiết sản phẩm",
+            "pn": "PN",
+            "area": "DT",
+            "budget": "Ngân sách khoản"
+        },
+        "id": "detail"
+    },
+    "8": {
+        "permission": "Loại khách hàng",
+        "id": "class_client_name"
+    },
+    "9": {
+        "permission": "Nhu cầu",
+        "id": "name_exigency"
+    },
+    "10": {
+        "permission": "Mục đích",
+        "id": "name_purpose"
+    },
+    "11": {
+        "permission": "Yêu cầu khác",
+        "id": "requirements"
+    },
+    "12": {
+        "permission": "Trạng thái",
+        "id": "name_status"
+    },
+    "13": {
+        "permission": "NV GD",
+        "id": "nvgd"
+    },
+    "14": {
+        "permission": "DK SP",
+        "id": "dksp"
+    },
+    "15": {
+        "permission": "ĐK khách hàng",
+        "id": "dkkh"
+    }
+}

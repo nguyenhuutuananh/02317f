@@ -16,7 +16,7 @@
 <!--                            <input class="form-control input-sm" name="" id=""  value="">-->
                         </th>
                     <?php }
-                    else {?>
+                    else { ?>
                         <th rowspan="2" >
 
                             <p class="text-center">
@@ -38,7 +38,7 @@
                         <?php foreach($value_th_array as $rom_order_2=>$order_th_2){?>
                             <?php if($rom_order_2!='title_th'){?>
                                 <th>
-                                    <p class="text-center"><?=$order_th_2;?></p>
+                                    <p class="text-center"><?=$order_th_2;?> 2222222</p>
                                     <input class="form-control input-sm" name="" id=""  value="">
                                 </th>
                             <?php }?>
