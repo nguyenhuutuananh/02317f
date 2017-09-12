@@ -166,7 +166,6 @@ class Newview extends Admin_controller
 
 
     public function addchil($id = false)
-
     {
 
 

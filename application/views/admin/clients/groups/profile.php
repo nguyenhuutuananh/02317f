@@ -1,278 +1,214 @@
-  <h4 class="bold no-margin"><?php echo _l('client_add_edit_profile'); ?></h4>
-  <hr class="no-mbot no-border" />
-  <div class="row">
-    <?php echo form_open($this->uri->uri_string(),array('class'=>'client-form','autocomplete'=>'off')); ?>
+<?php
+$convert_to = $this->input->get('convert_to');
+if(!is_null($convert_to)) {
+    
+    if($convert_to >= 2 && $convert_to >= 3) {
+        redirect('admin/clients');
+    }
+}
+?>
+<a  href="<?= admin_url() ?>clients">
+    <button type="button" class="btn btn-default  pull-right">
+        Trở lại
+    </button>
+</a>
+<h4 class="bold no-margin"><?php echo _l('Thông tin Khách hàng '); ?></h4>
+
+<hr class="no-mbot no-border" />
+<div class="row">
     <div class="additional"></div>
     <div class="col-md-12">
         <ul class="nav nav-tabs profile-tabs" role="tablist">
             <li role="presentation" class="active">
-                <a href="#contact_info" aria-controls="contact_info" role="tab" data-toggle="tab">
-                    <?php echo _l( 'customer_profile_details'); ?>
+                <a href="#view_client" aria-controls="view_project" role="tab" data-toggle="tab">
+                    <?php echo _l('Chi tiết'); ?>
                 </a>
             </li>
-            <li role="presentation">
-                <a href="#billing_and_shipping" aria-controls="billing_and_shipping" role="tab" data-toggle="tab">
-                    <?php echo _l( 'billing_shipping'); ?>
-                </a>
-            </li>
-            <?php if(isset($client)){ ?>
-            <li role="presentation">
-                <a href="#contacts" aria-controls="contacts" role="tab" data-toggle="tab">
-                    <?php echo _l( 'customer_contacts'); ?>
-                </a>
-            </li>
-            <li role="presentation">
-                <a href="#customer_admins" aria-controls=customer_admins" role="tab" data-toggle="tab">
-                    <?php echo _l( 'customer_admins'); ?>
-                </a>
-            </li>
-            <?php } ?>
         </ul>
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="contact_info">
-                <div class="row">
-                <?php if(!isset($client) || isset($client) && !is_empty_customer_company($client->userid)) { ?>
-                    <div class="col-md-12">
-                       <div class="checkbox checkbox-success mbot20 no-mtop">
-                           <input type="checkbox" name="show_primary_contact"<?php if(isset($client) && $client->show_primary_contact == 1){echo ' checked';}?> value="1" id="show_primary_contact">
-                           <label for="show_primary_contact"><?php echo _l('show_primary_contact',_l('invoices').', '._l('estimates').', '._l('payments')); ?></label>
-                       </div>
-                   </div>
-                   <?php } ?>
-                   <div class="col-md-6">
-                    <?php
-                    $value=( isset($client) ? $client->company : ''); ?>
-                    <?php $attrs = (isset($client) ? array() : array('autofocus'=>true)); ?>
-                    <?php echo render_input( 'company', 'client_company',$value,'text',$attrs); ?>
-                    <?php $value=( isset($client) ? $client->phonenumber : ''); ?>
-                    <?php echo render_input( 'phonenumber', 'client_phonenumber',$value); ?>
-                    <?php
-                    if(get_option('company_requires_vat_number_field') == 1){
-                        $value=( isset($client) ? $client->vat : '');
-                        echo render_input( 'vat', 'client_vat_number',$value);
-                    }
-                    $s_attrs = array('data-none-selected-text'=>_l('system_default_string'));
-                    $selected = '';
-                    if(isset($client) && client_have_transactions($client->userid)){
-                      $s_attrs['disabled'] = true;
-                  }
-                  foreach($currencies as $currency){
-                    if(isset($client)){
-                      if($currency['id'] == $client->default_currency){
-                        $selected = $currency['id'];
-                    }
-                }
-            }
-            ?>
-            <?php if(!isset($client)){ ?>
-            <i class="fa fa-question-circle" data-toggle="tooltip" data-title="<?php echo _l('customer_currency_change_notice'); ?>"></i>
-            <?php } ?>
-            <?php echo render_select('default_currency',$currencies,array('id','name','symbol'),'invoice_add_edit_currency',$selected,$s_attrs); ?>
-            <div class="form-group">
-                <label for="default_language" class="control-label"><?php echo _l('localization_default_language'); ?>
-                </label>
-                <select name="default_language" id="default_language" class="form-control selectpicker" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                    <option value=""><?php echo _l('system_default_string'); ?></option>
-                    <?php foreach(list_folders(APPPATH .'language') as $language){
-                        $selected = '';
-                        if(isset($client)){
-                           if($client->default_language == $language){
-                              $selected = 'selected';
-                          }
-                      }
-                      ?>
-                      <option value="<?php echo $language; ?>" <?php echo $selected; ?>><?php echo ucfirst($language); ?></option>
-                      <?php } ?>
-                  </select>
-              </div>
-              <a href="#" class="pull-left mright5" onclick="fetch_lat_long_from_google_cprofile(); return false;" data-toggle="tooltip" data-title="<?php echo _l('fetch_from_google') . ' - ' . _l('customer_fetch_lat_lng_usage'); ?>"><i id="gmaps-search-icon" class="fa fa-google" aria-hidden="true"></i></a>
-              <?php $value=( isset($client) ? $client->latitude : ''); ?>
-              <?php echo render_input( 'latitude', 'customer_latitude',$value); ?>
-              <?php $value=( isset($client) ? $client->longitude : ''); ?>
-              <?php echo render_input( 'longitude', 'customer_longitude',$value); ?>
-          </div>
-          <div class="col-md-6">
-            <?php $value=( isset($client) ? $client->address : ''); ?>
-            <?php echo render_input( 'address', 'client_address',$value); ?>
-            <?php $value=( isset($client) ? $client->city : ''); ?>
-            <?php echo render_input( 'city', 'client_city',$value); ?>
-            <?php $value=( isset($client) ? $client->state : ''); ?>
-            <?php echo render_input( 'state', 'client_state',$value); ?>
-            <?php $value=( isset($client) ? $client->zip : ''); ?>
-            <?php echo render_input( 'zip', 'client_postal_code',$value); ?>
-            <?php $countries= get_all_countries();
-            $customer_default_country = get_option('customer_default_country');
-            $selected =( isset($client) ? $client->country : $customer_default_country);
-            echo render_select( 'country',$countries,array( 'country_id',array( 'short_name')), 'clients_country',$selected,array('data-none-selected-text'=>_l('dropdown_non_selected_tex')));
-            ?>
-            <?php $value=( isset($client) ? $client->website : ''); ?>
-            <?php echo render_input( 'website', 'client_website',$value); ?>
-            <?php
-            $selected = array();
-            if(isset($customer_groups)){
-                foreach($customer_groups as $group){
-                   array_push($selected,$group['groupid']);
-               }
-           }
-           echo render_select('groups_in[]',$groups,array('id','name'),'customer_groups',$selected,array('multiple'=>true),array(),'','',false);
-           ?>
-       </div>
-       <div class="col-md-12">
-        <?php $rel_id=( isset($client) ? $client->userid : false); ?>
-        <?php echo render_custom_fields( 'customers',$rel_id); ?>
-    </div>
-</div>
-</div>
-<?php if(isset($client)){ ?>
-<div role="tabpanel" class="tab-pane" id="contacts">
-    <?php if(has_permission('customers','','create') || is_customer_admin($client->userid)){
-        $disable_new_contacts = false;
-        if(is_empty_customer_company($client->userid) && total_rows('tblcontacts',array('userid'=>$client->userid)) == 1){
-           $disable_new_contacts = true;
-       }
-       ?>
-       <div class="inline-block"<?php if($disable_new_contacts){ ?> data-toggle="tooltip" data-title="<?php echo _l('customer_contact_person_only_one_allowed'); ?>"<?php } ?>>
-        <a href="#" onclick="contact(<?php echo $client->userid; ?>); return false;" class="btn btn-info mbot25<?php if($disable_new_contacts){echo ' disabled';} ?>"><?php echo _l('new_contact'); ?></a>
-    </div>
-    <?php } ?>
-    <?php
-    $table_data = array(_l('client_firstname'),_l('client_lastname'),_l('client_email'),_l('contact_position'),_l('client_phonenumber'),_l('contact_active'),_l('clients_list_last_login'));
-    $custom_fields = get_custom_fields('contacts',array('show_on_table'=>1));
-    foreach($custom_fields as $field){
-       array_push($table_data,$field['name']);
-   }
-   array_push($table_data,_l('options'));
-   echo render_datatable($table_data,'contacts'); ?>
-</div>
-<div role="tabpanel" class="tab-pane" id="customer_admins">
-    <?php if (has_permission('customers', '', 'create') || has_permission('customers', '', 'edit')) { ?>
-    <a href="#" data-toggle="modal" data-target="#customer_admins_assign" class="btn btn-info mbot30"><?php echo _l('assign_admin'); ?></a>
-    <?php } ?>
-    <table class="table dt-table">
-        <thead>
-            <tr>
-                <th><?php echo _l('staff_member'); ?></th>
-                <th><?php echo _l('customer_admin_date_assigned'); ?></th>
-                <?php if(has_permission('customers','','create') || has_permission('customers','','edit')){ ?>
-                <th><?php echo _l('options'); ?></th>
-                <?php } ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($customer_admins as $c_admin){ ?>
-            <tr>
-                <td><a href="<?php echo admin_url('profile/'.$c_admin['staff_id']); ?>">
-                    <?php echo staff_profile_image($c_admin['staff_id'], array(
-                        'staff-profile-image-small',
-                        'mright5'
-                        ));
-                        echo get_staff_full_name($c_admin['staff_id']); ?></a>
-                    </td>
-                    <td data-order="<?php echo $c_admin['date_assigned']; ?>"><?php echo _dt($c_admin['date_assigned']); ?></td>
-                    <?php if(has_permission('customers','','create') || has_permission('customers','','edit')){ ?>
-                    <td>
-                        <a href="<?php echo admin_url('clients/delete_customer_admin/'.$client->userid.'/'.$c_admin['staff_id']); ?>" class="btn btn-danger _delete btn-icon"><i class="fa fa-remove"></i></a>
-                    </td>
-                    <?php } ?>
-                </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-    </div>
-    <?php } ?>
-    <div role="tabpanel" class="tab-pane" id="billing_and_shipping">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4><?php echo _l('billing_address'); ?> <a href="#" class="pull-right billing-same-as-customer"><small class="text-info font-medium-xs"><?php echo _l('customer_billing_same_as_profile'); ?></small></a></h4>
-                        <hr />
-                        <?php $value=( isset($client) ? $client->billing_street : ''); ?>
-                        <?php echo render_input( 'billing_street', 'billing_street',$value); ?>
-                        <?php $value=( isset($client) ? $client->billing_city : ''); ?>
-                        <?php echo render_input( 'billing_city', 'billing_city',$value); ?>
-                        <?php $value=( isset($client) ? $client->billing_state : ''); ?>
-                        <?php echo render_input( 'billing_state', 'billing_state',$value); ?>
-                        <?php $value=( isset($client) ? $client->billing_zip : ''); ?>
-                        <?php echo render_input( 'billing_zip', 'billing_zip',$value); ?>
-                        <?php $selected=( isset($client) ? $client->billing_country : '' ); ?>
-                        <?php echo render_select( 'billing_country',$countries,array( 'country_id',array( 'short_name')), 'billing_country',$selected,array('data-none-selected-text'=>_l('dropdown_non_selected_tex'))); ?>
-                    </div>
-                    <div class="col-md-6">
-                        <h4>
-                            <i class="fa fa-question-circle" data-toggle="tooltip" data-title="<?php echo _l('customer_shipping_address_notice'); ?>"></i>
-                            <?php echo _l('shipping_address'); ?> <a href="#" class="pull-right customer-copy-billing-address"><small class="text-info font-medium-xs"><?php echo _l('customer_billing_copy'); ?></small></a></h4>
-                            <hr />
-                            <?php $value=( isset($client) ? $client->shipping_street : ''); ?>
-                            <?php echo render_input( 'shipping_street', 'shipping_street',$value); ?>
-                            <?php $value=( isset($client) ? $client->shipping_city : ''); ?>
-                            <?php echo render_input( 'shipping_city', 'shipping_city',$value); ?>
-                            <?php $value=( isset($client) ? $client->shipping_state : ''); ?>
-                            <?php echo render_input( 'shipping_state', 'shipping_state',$value); ?>
-                            <?php $value=( isset($client) ? $client->shipping_zip : ''); ?>
-                            <?php echo render_input( 'shipping_zip', 'shipping_zip',$value); ?>
-                            <?php $selected=( isset($client) ? $client->shipping_country : $customer_default_country ); ?>
-                            <?php echo render_select( 'shipping_country',$countries,array( 'country_id',array( 'short_name')), 'shipping_country',$selected,array('data-none-selected-text'=>_l('dropdown_non_selected_tex'))); ?>
-                        </div>
-                        <?php if(isset($client) &&
-                        (total_rows('tblinvoices',array('clientid'=>$client->userid)) > 0 || total_rows('tblestimates',array('clientid'=>$client->userid)) > 0)){ ?>
+                <div role="tabpanel" class="tab-pane active" id="view_project">
+                    <?php echo form_open('http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'], array('class' => 'clients-bds-form', 'autocomplete' => 'off')); ?>
+                    <div class="row">
                         <div class="col-md-12">
-                            <div class="alert alert-warning">
-                                <div class="checkbox checkbox-default">
-                                    <input type="checkbox" name="update_all_other_transactions" id="update_all_other_transactions">
-                                    <label for="update_all_other_transactions">
-                                        <?php echo _l('customer_update_address_info_on_invoices'); ?><br />
-                                    </label>
-                                </div>
-                                <b><?php echo _l('customer_update_address_info_on_invoices_help'); ?></b>
-                            </div>
+                            <p class="text-dark text-uppercase" style="text-align: center;"></p>
+                            <hr class="no-mtop">
                         </div>
-                        <?php } ?>
+                        <div class="col-md-12">
+                            <p class="text-dark text-uppercase" style="text-align: center; font-weight: bold"></p>
+                            <hr class="no-mtop">
+                        </div>
+                        <div class="col-md-12">
+                            <fieldset>
+                                <legend>Khách hàng</legend>
+                                    
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php $value = (isset($client) ? $client->company : ''); ?>
+                                        <?php echo render_input('company', 'Tên Khách hàng', $value); ?>
+                                        <?php $value = (isset($client) ? $client->email : ''); ?>
+                                        <?php echo render_input('email', 'Email', $value); ?>
+                                        <?php $selected = (isset($client) ? $client->exigency : ''); ?>
+                                        <?php echo render_select('exigency', $exigency, array('id', 'name'), 'Nhu cầu', $selected, array()); ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php $selected = (isset($client) ? $client->purpose : ''); ?>
+                                        <?php echo render_select('purpose', $purpose, array('id', 'name'), 'Mục đích', $selected, array()); ?>
+                                        <?php $value = (isset($client) ? $client->phonenumber : ''); ?>
+                                        <?php echo render_input('phonenumber', 'Số điện thoại', $value); ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php $selected = (isset($client) ? $client->country : ''); ?>
+                                        <?php echo render_select('country', $countries, array('country_id', 'short_name'), 'Quốc tịch', $selected, array()); ?>
+                                        <!--                                                        --><?php //$selected=( isset($client) ? $client->type_client : ''); ?>
+                                        <!--                                                        --><?php //echo render_select( 'type_client', array(array('id'=>1,'name'=>'Khách hàng đang quan tâm'),array('id'=>2,'name'=>'Khách hàng mua/thuê'),array('id'=>3,'name'=>'Khách hàng fail')),array('id','name'),'Loại khách hàng',$selected,array()); ?>
+                                        <?php $selected = (isset($client) ? $client->source : ''); ?>
+                                        <?php echo render_select('source', $source, array('id', 'name'), 'Nguồn', $selected, array()); ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php $selected = (isset($client) ? $client->class_client : ''); ?>
+                                        <?php echo render_select('class_client', $class_client, array('id', 'name'), 'Loại khách hàng', $selected, array()); ?>
+                                        <?php $value = (isset($client) ? $client->date_contact : ''); ?>
+                                        <?php echo render_date_input('date_contact', 'Ngày Hẹn gặp', $value); ?>
+                                    </div>
+                            </fieldset>
+                        </div>
+                        
+                        <p class="text-dark text-uppercase" style="text-align: center;"></p>
+                        <hr class="no-mtop">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            <fieldset>
+                                <legend>Yêu Cầu Chi Tiết Sản Phẩm</legend>
+                                
+                                    <?php $value = (isset($client) ? $client->date_movein : ''); ?>
+                                    <?php echo render_date_input('date_movein', 'Ngày move in', $value); ?>    
+                                    <?php $value = (isset($client) ? $client->date_tax : ''); ?>
+                                    <?php echo render_input('date_tax', 'Thời hạn thuê', $value); ?>    
+                            </fieldset>
                     </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            <fieldset>
+                                <legend>Tổng hợp</legend>
+                                
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                    <?php $selected = (isset($client) ? $client->status : ''); ?>
+                                    <?php echo render_select('status', $status, array('id', 'name'), 'Trạng thái', $selected, array()); ?>
+                                    <?php $selected = (isset($client) ? $client->nvgd : ''); ?>
+                                    <?php echo render_select('status', $staff, array('staffid', 'lastname'), 'Nhân viên giám định', $selected, array()); ?>
+                                </div>
+                                
+                                
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                    <?php $value = (isset($client) ? $client->requirements : ''); ?>
+                                    <?php echo render_input('requirements', 'Yêu cầu khác', $value); ?>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="clearfix">
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            <fieldset>
+                                <legend>Yêu cầu khu vực dự án</legend>
+                                <?php $selected = (isset($client) ? $client->type_bds : ''); ?>
+                                <?php echo render_select('type_bds', $menu_project, array('id', 'menu_name'), 'Loại bất động sản', $selected, array('onchange' => 'get_project(this.value)')); ?>
+                                <?php $selected = (isset($client) ? $client->province : ''); ?>
+                                <?php echo render_select('province', $province, array('provinceid', 'name', 'type'), 'Tỉnh/Thành phố', $selected, array('onchange' => 'get_district(this.value)')); ?>
+                                <?php $selected = (isset($client) ? $client->id_project_bds : ''); ?>
+                                <?php if (isset($client->type_bds)) {
+                                    $id_project_bds = $this->clients_model->get_project($client->type_bds);
+                                } ?>
+                                <?php echo render_select('id_project_bds', $id_project_bds, array('id', 'project_name', 'code'), 'Dự án', $selected, array()); ?>
+                                <?php $selected = (isset($client) ? $client->district : ''); ?>
+                                <?php if (isset($client->province)) {
+                                    $district = $this->clients_model->get_district($client->province);
+                                } ?>
+                                <?php echo render_select('district', $district, array('districtid', 'name', 'type'), 'Quận/huyện', $selected, array()); ?>
+
+                            </fieldset>
+                            <?php if ($type_client == 2 || $client->type_client == 2) { ?>
+                            <p class="text-dark text-uppercase" style="text-align: center;"></p>
+                            <hr class="no-mtop">
+                            <fieldset>
+                                <legend>Hoa hồng</legend>
+
+                                    <div class="col-md-6">
+                                        <?php $value = (isset($client) ? $client->status_bonus : ''); ?>
+                                        <?php echo render_input('status_bonus', 'Trạng thái hoa hồng', $value); ?>
+                                        <button type="button" class="btn btn-success" onclick="append_colum()">
+                                            Thêm Đợt Thanh toán Hoa hồng
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6 time_bonus">
+                                        <?php if (isset($client)) {
+                                            $time_bonus = explode(',', $client->time_bonus);
+                                            $num_bonus = explode(',', $client->num_bonus);
+                                            ?>
+                                            <?php foreach ($time_bonus as $num => $rom) { ?>
+                                                <fieldset class="fieldset review_bonus_<?= $num + 1 ?>">
+                                                    <legend class="legend">Đợt: <?= $num + 1 ?>  <a href="javacript:void(0)" class="text-danger _delete" onclick="remove_field(<?= $num + 1 ?>)"><i class="fa fa fa-times"></i></a></legend>
+                                                    <div class="form-group">
+                                                        <label for="time_bonus" class="control-label label-time">Ngày thu tiền đợt: <?= $num + 1 ?></label>
+                                                        <div class="input-group date">
+                                                            <input type="text"  name="time_bonus[]" class="form-control datepicker" value="<?= $rom ?>">
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-calendar calendar-icon"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="num_bonus" class="control-label label-num">Đợt: <?= $num + 1 ?></label>
+                                                        <input type="text"  name="num_bonus[]" class="form-control" value="<?= $num_bonus[$num] ?>">
+                                                    </div>
+                                                </fieldset>
+
+
+                                            <?php 
+                                        } ?>
+                                    </div>
+                                <?php 
+                            } ?>
+
+
+                                    <div class="col-md-6 money_bonus">
+                                    </div>
+                                <?php 
+                            } ?>
+
+
+                            </fieldset>
+
+
+                        </div>
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            <fieldset>
+                                <legend>Yêu Cầu Chi Tiết Sản Phẩm</legend>
+                                <?php $value = (isset($client) ? $client->pn : ''); ?>
+                                <?php echo render_input('pn', 'Phòng ngủ', $value); ?>
+
+                                <?php $value = (isset($client) ? $client->budget : ''); ?>
+                                <?php echo render_input('budget', 'Ngân sách khoản', $value); ?>
+                                <?php $value = (isset($client) ? $client->area : ''); ?>
+                                <?php echo render_input('area', 'Diện tích', $value); ?>
+                            </fieldset>
+                        </div>
+                        
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                            <fieldset>
+                                <legend>Đối Tác</legend>
+                                <?php $selected = (isset($client) ? $client->id_partner : ''); ?>
+                                <?php echo render_select('id_partner', $id_partner, array('id_partner', 'name_partner'), 'Đối tác', $selected, array()); ?>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-6">
+
+                        </div>
+                    </div>
+                <div>
+                    <button class="btn btn-info mtop20 only-save customer-form-submiter">
+                        <?php echo _l('submit'); ?>
+                    </button>
                 </div>
+                    <?php echo form_close(); ?>
             </div>
-        </div>
-        <button class="btn btn-info mtop20 only-save customer-form-submiter">
-            <?php echo _l( 'submit'); ?>
-        </button>
-        <?php if(!isset($client)){ ?>
-        <button class="btn btn-info mtop20 save-and-add-contact customer-form-submiter">
-            <?php echo _l( 'save_customer_and_add_contact'); ?>
-        </button>
-        <?php } ?>
-    </div>
-</div>
-<?php echo form_close(); ?>
-</div>
-<div id="contact_data"></div>
-<?php if(isset($client)){ ?>
-<?php if (has_permission('customers', '', 'create') || has_permission('customers', '', 'edit')) { ?>
-<div class="modal fade" id="customer_admins_assign" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-        <?php echo form_open(admin_url('clients/assign_admins/'.$client->userid)); ?>
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title"><?php echo _l('assign_admin'); ?></h4>
-            </div>
-            <div class="modal-body">
-                <?php
-                $selected = array();
-                foreach($customer_admins as $c_admin){
-                   array_push($selected,$c_admin['staff_id']);
-               }
-               echo render_select('customer_admins[]',$staff,array('staffid',array('firstname','lastname')),'',$selected,array('multiple'=>true),array(),'','',false); ?>
-           </div>
-           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
-            <button type="submit" class="btn btn-info"><?php echo _l('submit'); ?></button>
+
         </div>
     </div>
-    <!-- /.modal-content -->
-    <?php echo form_close(); ?>
 </div>
-<!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-<?php } ?>
-<?php } ?>

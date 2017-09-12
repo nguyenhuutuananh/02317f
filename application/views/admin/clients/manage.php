@@ -5,13 +5,13 @@
     }
     .view_people {
         background-color: aliceblue!important;
-    );
+    }
     .bootstrap-select {
         min-width: 160px!important;
-    };
+    }
 </style>
 
-<style>
+<style type="text/css"> 
     .select-div{
         position: relative;
         top: 9px;
@@ -33,12 +33,11 @@
     }
     .view_people {
         background-color: aliceblue!important;
-    );
+    }
     .bootstrap-select {
         min-width: 160px!important;
-    };
-    th, td { white-space: nowrap; };
-
+    }
+    th, td { white-space: nowrap !important; }
 </style>
 <link href="<?=base_url()?>assets/css/fixedColumns.dataTables.min.css" rel="stylesheet">
 <div id="wrapper">

@@ -1,129 +1,149 @@
+<?php
+$table_heads = $table_heads_clients_buy;
+$clients = $clients_buy;
+?>
 <div class="table-responsive no-dt">
-    <table class="table table-hover table-bordered">
+    <table id="table_clients_buy" class="table display stripe table_all row-border order-column">
         <thead>
         <tr>
-            <th rowspan="2" class="bold"><p class="text-center">Ngày liên hệ</p> <input class="form-control input-sm" id="type_area" placeholder="Ngày liên hệ"></th>
-            <th rowspan="2" class="bold"><p class="text-center">Nguồn</p> <input class="form-control input-sm" id="type_area" placeholder="Nguồn"></th>
-            <!--Đối tác-->
-            <th colspan="4" class="bg-success">Đối tác</th>
-            <!--Đối tác-->
+            <!-- Row 1-->
+            <?php
+            if(isset($table_heads)) {
+                foreach($table_heads as $table_head) {
+                    if(count($table_head->childs) > 0) {
+                    ?>
+            <th colspan="<?php echo count($table_head->childs); ?>" >
 
-            <!--Khách hàng-->
-
-            <th colspan="4" class="bg-warning">khách hàng</th>
-            <!--Khách hàng-->
-
-            <th rowspan="2"><p class="text-center">Loại khách hàng</p> <input class="form-control input-sm" id="type_area" placeholder="Loại khách hàng"></th>
-            <th rowspan="2"><p class="text-center">Nhu cầu</p> <input class="form-control input-sm" id="type_area" placeholder="Nhu cầu"></th>
-            <th rowspan="2"><p class="text-center">Mục đích</p> <input class="form-control input-sm" id="type_area" placeholder="Mục đích"></th>
-
-            <!--Yêu cầu khu vực-->
-            <th colspan="3" class="bg-info"><p class="text-center">Yêu cầu khu vực/dự án</p> <input class="form-control input-sm" id="type_area" placeholder="Yêu cầu khu vực/dự án"></th>
-
-            <!--Yêu cầu chi tiết-->
-            <th colspan="3" class="bg-danger">Yêu cầu chi tiết sản phẩm</th>
-            <th colspan="2" class="bg-success">Thời gian</th>
-            <!--End Yêu cầu chi tiết-->
-            <th  rowspan="2"     class="bg-info">Thanh toán</th>
-
-
-            <th rowspan="2">Yêu cầu khác</th>
-            <th rowspan="2">Trạng thái</th>
-            <th rowspan="2">NV GD</th>
-            <th rowspan="2">DK SP</th>
-            <th rowspan="2">ĐK Khách khàng</th>
+                <p class="text-center">
+                    <?php echo $table_head->title_th; ?>
+                </p>
+            </th>
+                    <?php
+                    }
+                    else {
+                    ?>
+            <th rowspan="2" >
+                <p class="text-center">
+                    <?=$table_head->title_th;?> 
+                </p>
+                <input class="form-control input-sm" name="" id=""  value="">
+            </th>
+                    <?php
+                    }
+                }
+                ?>
+            <th rowspan="2">
+                <p class="text-center"><?=_l('actions')?></p>
+            </th>
+                <?php
+            }
+        ?>
         </tr>
-
         <tr>
-            <!--Đối tác-->
-
-            <th>Phân loại Đối tác</th>
-            <th>Họ Tên(Đối tác)</th>
-            <th>Số điện thoại(Đối tác)</th>
-            <th>Email(Đối tác)</th>
-            <!--Đối tác-->
-
-            <!--Khách hàng-->
-
-            <th>Tên khách hàng</th>
-            <th>Số điện thoại(Khách hàng)</th>
-            <th>Email(Khách hàng)</th>
-            <th>Quốc tịch</th>
-            <!--Khách hàng-->
-
-
-            <!--Yêu cầu khu vực-->
-            <th>Loại bds</th>
-            <th>Quận khu vực</th>
-            <th>DA</th>
-
-            <!--Yêu cầu chi tiết-->
-            <th>PN</th>
-            <th>DT</th>
-            <th>Ngân sách khoản</th>
-            <!--End Yêu cầu chi tiết-->
-
-            <th>Ngày move in</th>
-            <th>Thời gian thuê</th>
+            <!-- Row 2-->
+            <?php
+            if(isset($table_heads)) {
+                foreach($table_heads as $table_head) {
+                    foreach($table_head->childs as $child) {
+                        ?>
+            <th>
+                <p class="text-center"><?=$child->title_th;?></p>
+                <input class="form-control input-sm" name="" id=""  value="">
+            </th>
+                        <?php
+                    }
+                }
+                
+            }
+            ?>
         </tr>
         </thead>
+
         <tbody>
-        <?php foreach($clients_buy as $rom_b){?>
+        <?php foreach($clients as $rowItem){?>
             <tr>
-                <td><?=$rom_b['date_contact']?></td>
-                <td><?=$rom_b['source_name']?></td>
-                <td><?=render_tags(get_tags_partner_in($rom_b['id_partner']))?></td>
-
-                <td><?=$rom_b['name_partner']?></td>
-                <td><?=$rom_b['phone_partner']?></td>
-                <td><?=$rom_b['email_partner']?></td>
-
-                <td><?=$rom_b['company']?></td>
-                <td><?=$rom_b['phonenumber']?></td>
-                <td><?=$rom_b['email']?></td>
-                <td><?=$rom_b['name_country']?></td>
-                <td><?=$rom_b['class_client_name']?></td>
-                <td><?=$rom_b['name_exigency']?></td>
-                <td><?=$rom_b['purpose']?></td>
-                <td><?=$rom_b['name_menu_bds']?></td>
-                <td><?=$rom_b['province_name']?>/<?=$rom['district_name']?></td>
-
-                <td><?=$rom_b['name_bds']?></td>
-                <td><?=$rom_b['pn']?></td>
-                <td><?=$rom_b['area']?></td>
-                <td><?=$rom_b['budget']?></td>
-                <td><?=$rom_b['date_movein']?></td>
-                <td><?=$rom_b['date_tax']?></td>
-                <td>
-                    <?php $time_bonus=explode(',',$rom_b['time_bonus'])?>
-                    <?php $num_bonus=explode(',',$rom_b['num_bonus'])?>
-                    <div class="tags-labels">
-                        <?php foreach($time_bonus as $n=> $r){?>
-                            <span class="label label-tag tag-id-<?=$n?>">
-                                                                        <span class="tag"><?=$r?> : <?=$num_bonus[$n]?></span>
-                                                                        <span class="hide">, </span>
-                                                                    </span>
-                        <?php }?>
-                    </div>
-                </td>
-                <!--                                                            <td>--><?//=$rom_b['num_bonus']?><!--</td>-->
-                <td><?=$rom_b['requirements']?></td>
-                <td><?=$rom_b['status']?></td>
-                <td>
-                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rom['nvgd'])?>" href="<?=admin_url($rom['nvgd'])?>"><?=staff_profile_image($rom['nvgd'], array(
-                            'staff-profile-image-small'
-                        ))?> <?=get_staff_full_name($rom['nvgd'])?></a>
-                </td>
-                <td>
-                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rom['dksp'])?>" href="<?=admin_url($rom['dksp'])?>"><?=staff_profile_image($rom['dksp'], array(
-                            'staff-profile-image-small'
-                        ))?> <?=get_staff_full_name($rom['dksp'])?></a>
-                </td>
-                <td>
-                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rom['dkkh'])?>" href="<?=admin_url($rom['dkkh'])?>"><?=staff_profile_image($rom['dkkh'], array(
-                            'staff-profile-image-small'
-                        ))?> <?=get_staff_full_name($rom['dkkh'])?></a>
-                </td>
+            <?php
+                if(isset($table_heads)) {
+                    $thuTuCot = 1;
+                    foreach($table_heads as $table_head) {
+                        $object_check = array();
+                        if(count($table_head->childs) == 0) {
+                            $object_check[] = $table_head;
+                        }
+                        else {
+                            $object_check = $table_head->childs;
+                        }
+                        
+                        foreach($object_check as $objectTableHeading) {
+                        ?>
+                        <td>
+                        <?php
+                            if($thuTuCot <= 2) {
+                                ?>
+                                <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=2')?>">
+                                <?php
+                            }
+                            switch ($objectTableHeading->id) {
+                                case 'id_partner':
+                                    echo render_tags(get_tags_partner_in($rowItem[$objectTableHeading->id]));
+                                    break;
+                                case 'time_bonus':
+                                    $time_bonus=explode(',', $rowItem[$objectTableHeading->id]);
+                                    $num_bonus=explode(',', $rowItem['num_bonus']);
+                                    ?>
+                                    <div class="tags-labels">
+                                        <?php foreach($time_bonus as $n=> $r){?>
+                                            <span class="label label-tag tag-id-<?=$n?>">
+                                                <span class="tag"><?=$r?> : <?=$num_bonus[$n]?></span>
+                                                <span class="hide">, </span>
+                                            </span>
+                                        <?php }?>
+                                    </div>
+                                    <?php
+                                    break;
+                                case 'province_name':
+                                    ?>
+                                    <?=$rowItem['province_name']?>/<?=$rowItem['district_name']?>
+                                    <?php
+                                    break;
+                                case 'address':
+                                    echo $rowItem['home_number'].' '.$rowItem['home_street'];
+                                    break;
+                                case 'nvgd':
+                                case 'dksp':
+                                case 'dkkh':
+                                        ?>
+                                                <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rowItem[$objectTableHeading->id])?>" href="<?=admin_url($rowItem[$objectTableHeading->id])?>"><?=staff_profile_image($rowItem[$objectTableHeading->id], array(
+                                                        'staff-profile-image-small'
+                                                    ))?> <?=get_staff_full_name($rowItem[$objectTableHeading->id])?></a>
+                                        <?php
+                                    break;
+                                    default:
+                                        ?>
+                                                <p class="text-center">
+                                                <?=$rowItem[$objectTableHeading->id]?>
+                                                </p>
+                                        <?php
+                                    break;
+                            }
+                            if($thuTuCot <= 2) {
+                                ?>
+                                </a>
+                                <?php
+                            }
+                            $thuTuCot++;
+                        ?>
+                        </td>
+                        <?php
+                        }
+                    }
+                    ?>
+                    <td>
+                        <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=2')?>" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
+                    </td>
+                    <?php
+                }
+            ?>
             </tr>
         <?php }?>
         </tbody>

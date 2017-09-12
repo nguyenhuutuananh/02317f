@@ -1,116 +1,146 @@
+<?php
+$table_heads = $table_heads_clients_fail;
+$clients = $clients_fail;
+?>
 <div class="table-responsive no-dt">
-    <table id="" class="table stripe table_all row-border order-column" cellspacing="0" width="100%">
+    <table id="table_clients_fail" class="table display stripe table_all row-border order-column">
         <thead>
         <tr>
-            <th rowspan="2" >Ngày liên hệ</th>
-            <th rowspan="2" >Nguồn</th>
-            <!--Đối tác-->
-            <th colspan="4" class="bg-success">Đối tác</th>
-            <!--Đối tác-->
+            <!-- Row 2-->
+            <?php
+            if(isset($table_heads)) {
+                foreach($table_heads as $table_head) {
+                    if(count($table_head->childs) > 0) {
+                    ?>
+            <th colspan="<?php echo count($table_head->childs); ?>" >
 
-            <!--Khách hàng-->
-
-            <th colspan="4" class="bg-warning">khách hàng</th>
-            <!--Khách hàng-->
-
-            <th rowspan="2">Loại khách hàng</th>
-            <th rowspan="2">Nhu cầu</th>
-            <th rowspan="2">Mục đích</th>
-
-            <!--Yêu cầu khu vực-->
-            <th colspan="3" class="bg-info">Yêu cầu khu vực/DA</th>
-
-            <!--Yêu cầu chi tiết-->
-            <th colspan="3" class="bg-danger">Yêu cầu chi tiết sản phẩm</th>
-            <th colspan="2" class="bg-success">Thời gian</th>
-            <!--End Yêu cầu chi tiết-->
-
-
-            <th rowspan="2">Yêu cầu khác</th>
-            <th rowspan="2">Trạng thái</th>
-            <th rowspan="2">NV GD</th>
-            <th rowspan="2">DK SP</th>
-            <th rowspan="2">ĐK Khách khàng</th>
+                <p class="text-center">
+                    <?php echo $table_head->title_th; ?>
+                </p>
+            </th>
+                    <?php
+                    }
+                    else {
+                    ?>
+            <th rowspan="2" >
+                <p class="text-center">
+                    <?=$table_head->title_th;?> 
+                </p>
+                <input class="form-control input-sm" name="" id=""  value="">
+            </th>
+                    <?php
+                    }
+                }
+                ?>
+            <th rowspan="2">
+                <p class="text-center"><?=_l('actions')?></p>
+            </th>
+                <?php
+            }
+        ?>
         </tr>
-
         <tr>
-            <!--Đối tác-->
-
-            <th>Phân loại Đối tác</th>
-            <th>Họ Tên(Đối tác)</th>
-            <th>Số điện thoại(Đối tác)</th>
-            <th>Email(Đối tác)</th>
-            <!--Đối tác-->
-
-            <!--Khách hàng-->
-
-            <th>Tên khách hàng</th>
-            <th>Số điện thoại(Khách hàng)</th>
-            <th>Email(Khách hàng)</th>
-            <th>Quốc tịch</th>
-            <!--Khách hàng-->
-
-
-            <!--Yêu cầu khu vực-->
-            <th>Loại bds</th>
-            <th>Quận khu vực</th>
-            <th>DA</th>
-
-            <!--Yêu cầu chi tiết-->
-            <th>PN</th>
-            <th>DT</th>
-            <th>Ngân sách khoản</th>
-            <!--End Yêu cầu chi tiết-->
-
-            <th>Ngày move in</th>
-            <th>Thời gian thuê</th>
+            <!-- Row 2-->
+            <?php
+            if(isset($table_heads)) {
+                foreach($table_heads as $table_head) {
+                    foreach($table_head->childs as $child) {
+                        ?>
+            <th>
+                <p class="text-center"><?=$child->title_th;?></p>
+                <input class="form-control input-sm" name="" id=""  value="">
+            </th>
+                        <?php
+                    }
+                }
+                
+            }
+            ?>
         </tr>
         </thead>
+
         <tbody>
-        <?php foreach($clients_fail as $rom_f){?>
+        <?php foreach($clients as $rowItem){?>
             <tr>
-                <td><?=$rom_f['date_contact']?></td>
-                <td><?=$rom_f['source_name']?></td>
-                <td><?= render_tags(get_tags_partner_in($rom_f['id_partner']))?></td>
-
-                <td><?=$rom_f['name_partner']?></td>
-                <td><?=$rom_f['phone_partner']?></td>
-                <td><?=$rom_f['email_partner']?></td>
-
-                <td><?=$rom_f['company']?></td>
-                <td><?=$rom_f['phonenumber']?></td>
-                <td><?=$rom_f['email']?>1</td>
-                <td><?=$rom_f['name_country']?></td>
-                <td><?=$rom_f['class_client_name']?></td>
-                <td><?=$rom_f['name_exigency']?></td>
-                <td><?=$rom_f['purpose']?></td>
-                <td><?=$rom_f['name_menu_bds']?></td>
-                <td><?=$rom_f['province_name']?>/<?=$rom_f['district_name']?></td>
-
-                <td><?=$rom_f['name_bds']?></td>
-                <td><?=$rom_f['pn']?></td>
-                <td><?=$rom_f['area']?></td>
-                <td><?=$rom_f['budget']?></td>
-
-                <td><?=$rom_f['date_movein']?></td>
-                <td><?=$rom_f['date_tax']?></td>
-                <td><?=$rom_f['requirements']?></td>
-                <td><?=$rom_f['status']?></td>
-                <td>
-                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rom['nvgd'])?>" href="<?=admin_url($rom['nvgd'])?>"><?=staff_profile_image($rom['nvgd'], array(
-                            'staff-profile-image-small'
-                        ))?> <?=get_staff_full_name($rom['nvgd'])?></a>
-                </td>
-                <td>
-                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rom['dksp'])?>" href="<?=admin_url($rom['dksp'])?>"><?=staff_profile_image($rom['dksp'], array(
-                            'staff-profile-image-small'
-                        ))?> <?=get_staff_full_name($rom['dksp'])?></a>
-                </td>
-                <td>
-                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rom['dkkh'])?>" href="<?=admin_url($rom['dkkh'])?>"><?=staff_profile_image($rom['dkkh'], array(
-                            'staff-profile-image-small'
-                        ))?> <?=get_staff_full_name($rom['dkkh'])?></a>
-                </td>
+            <?php
+                if(isset($table_heads)) {
+                    $thuTuCot = 1;
+                    foreach($table_heads as $table_head) {
+                        $object_check = array();
+                        if(count($table_head->childs) == 0) {
+                            $object_check[] = $table_head;
+                        }
+                        else {
+                            $object_check = $table_head->childs;
+                        }
+                        
+                        foreach($object_check as $objectTableHeading) {
+                        ?>
+                        <td>
+                        <?php
+                            if($thuTuCot <= 2) {
+                                ?>
+                                <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=2')?>">
+                                <?php
+                            }
+                            switch ($objectTableHeading->id) {
+                                case 'id_partner':
+                                    echo render_tags(get_tags_partner_in($rowItem[$objectTableHeading->id]));
+                                    break;
+                                case 'time_bonus':
+                                    $time_bonus=explode(',', $rowItem[$objectTableHeading->id]);
+                                    $num_bonus=explode(',', $rowItem['num_bonus']);
+                                    ?>
+                                    <div class="tags-labels">
+                                        <?php foreach($time_bonus as $n=> $r){?>
+                                            <span class="label label-tag tag-id-<?=$n?>">
+                                                <span class="tag"><?=$r?> : <?=$num_bonus[$n]?></span>
+                                                <span class="hide">, </span>
+                                            </span>
+                                        <?php }?>
+                                    </div>
+                                    <?php
+                                    break;
+                                case 'province_name':
+                                    ?>
+                                    <?=$rowItem['province_name']?>/<?=$rowItem['district_name']?>
+                                    <?php
+                                    break;
+                                case 'nvgd':
+                                case 'dksp':
+                                case 'dkkh':
+                                        ?>
+                                                <a data-toggle="tooltip" data-title="<?=get_staff_full_name($rowItem[$objectTableHeading->id])?>" href="<?=admin_url($rowItem[$objectTableHeading->id])?>"><?=staff_profile_image($rowItem[$objectTableHeading->id], array(
+                                                        'staff-profile-image-small'
+                                                    ))?> <?=get_staff_full_name($rowItem[$objectTableHeading->id])?></a>
+                                        <?php
+                                    break;
+                                    default:
+                                        ?>
+                                                <p class="text-center">
+                                                <?=$rowItem[$objectTableHeading->id]?>
+                                                </p>
+                                        <?php
+                                    break;
+                            }
+                            if($thuTuCot <= 2) {
+                                ?>
+                                </a>
+                                <?php
+                            }
+                            $thuTuCot++;
+                        ?>
+                        </td>
+                        <?php
+                        }
+                    }
+                    ?>
+                    <td>
+                        <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=3')?>" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
+                    </td>
+                    <?php
+                }
+            ?>
             </tr>
         <?php }?>
         </tbody>

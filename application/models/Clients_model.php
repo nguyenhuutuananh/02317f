@@ -52,18 +52,13 @@ class Clients_model extends CRM_Model
         return $this->db->get('tblclients')->result_array();
 
     }
-
-
-
-
-
-
     public function get_clients($type)
     {
         $this->db->select('tblclients.*,
                             province.name as province_name,
                             district.name as district_name,
                             tblprojectmenu.project_name as name_bds,
+                            tblprojectmenu.expires as expire_bds,
                             tblmenubds.menu_name as name_menu_bds,
                             tblpartner.name_partner as name_partner,
                             tblpartner.phone_partner as phone_partner,
@@ -73,8 +68,12 @@ class Clients_model extends CRM_Model
                             tblexigency.name as name_exigency,
                             tblstatus.name as name_status,
                             tblpurpose.name as name_purpose,
-                            tblclass_client.name as class_client_name
-
+                            tblclass_client.name as class_client_name,
+                            (select tblfieldvalue_bds.value from tblfieldvalue_bds where colum_id=tblclients.id_project_bds and tblfieldvalue_bds.field_id=5) as home_number,
+                            (select tblfieldvalue_bds.value from tblfieldvalue_bds where colum_id=tblclients.id_project_bds and tblfieldvalue_bds.field_id=6) as home_street,
+                            (select tblmaster_bds.name from tblmaster_bds where tblmaster_bds.idproject = tblclients.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_name,
+                            (select tblmaster_bds.phonenumber from tblmaster_bds where tblmaster_bds.idproject = tblclients.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_phonenumber,
+                            (select tblmaster_bds.email_master from tblmaster_bds where tblmaster_bds.idproject = tblclients.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_email,
                             ');
         $this->db->join('province','province.provinceid=tblclients.province','left')
             ->join('district','district.districtid=tblclients.district','left')

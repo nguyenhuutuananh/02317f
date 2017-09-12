@@ -6,200 +6,9 @@
 </style>
 
 <?php
-if($type==1)
+if($type >= 1 && $type <= 3)
 {
-   $colum = array(
-        'date_contact'=>'Ngày liên hệ',
-        'source_name'=>'Nguồn',
-        'partner'=> array(
-             "title_th"   => 'Đối tác',
-             'id_partner' => 'Phân loại Đối tác',
-             'name_partner'=>'Họ Tên(Đối tác)',
-             'phone_partner'=>'Số điện thoại(Đối tác)',
-             'email_partner'=>'Email(Đối tác)'
-        ),
-         'clients' => array(
-             "title_th"=>'Khách hàng',
-             'company'=>'Tên khách hàng',
-             'phonenumber'=>'Số điện thoại(KH)',
-             'email'=>'Email(KH)',
-             'name_country'=>'Quốc tịch'
-        ),
-         'area'=>array(
-             "title_th" => 'Yêu cầu khu vực/DA',
-             'name_menu_bds' => 'Loại bds'
-             ,'province_name' => 'Quận khu vực',
-             'name_bds'=>'DA'
-            ),
-         'time' => array(
-             "title_th" => "Thời gian",
-             "date_movein" => "Ngày move in",
-             "date_tax"=>"Thời gian thuê"
-            ),
-         'detail'=>array(
-             "title_th" => 'Yêu cầu chi tiết sản phẩm',
-             'pn'=>'PN',
-             'area'=>'DT',
-             'budget'=>'Ngân sách khoản'
-            ),
-         'class_client_name'=>'Loại khách hàng',
-         'name_exigency'=>'Nhu cầu',
-         'name_purpose'=>'Mục đích',
-         'requirements'=>'Yêu cầu khác',
-         'name_status'=>'Trạng thái',
-         'nvgd'=>'NV GD',
-         'dksp'=>'DK SP',
-         'dkkh'=>'ĐK khách hàng'
-    );
-    $columns = new stdClass();
-    $columns->client_take_care = array(
-        (object)array(
-            'title_th'   => 'Ngày liên hệ',
-            'id'         => 'date_contact',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'Nguồn',
-            'id'         => 'source_name',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'Đối tác',
-            'id'         => 'partner',
-            'childs' => [
-                (object)array(
-                    'title_th' => 'Phân loại Đối tác',
-                    'id'       => 'id_partner',
-                ),
-                (object)array(
-                    'title_th' => 'Họ Tên(Đối tác)',
-                    'id'       => 'name_partner',
-                ),
-                (object)array(
-                    'title_th' => 'Số điện thoại(Đối tác)',
-                    'id'       => 'phone_partner',
-                ),
-                (object)array(
-                    'title_th' => 'Email(Đối tác)',
-                    'id'       => 'email_partner',
-                ),
-            ],
-        ),
-        (object)array(
-            'title_th'   => 'Khách hàng',
-            'id'         => 'clients',
-            'childs' => [
-                (object)array(
-                    'title_th' => 'Tên khách hàng',
-                    'id'       => 'company',
-                ),
-                (object)array(
-                    'title_th' => 'Số điện thoại(KH)',
-                    'id'       => 'phonenumber',
-                ),
-                (object)array(
-                    'title_th' => 'Email(KH)',
-                    'id'       => 'email',
-                ),
-                (object)array(
-                    'title_th' => 'Quốc tịch',
-                    'id'       => 'name_country',
-                ),
-            ],
-        ),
-        (object)array(
-            'title_th'   => 'Yêu cầu khu vực/DA',
-            'id'         => 'area',
-            'childs' => [
-                (object)array(
-                    'title_th' => 'Loại bds',
-                    'id'       => 'name_menu_bds',
-                ),
-                (object)array(
-                    'title_th' => 'Quận khu vực',
-                    'id'       => 'province_name',
-                ),
-                (object)array(
-                    'title_th' => 'DA',
-                    'id'       => 'name_bds',
-                ),
-            ],
-        ),
-        (object)array(
-            'title_th'   => 'Thời gian',
-            'id'         => 'time',
-            'childs' => [
-                (object)array(
-                    'title_th' => 'PN',
-                    'id'       => 'pn',
-                ),
-                (object)array(
-                    'title_th' => 'DT',
-                    'id'       => 'area',
-                ),
-                (object)array(
-                    'title_th' => 'Ngân sách khoản',
-                    'id'       => 'budget',
-                ),
-            ],
-        ),
-        (object)array(
-            'title_th'   => 'Yêu cầu chi tiết sản phẩm',
-            'id'         => 'detail',
-            'childs' => [
-                (object)array(
-                    'title_th' => 'Ngày move in',
-                    'id'       => 'date_movein',
-                ),
-                (object)array(
-                    'title_th' => 'Thời gian thuê',
-                    'id'       => 'date_tax',
-                ),
-            ],
-        ),
-        (object)array(
-            'title_th'   => 'Loại khách hàng',
-            'id'         => 'class_client_name',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'Nhu cầu',
-            'id'         => 'name_exigency',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'Mục đích',
-            'id'         => 'name_purpose',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'Yêu cầu khác',
-            'id'         => 'requirements',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'Trạng thái',
-            'id'         => 'name_status',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'NV GD',
-            'id'         => 'nvgd',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'DK SP',
-            'id'         => 'dksp',
-            'childs' => [],
-        ),
-        (object)array(
-            'title_th'   => 'ĐK khách hàng',
-            'id'         => 'dkkh',
-            'childs' => [],
-        ),
-    );
-    print_r($columns);
-    exit();
+    $columns = isset($table_heads) ? $table_heads : array();
 }
 ?>
 
@@ -210,7 +19,6 @@ if($type==1)
                 <div class="panel_s">
                     <div class="panel-body _buttons">
                         <a href="#" onclick="save_menu();return false;" class="btn btn-info">Lưu bảng </a>
-                        <a href="<?=admin_url()?>newview/rename_table" class="btn btn-info">Đổi tên bảng</a>
                     </div>
                 </div>
             </div>
@@ -224,23 +32,45 @@ if($type==1)
                             <hr />
                             <div class="dd active">
                                 <ol class="dd-list">
-                                    <?php if(count($get_column) == 0) { ?>
-                                        <li class="dd-item dd3-empty"></li>
                                     <?php
-                                    } else {
-                                        foreach($get_column as $key => $item) {
+                                    if(count($columns) > 0) {
+                                        foreach($columns as $column) {
                                     ?>
-                                    <li class="dd-item dd3-item main" data-id="<?php echo $key; ?>" data-permission="<?php echo str_replace('"', "'", json_encode($item)); ?>">
+                                    <li onclick="dichuyen(this)" class="dd-item dd3-item main" data-id="<?=$column->id?>">
                                         <div class="dd-handle dd3-handle"></div>
-                                        <div class="dd3-content"><?php echo $ten; ?>
-                                            <!-- <a href="#" class="text-muted toggle-menu-options main-item-options pull-right"><i class="fa fa-cog"></i></a> -->
-                                        </div>
+                                        <div class="dd3-content"><?=$column->title_th?></div>
                                     </li>
                                     <?php
                                         }
                                     }
                                     ?>
-                                    
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="col-md-6 border-right">
+                            <h4 class="bold"><?php echo _l('inactive_menu_items'); ?></h4>
+                            <hr />
+                            <div class="dd inactive">
+                                <ol class="dd-list">
+                                    <?php
+                                    if(isset($origin_table_heads) && count($origin_table_heads) > 0) {
+                                        $temp_columns = $columns;
+                                        foreach($temp_columns as $key=>$item) {
+                                            $temp_columns[$key] = (array)$temp_columns[$key];
+                                        }
+                
+                                        foreach($origin_table_heads as $key=>$column) {
+                                            if(count($columns) == 0 || array_search($column->id, array_column($temp_columns, 'id')) === false) {
+                                    ?>
+                                    <li onclick="dichuyen(this)" class="dd-item dd3-item main" data-id="<?=$column->id?>">
+                                        <div class="dd-handle dd3-handle"></div>
+                                        <div class="dd3-content"><?=$column->title_th?></div>
+                                    </li>
+                                    <?php
+                                            }
+                                        }
+                                    }
+                                    ?>
                                 </ol>
                             </div>
                         </div>
@@ -258,7 +88,7 @@ if($type==1)
     $(function(){
         _formatMenuIconInput();
         $('.dd').nestable({
-            maxDepth: 2
+            maxDepth: 1
         });
         $('.toggle-menu-options').on('click', function(e) {
             e.preventDefault();
@@ -335,11 +165,10 @@ if($type==1)
         data.active = setup_menu_active;
         data.inactive = setup_menu_inactive;
         data.type=<?=$type?>;
-        console.log(data.inactive);
         $.post(admin_url + 'clients/update_order_table', data).done(function(result) {
             console.log(result);
             alert_float('success', result);
-        })
+        });
 
     }
 

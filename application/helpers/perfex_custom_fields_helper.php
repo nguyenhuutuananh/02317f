@@ -510,131 +510,16 @@ function render_fields($belongs_to, $rel_id = false, $where = array(),$where_in=
             $field_name = ucfirst($field['name']);
             if ($field['type'] == 'input') {
                 $fields_html .= '<div class="form-group"><label for="'.$field['id_field'].'_'. $field['id'].'" class="control-label">'.$field_name.'</label><input type="text" id="'.$field['id_field'].'_'. $field['id'].'" name="'.'fields[' . $field['_table'] . '][' . $field['id'] . ']'.'" class="form-control" value="'.$value.'"></div>';
-            } else if ($field['type'] == 'date_picker') {
-                $fields_html .= render_date_input('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, _d($value), $_input_attrs);
-            } else if ($field['type'] == 'textarea') {
-                $fields_html .= render_textarea('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, $value, $_input_attrs);
-            } else if ($field['type'] == 'colorpicker') {
-                $fields_html .= render_color_picker('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, $value, $_input_attrs);
-            } else if ($field['type'] == 'select') {
-                $_select_attrs = array();
-                $select_attrs  = '';
-                if ($field['required'] == 1) {
-                    $_select_attrs['data-custom-field-required'] = true;
-                }
-                if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
-                    $_select_attrs['disabled'] = true;
-                }
-                $_select_attrs['data-fieldto'] = $field['_table'];
-                $_select_attrs['data-fieldid'] = $field['id'];
-                foreach ($_select_attrs as $key => $val) {
-                    $select_attrs .= $key . '=' . '"' . $val . '" ';
-                }
-
-                $fields_html .= '<div class="form-group">';
-                $fields_html .= '<label for="'.$field['id_field'].'_'. $field['id'].'">' . $field_name . '</label>';
-                $fields_html .= '<select id="'.$field['id_field'].'_'. $field['id'].'"' . $select_attrs . ' name="fields[' . $field['_table'] . '][' . $field['id'] . ']" class="selectpicker form-control" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
-                $fields_html .= '<option value=""></option>';
-                $options = explode(',', $field['options']);
-                foreach ($options as $option) {
-                    $option   = trim($option);
-                    $selected = '';
-                    if ($option == $value) {
-                        $selected = ' selected';
-                    }
-                    $fields_html .= '<option value="' . $option . '"' . $selected . '' . set_select('fields[' . $field['_table'] . '][' . $field['id'] . ']', $option) . '>' . $option . '</option>';
-                }
-                $fields_html .= '</select>';
-                $fields_html .= '</div>';
-            } else if ($field['type'] == 'checkbox') {
-                $fields_html .= '<div class="form-group chk">';
-                $fields_html .= '<br /><label class="control-label" for="fields[' . $field['_table'] . '][' . $field['id'] . '][]">' . $field_name . '</label>';
-                $options = explode(',', $field['options']);
-                $value   = explode(',', $value);
-
-                foreach ($options as $option) {
-                    $option  = preg_replace('/"/', '', $option);
-                    $option  = trim($option);
-                    foreach ($value as $v) {
-                        $v = trim($v);
-                        if ($v == $option) {
-                            $checked = 'checked';
-                        }
-                    }
-
-                    $_chk_attrs                 = array();
-                    $chk_attrs                  = '';
-                    $_chk_attrs['data-fieldto'] = $field['_table'];
-                    $_chk_attrs['data-fieldid'] = $field['id'];
-
-                    if ($field['required'] == 1) {
-                        $_chk_attrs['data-custom-field-required'] = true;
-                    }
-
-                    if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
-                        $_chk_attrs['disabled'] = true;
-                    }
-                    foreach ($_chk_attrs as $key => $val) {
-                        $chk_attrs .= $key . '=' . '"' . $val . '" ';
-                    }
-
-                    $fields_html .= '<div class="checkbox">';
-                    $fields_html .= '<input class="custom_field_checkbox" ' . $chk_attrs . ' ' . set_checkbox('fields[' . $field['_table'] . '][' . $field['id'] . '][]', $option) . ' ' . $checked . ' value="' . $option . '" id="cfc_' . $field['id'] . '_' . slug_it($option) . '" type="checkbox" name="custom_fields[' . $field['fieldto'] . '][' . $field['id'] . '][]">';
-
-                    $fields_html .= '<label for="cfc_' . $field['id'] . '_' . slug_it($option) . '">' . $option . '</label>';
-                    $fields_html .= '<input type="hidden" name="fields[' . $field['_table'] . '][' . $field['id'] . '][]" value="cfk_hidden">';
-                    $fields_html .= '</div>';
-                }
-                $fields_html .= '</div>';
-            } else if ($field['type'] == 'link') {
-
-                $fields_html .= '<div class="form-group cf-hyperlink" data-fieldto="' . $field['_table'] . '" data-field-id="' . $field['id'] . '" data-value="' . htmlspecialchars($value) . '" data-field-name="' . htmlspecialchars($field_name) . '">';
-                $fields_html .= '<label class="control-label" for="custom_fields[' . $field['_table'] . '][' . $field['id'] . ']">' . $field_name . '</label></br>';
-
-                $fields_html .= '<a id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_popover" type="button" href="javascript:">' . _l('cf_translate_input_link_tip') . '</a>';
-
-                $fields_html .= '<input type="hidden" ' . ($field['required'] == 1 ? 'data-custom-field-required="1"' : '') . ' value="" id="custom_fields[' . $field['_table'] . '][' . $field['id'] . ']" name="fields[' . $field['_table'] . '][' . $field['id'] . ']">';
-
-                $field_template = '';
-                $field_template .= '<div id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_popover-content" class="hide cfh-field-popover-template"><div class="form-group">';
-                $field_template .= '<div class="row"><div class="col-md-12"><label class="control-label" for="fields_' . $field['_table'] . '_' . $field['id'] . '_title">' . _l('cf_translate_input_link_title') . '</label>';
-                $field_template .= '<input type="text"' . ($field['disalow_client_to_edit'] == 1 && is_client_logged_in() ? " disabled=\"true\" " : ' ') . 'id="fields_' . $field['fieldto'] . '_' . $field['id'] . '_title" value="" class="form-control">';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="form-group">';
-                $field_template .= '<div class="row">';
-                $field_template .= '<div class="col-md-12">';
-                $field_template .= '<label class="control-label" for="custom_fields_' . $field['fieldto'] . '_' . $field['id'] . '_link">' . _l('cf_translate_input_link_url') . '</label>';
-                $field_template .= '<input type="text"' . ($field['disalow_client_to_edit'] == 1 && is_client_logged_in() ? " disabled=\"true\" " : ' ') . 'id="custom_fields_' . $field['fieldto'] . '_' . $field['id'] . '_link" value="" class="form-control">';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="row">';
-                $field_template .= '<div class="col-md-6">';
-                $field_template .= '<button type="button" id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_btn-cancel" class="btn btn-default btn-md pull-left" value="">' . _l('cancel') . '</button>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="col-md-6">';
-                $field_template .= '<button type="button" id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_btn-save" class="btn btn-info btn-md pull-right" value="">' . _l('apply') . '</button>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $fields_html .= '<script>';
-                $fields_html .= 'cfh_popover_templates[\'' . $field['id'] . '\'] = \'' . $field_template . '\';';
-                $fields_html .= '</script>';
-                $fields_html .= '</div>';
             }
-
             $name = 'fields[' . $field['_table'] . '][' . $field['id'] . ']';
             if ($field['type'] == 'checkbox') {
                 $name .= '[]';
             }
 
             $fields_html .= form_error($name);
-            // Close column
             $fields_html .='</div>';
 
         }
-        // close row
         $fields_html .= '</div>';
     }
 
@@ -692,120 +577,7 @@ function render_one_fields($belongs_to, $rel_id = false, $where = array(),$delet
                     {
                     $fields_html .= '<div class="form-group"><input type="text" id="'.$field['id_field'].'_'. $field['id'].'" name="'.'fields[' . $field['_table'] . '][' . $field['id'] . ']'.'" class="form-control" placeholder="'.$field['name'].'" value=""></div>';
                 }
-            } else if ($field['type'] == 'date_picker') {
-                $fields_html .= render_date_input('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, _d($value), $_input_attrs);
-            } else if ($field['type'] == 'textarea') {
-                $fields_html .= render_textarea('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, $value, $_input_attrs);
-            } else if ($field['type'] == 'colorpicker') {
-                $fields_html .= render_color_picker('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, $value, $_input_attrs);
-            } else if ($field['type'] == 'select') {
-                $_select_attrs = array();
-                $select_attrs  = '';
-                if ($field['required'] == 1) {
-                    $_select_attrs['data-custom-field-required'] = true;
-                }
-                if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
-                    $_select_attrs['disabled'] = true;
-                }
-                $_select_attrs['data-fieldto'] = $field['_table'];
-                $_select_attrs['data-fieldid'] = $field['id'];
-                foreach ($_select_attrs as $key => $val) {
-                    $select_attrs .= $key . '=' . '"' . $val . '" ';
-                }
-
-                $fields_html .= '<div class="form-group">';
-                $fields_html .= '<label for="'.$field['id_field'].'_'. $field['id'].'">' . $field_name . '</label>';
-                $fields_html .= '<select id="'.$field['id_field'].'_'. $field['id'].'"' . $select_attrs . ' name="fields[' . $field['_table'] . '][' . $field['id'] . ']" class="selectpicker form-control" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
-                $fields_html .= '<option value=""></option>';
-                $options = explode(',', $field['options']);
-                foreach ($options as $option) {
-                    $option   = trim($option);
-                    $selected = '';
-                    if ($option == $value) {
-                        $selected = ' selected';
-                    }
-                    $fields_html .= '<option value="' . $option . '"' . $selected . '' . set_select('fields[' . $field['_table'] . '][' . $field['id'] . ']', $option) . '>' . $option . '</option>';
-                }
-                $fields_html .= '</select>';
-                $fields_html .= '</div>';
-            } else if ($field['type'] == 'checkbox') {
-                $fields_html .= '<div class="form-group chk">';
-                $fields_html .= '<br /><label class="control-label" for="fields[' . $field['_table'] . '][' . $field['id'] . '][]">' . $field_name . '</label>';
-                $options = explode(',', $field['options']);
-                $value   = explode(',', $value);
-
-                foreach ($options as $option) {
-                    $option  = preg_replace('/"/', '', $option);
-                    $option  = trim($option);
-                    foreach ($value as $v) {
-                        $v = trim($v);
-                        if ($v == $option) {
-                            $checked = 'checked';
-                        }
-                    }
-
-                    $_chk_attrs                 = array();
-                    $chk_attrs                  = '';
-                    $_chk_attrs['data-fieldto'] = $field['_table'];
-                    $_chk_attrs['data-fieldid'] = $field['id'];
-
-                    if ($field['required'] == 1) {
-                        $_chk_attrs['data-custom-field-required'] = true;
-                    }
-
-                    if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
-                        $_chk_attrs['disabled'] = true;
-                    }
-                    foreach ($_chk_attrs as $key => $val) {
-                        $chk_attrs .= $key . '=' . '"' . $val . '" ';
-                    }
-
-                    $fields_html .= '<div class="checkbox">';
-                    $fields_html .= '<input class="custom_field_checkbox" ' . $chk_attrs . ' ' . set_checkbox('fields[' . $field['_table'] . '][' . $field['id'] . '][]', $option) . ' ' . $checked . ' value="' . $option . '" id="cfc_' . $field['id'] . '_' . slug_it($option) . '" type="checkbox" name="custom_fields[' . $field['fieldto'] . '][' . $field['id'] . '][]">';
-
-                    $fields_html .= '<label for="cfc_' . $field['id'] . '_' . slug_it($option) . '">' . $option . '</label>';
-                    $fields_html .= '<input type="hidden" name="fields[' . $field['_table'] . '][' . $field['id'] . '][]" value="cfk_hidden">';
-                    $fields_html .= '</div>';
-                }
-                $fields_html .= '</div>';
-            } else if ($field['type'] == 'link') {
-
-                $fields_html .= '<div class="form-group cf-hyperlink" data-fieldto="' . $field['_table'] . '" data-field-id="' . $field['id'] . '" data-value="' . htmlspecialchars($value) . '" data-field-name="' . htmlspecialchars($field_name) . '">';
-                $fields_html .= '<label class="control-label" for="custom_fields[' . $field['_table'] . '][' . $field['id'] . ']">' . $field_name . '</label></br>';
-
-                $fields_html .= '<a id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_popover" type="button" href="javascript:">' . _l('cf_translate_input_link_tip') . '</a>';
-
-                $fields_html .= '<input type="hidden" ' . ($field['required'] == 1 ? 'data-custom-field-required="1"' : '') . ' value="" id="custom_fields[' . $field['_table'] . '][' . $field['id'] . ']" name="fields[' . $field['_table'] . '][' . $field['id'] . ']">';
-
-                $field_template = '';
-                $field_template .= '<div id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_popover-content" class="hide cfh-field-popover-template"><div class="form-group">';
-                $field_template .= '<div class="row"><div class="col-md-12"><label class="control-label" for="fields_' . $field['_table'] . '_' . $field['id'] . '_title">' . _l('cf_translate_input_link_title') . '</label>';
-                $field_template .= '<input type="text"' . ($field['disalow_client_to_edit'] == 1 && is_client_logged_in() ? " disabled=\"true\" " : ' ') . 'id="fields_' . $field['fieldto'] . '_' . $field['id'] . '_title" value="" class="form-control">';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="form-group">';
-                $field_template .= '<div class="row">';
-                $field_template .= '<div class="col-md-12">';
-                $field_template .= '<label class="control-label" for="custom_fields_' . $field['fieldto'] . '_' . $field['id'] . '_link">' . _l('cf_translate_input_link_url') . '</label>';
-                $field_template .= '<input type="text"' . ($field['disalow_client_to_edit'] == 1 && is_client_logged_in() ? " disabled=\"true\" " : ' ') . 'id="custom_fields_' . $field['fieldto'] . '_' . $field['id'] . '_link" value="" class="form-control">';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="row">';
-                $field_template .= '<div class="col-md-6">';
-                $field_template .= '<button type="button" id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_btn-cancel" class="btn btn-default btn-md pull-left" value="">' . _l('cancel') . '</button>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="col-md-6">';
-                $field_template .= '<button type="button" id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_btn-save" class="btn btn-info btn-md pull-right" value="">' . _l('apply') . '</button>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $fields_html .= '<script>';
-                $fields_html .= 'cfh_popover_templates[\'' . $field['id'] . '\'] = \'' . $field_template . '\';';
-                $fields_html .= '</script>';
-                $fields_html .= '</div>';
             }
-
             $name = 'fields[' . $field['_table'] . '][' . $field['id'] . ']';
             if ($field['type'] == 'checkbox') {
                 $name .= '[]';
@@ -871,18 +643,8 @@ function insert_row_menu_field($id_menu,$data_table,$data_from)
 function render_fields_row($table,$id_menu,$id_colum="", $where = array(),$col='',$class_lable='',$class_div='')
 {
     $CI =& get_instance();
-//    $CI->db->select('tbfield_bds.*,tblfieldvalue_bds.colum_id as id_colum');
     $CI->db->select('tbfield_bds.*');
     $CI->db->join('tblrow_menu_bds','tblrow_menu_bds.id_field=tbfield_bds.id and tblrow_menu_bds.id_menu='.$id_menu);
-
-//    if($id_colum!="")
-//    {
-//        $CI->db->join('tblfieldvalue_bds','tblfieldvalue_bds.field_id = tbfield_bds.id and tblfieldvalue_bds.colum_id='.$id_colum,'left');
-//    }
-//    else
-//    {
-//        $CI->db->join('tblfieldvalue_bds','tblfieldvalue_bds.field_id = tbfield_bds.id','left');
-//    }
     $CI->db->where('tbfield_bds._table', $table);
     if (count($where) > 0) {
         foreach($where as $w)
@@ -897,7 +659,6 @@ function render_fields_row($table,$id_menu,$id_colum="", $where = array(),$col='
 
     $is_admin = is_admin();
     if (count($fields)) {
-//        $fields_html .= '<div class="">';
         $fields_html .= '';
         foreach ($fields as $field) {
 
@@ -916,9 +677,6 @@ function render_fields_row($table,$id_menu,$id_colum="", $where = array(),$col='
             }
 
             $fields_html .= '<div class="col-md-' . $field['bs_column'] . '">';
-            if ($is_admin) {
-//                $fields_html .= '<a href="' . admin_url('custom_fields/field/' . $field['id']) . '" target="_blank" class="custom-field-inline-edit-link"><i class="fa fa-pencil-square-o"></i></a>';
-            }
             if($id_colum!="")
             {
                 $value = get_field_value($field['id'],$id_colum,'', false);
@@ -932,118 +690,6 @@ function render_fields_row($table,$id_menu,$id_colum="", $where = array(),$col='
             $field_name = ucfirst($field['name']);
             if ($field['type'] == 'input') {
                 $fields_html .= '<div class="form-group '.$class_div.'"><label for="'.$field['id_field'].'_'. $field['id'].'" class="control-label '.$class_lable.'">'.$field_name.'</label><input type="text" id="'.$field['id_field'].'_'. $field['id'].'" name="'.'fields[' . $field['_table'] . '][' . $field['id'] . ']'.'" class="form-control" value="'.$value.'"></div>';
-            } else if ($field['type'] == 'date_picker') {
-                $fields_html .= render_date_input('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, _d($value), $_input_attrs);
-            } else if ($field['type'] == 'textarea') {
-                $fields_html .= render_textarea('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, $value, $_input_attrs);
-            } else if ($field['type'] == 'colorpicker') {
-                $fields_html .= render_color_picker('fields[' . $field['_table'] . '][' . $field['id'] . ']', $field_name, $value, $_input_attrs);
-            } else if ($field['type'] == 'select') {
-                $_select_attrs = array();
-                $select_attrs  = '';
-                if ($field['required'] == 1) {
-                    $_select_attrs['data-custom-field-required'] = true;
-                }
-                if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
-                    $_select_attrs['disabled'] = true;
-                }
-                $_select_attrs['data-fieldto'] = $field['_table'];
-                $_select_attrs['data-fieldid'] = $field['id'];
-                foreach ($_select_attrs as $key => $val) {
-                    $select_attrs .= $key . '=' . '"' . $val . '" ';
-                }
-
-                $fields_html .= '<div class="form-group">';
-                $fields_html .= '<label for="'.$field['id_field'].'_'. $field['id'].'">' . $field_name . '</label>';
-                $fields_html .= '<select id="'.$field['id_field'].'_'. $field['id'].'"' . $select_attrs . ' name="fields[' . $field['_table'] . '][' . $field['id'] . ']" class="selectpicker form-control" data-width="100%" data-none-selected-text="' . _l('dropdown_non_selected_tex') . '"  data-live-search="true">';
-                $fields_html .= '<option value=""></option>';
-                $options = explode(',', $field['options']);
-                foreach ($options as $option) {
-                    $option   = trim($option);
-                    $selected = '';
-                    if ($option == $value) {
-                        $selected = ' selected';
-                    }
-                    $fields_html .= '<option value="' . $option . '"' . $selected . '' . set_select('fields[' . $field['_table'] . '][' . $field['id'] . ']', $option) . '>' . $option . '</option>';
-                }
-                $fields_html .= '</select>';
-                $fields_html .= '</div>';
-            } else if ($field['type'] == 'checkbox') {
-                $fields_html .= '<div class="form-group chk">';
-                $fields_html .= '<br /><label class="control-label" for="fields[' . $field['_table'] . '][' . $field['id'] . '][]">' . $field_name . '</label>';
-                $options = explode(',', $field['options']);
-                $value   = explode(',', $value);
-
-                foreach ($options as $option) {
-                    $option  = preg_replace('/"/', '', $option);
-                    $option  = trim($option);
-                    foreach ($value as $v) {
-                        $v = trim($v);
-                        if ($v == $option) {
-                            $checked = 'checked';
-                        }
-                    }
-
-                    $_chk_attrs                 = array();
-                    $chk_attrs                  = '';
-                    $_chk_attrs['data-fieldto'] = $field['_table'];
-                    $_chk_attrs['data-fieldid'] = $field['id'];
-
-                    if ($field['required'] == 1) {
-                        $_chk_attrs['data-custom-field-required'] = true;
-                    }
-
-                    if ($field['disalow_client_to_edit'] == 1 && is_client_logged_in()) {
-                        $_chk_attrs['disabled'] = true;
-                    }
-                    foreach ($_chk_attrs as $key => $val) {
-                        $chk_attrs .= $key . '=' . '"' . $val . '" ';
-                    }
-
-                    $fields_html .= '<div class="checkbox">';
-                    $fields_html .= '<input class="custom_field_checkbox" ' . $chk_attrs . ' ' . set_checkbox('fields[' . $field['_table'] . '][' . $field['id'] . '][]', $option) . ' ' . $checked . ' value="' . $option . '" id="cfc_' . $field['id'] . '_' . slug_it($option) . '" type="checkbox" name="custom_fields[' . $field['fieldto'] . '][' . $field['id'] . '][]">';
-
-                    $fields_html .= '<label for="cfc_' . $field['id'] . '_' . slug_it($option) . '">' . $option . '</label>';
-                    $fields_html .= '<input type="hidden" name="fields[' . $field['_table'] . '][' . $field['id'] . '][]" value="cfk_hidden">';
-                    $fields_html .= '</div>';
-                }
-                $fields_html .= '</div>';
-            } else if ($field['type'] == 'link') {
-
-                $fields_html .= '<div class="form-group cf-hyperlink" data-fieldto="' . $field['_table'] . '" data-field-id="' . $field['id'] . '" data-value="' . htmlspecialchars($value) . '" data-field-name="' . htmlspecialchars($field_name) . '">';
-                $fields_html .= '<label class="control-label" for="custom_fields[' . $field['_table'] . '][' . $field['id'] . ']">' . $field_name . '</label></br>';
-
-                $fields_html .= '<a id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_popover" type="button" href="javascript:">' . _l('cf_translate_input_link_tip') . '</a>';
-
-                $fields_html .= '<input type="hidden" ' . ($field['required'] == 1 ? 'data-custom-field-required="1"' : '') . ' value="" id="custom_fields[' . $field['_table'] . '][' . $field['id'] . ']" name="fields[' . $field['_table'] . '][' . $field['id'] . ']">';
-
-                $field_template = '';
-                $field_template .= '<div id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_popover-content" class="hide cfh-field-popover-template"><div class="form-group">';
-                $field_template .= '<div class="row"><div class="col-md-12"><label class="control-label" for="fields_' . $field['_table'] . '_' . $field['id'] . '_title">' . _l('cf_translate_input_link_title') . '</label>';
-                $field_template .= '<input type="text"' . ($field['disalow_client_to_edit'] == 1 && is_client_logged_in() ? " disabled=\"true\" " : ' ') . 'id="fields_' . $field['fieldto'] . '_' . $field['id'] . '_title" value="" class="form-control">';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="form-group">';
-                $field_template .= '<div class="row">';
-                $field_template .= '<div class="col-md-12">';
-                $field_template .= '<label class="control-label" for="custom_fields_' . $field['fieldto'] . '_' . $field['id'] . '_link">' . _l('cf_translate_input_link_url') . '</label>';
-                $field_template .= '<input type="text"' . ($field['disalow_client_to_edit'] == 1 && is_client_logged_in() ? " disabled=\"true\" " : ' ') . 'id="custom_fields_' . $field['fieldto'] . '_' . $field['id'] . '_link" value="" class="form-control">';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="row">';
-                $field_template .= '<div class="col-md-6">';
-                $field_template .= '<button type="button" id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_btn-cancel" class="btn btn-default btn-md pull-left" value="">' . _l('cancel') . '</button>';
-                $field_template .= '</div>';
-                $field_template .= '<div class="col-md-6">';
-                $field_template .= '<button type="button" id="custom_fields_' . $field['_table'] . '_' . $field['id'] . '_btn-save" class="btn btn-info btn-md pull-right" value="">' . _l('apply') . '</button>';
-                $field_template .= '</div>';
-                $field_template .= '</div>';
-                $fields_html .= '<script>';
-                $fields_html .= 'cfh_popover_templates[\'' . $field['id'] . '\'] = \'' . $field_template . '\';';
-                $fields_html .= '</script>';
-                $fields_html .= '</div>';
             }
 
             $name = 'fields[' . $field['_table'] . '][' . $field['id'] . ']';

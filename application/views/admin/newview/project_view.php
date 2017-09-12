@@ -865,6 +865,7 @@
         </div>
     </div>
 </div>
+
     <?php init_tail(); ?>
     <div id="script">
     <div id="content-script">
@@ -888,6 +889,7 @@
                     } );
                 table_all.columns().every( function () {
                         var that = this;
+                        
                         $( 'input,select', this.header() ).on( 'keyup change focus', function () {
                             if ( that.search() !== this.value ) {
                                 that
@@ -896,13 +898,13 @@
                             }
                         } );
                 } );
-                var fouces_input=$('th input');
-                $.each($(fouces_input), function( index, value ) {
-                    console.log(value.value);
-                    if(value.value!="") {
-                        $(value).focus();
-                    }
-                })
+                    var fouces_input=$('th input');
+                    $.each($(fouces_input), function( index, value ) {
+                        console.log(value.value);
+                        if(value.value!="") {
+                            $(value).focus();
+                        }
+                    })
 
 
                 $('table').removeClass('dataTable ');
@@ -1017,7 +1019,6 @@
         function status_project(id_project,id)
         {
            var dataString={id_project:id_project,id:id};
-            debugger;
             jQuery.ajax({
                 type: "post",
                 url: "<?=admin_url()?>newview/status_project",
@@ -1167,7 +1168,6 @@
                 _data_id="";
             }
             var kiemtra=0;
-            console.log(kiemtra);
                 jQuery.ajax({
                     type: "post",
                     dataType: "json",
