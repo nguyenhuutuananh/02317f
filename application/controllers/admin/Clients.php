@@ -328,7 +328,7 @@ class Clients extends Admin_controller
 
             (object)array(
                 'title_th'   => 'Ngày HHĐ',
-                'id'         => 'expire_bds',
+                'id'         => 'expire_contract',
                 'childs' => [],
             ),
 
@@ -528,12 +528,10 @@ class Clients extends Admin_controller
     /* List all clients */
     public function index()
     {
-        $data['clients_care']=$this->clients_model->get_clients(1);
-        $data['clients_buy']=$this->clients_model->get_clients(2);
-        $data['clients_fail']=$this->clients_model->get_clients(3);
+        $data['clients_care'] = $this->clients_model->get_clients(1);
+        $data['clients_buy']  = $this->clients_model->get_clients(2);
+        $data['clients_fail'] = $this->clients_model->get_clients(3);
 
-        // print_r($data['clients_buy'][0]);
-        // exit();
 
         $data['table_heads_clients_care'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=1')->value);
         $data['table_heads_clients_buy'] = json_decode($this->clients_model->get_table('tblorder_table_clients', 'id=2')->value);
@@ -545,37 +543,47 @@ class Clients extends Admin_controller
     }
     public function client($id)
     { 
+        $data['type_client']=$this->input->get('type_client');
+        if(!$data['type_client']) {
+            redirect(admin_url('clients/'));
+        }
         if($this->input->post()){
             $data=$this->input->post();
             $data['time_bonus']=implode(',',$data['time_bonus']);
             $data['num_bonus']=implode(',',$data['num_bonus']);
+            $data['type_client']=$this->input->get('type_client');
             if($id=="")
             {
-                $data['type_client']=$this->input->get('type_client');
-                if($data['type_client'])
+                if($data['type_client'] >= 1)
                 {
                     $data['datecreated']=date('Y-m-d');
                     $id=$this->clients_model->add_client($data);
                     if($id)
                     {
+                        exit("success");
                         set_alert('success','thêm thành công');
-
                     }
                     else
                     {
+                        print_r($data);
+                        exit("error");
                         set_alert('danger','Thêm không thành công');
                     }
-                    redirect(admin_url('clients/client/' . $id));
+                    
+                    redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
                 }
             }
             else
             {
+                if(!is_null($this->input->get('type_client'))) {
+                    $data['type_client']=$this->input->get('type_client')+1;
+                }
                 $result=$this->clients_model->update_client($id,$data);
                 if($result)
                 {
                     set_alert('success','Cập nhật dữ liệu thành công');
                 }
-                redirect(admin_url('clients/client/' . $id));
+                redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
             }
         }
         else
@@ -583,8 +591,7 @@ class Clients extends Admin_controller
             if($id!="")
             {
                 $data['client'] = $this->clients_model->get_data_clients($id);
-                // print_r($data['client']);
-                // exit();
+
             }
             else
             {
@@ -616,6 +623,7 @@ class Clients extends Admin_controller
             $data['status']=$this->clients_model->get_table_array('tblstatus');
             $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner','_delete!=1');
             $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
+            
             $this->load->view('admin/clients/client', $data);
         }
     }
@@ -720,157 +728,5 @@ class Clients extends Admin_controller
             $this->db->update('tblorder_table_clients', $array);
         }
         echo 'Cập nhật thành công';
-    }
-    public function test() {
-        $columns = new stdClass();
-        $columns = array(
-            (object)array(
-                'title_th'   => 'Ngày liên hệ',
-                'id'         => 'date_contact',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'Nguồn',
-                'id'         => 'source_name',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'Đối tác',
-                'id'         => 'partner',
-                'childs' => [
-                    (object)array(
-                        'title_th' => 'Phân loại Đối tác',
-                        'id'       => 'id_partner',
-                    ),
-                    (object)array(
-                        'title_th' => 'Họ Tên(Đối tác)',
-                        'id'       => 'name_partner',
-                    ),
-                    (object)array(
-                        'title_th' => 'Số điện thoại(Đối tác)',
-                        'id'       => 'phone_partner',
-                    ),
-                    (object)array(
-                        'title_th' => 'Email(Đối tác)',
-                        'id'       => 'email_partner',
-                    ),
-                ],
-            ),
-            (object)array(
-                'title_th'   => 'Khách hàng',
-                'id'         => 'clients',
-                'childs' => [
-                    (object)array(
-                        'title_th' => 'Tên khách hàng',
-                        'id'       => 'company',
-                    ),
-                    (object)array(
-                        'title_th' => 'Số điện thoại(KH)',
-                        'id'       => 'phonenumber',
-                    ),
-                    (object)array(
-                        'title_th' => 'Email(KH)',
-                        'id'       => 'email',
-                    ),
-                    (object)array(
-                        'title_th' => 'Quốc tịch',
-                        'id'       => 'name_country',
-                    ),
-                ],
-            ),
-            (object)array(
-                'title_th'   => 'Yêu cầu khu vực/DA',
-                'id'         => 'area',
-                'childs' => [
-                    (object)array(
-                        'title_th' => 'Loại bds',
-                        'id'       => 'name_menu_bds',
-                    ),
-                    (object)array(
-                        'title_th' => 'Quận khu vực',
-                        'id'       => 'province_name',
-                    ),
-                    (object)array(
-                        'title_th' => 'DA',
-                        'id'       => 'name_bds',
-                    ),
-                ],
-            ),
-            (object)array(
-                'title_th'   => 'Thời gian',
-                'id'         => 'time',
-                'childs' => [
-                    (object)array(
-                        'title_th' => 'PN',
-                        'id'       => 'pn',
-                    ),
-                    (object)array(
-                        'title_th' => 'DT',
-                        'id'       => 'area',
-                    ),
-                    (object)array(
-                        'title_th' => 'Ngân sách khoản',
-                        'id'       => 'budget',
-                    ),
-                ],
-            ),
-            (object)array(
-                'title_th'   => 'Yêu cầu chi tiết sản phẩm',
-                'id'         => 'detail',
-                'childs' => [
-                    (object)array(
-                        'title_th' => 'Ngày move in',
-                        'id'       => 'date_movein',
-                    ),
-                    (object)array(
-                        'title_th' => 'Thời gian thuê',
-                        'id'       => 'date_tax',
-                    ),
-                ],
-            ),
-            (object)array(
-                'title_th'   => 'Loại khách hàng',
-                'id'         => 'class_client_name',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'Nhu cầu',
-                'id'         => 'name_exigency',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'Mục đích',
-                'id'         => 'name_purpose',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'Yêu cầu khác',
-                'id'         => 'requirements',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'Trạng thái',
-                'id'         => 'name_status',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'NV GD',
-                'id'         => 'nvgd',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'DK SP',
-                'id'         => 'dksp',
-                'childs' => [],
-            ),
-            (object)array(
-                'title_th'   => 'ĐK khách hàng',
-                'id'         => 'dkkh',
-                'childs' => [],
-            ),
-        );
-        // print_r(json_encode($columns));
-        print_r($columns);
-        exit();
     }
 }

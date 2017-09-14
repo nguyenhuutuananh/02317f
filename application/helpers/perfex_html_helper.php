@@ -536,6 +536,41 @@ function render_input($name, $label = '', $value = '', $type = 'text', $input_at
     $input .= '</div>';
     return $input;
 }
+function render_inline_input($name, $label = '', $value = '', $type = 'text', $input_attrs = array(), $form_group_attr = array(), $form_group_class = '', $input_class = '',$form_group_lable='')
+{
+    $input            = '';
+    $_form_group_attr = '';
+    $_input_attrs     = '';
+    foreach ($input_attrs as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_input_attrs .= $key . '=' . '"' . $val . '"';
+    }
+    foreach ($form_group_attr as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_form_group_attr .= $key . '=' . '"' . $val . '"';
+    }
+    if (!empty($form_group_class)) {
+        $form_group_class = ' ' . $form_group_class;
+    }
+    if (!empty($input_class)) {
+        $input_class = ' ' . $input_class;
+    }
+    $input .= '<div class="form-group' . $form_group_class . '" ' . $_form_group_attr . '>';
+    if ($label != '') {
+        $input .= '<label for="' . $name . '" class="col-sm-4 control-label '.$form_group_lable.'">' . _l($label,'',false) . '</label>';
+    }
+    $input .= '<div class="col-sm-8">';
+    $input .= '<input type="' . $type . '" id="' . $name . '" name="' . $name . '" class="form-control' . $input_class . '" ' . $_input_attrs . ' value="' . set_value($name, $value) . '">';
+    $input .= '</div>';
+    $input .= '</div>';
+    return $input;
+}
 /**
  * Render color picker input
  * @param  string $name        input name
@@ -562,7 +597,7 @@ function render_color_picker($name, $label = '', $value = '', $input_attrs = arr
     $picker .= '<div class="input-group mbot15 colorpicker-input">
     <input type="text" value="' . set_value($name, $value) . '" name="' . $name . '" id="' . $name . '" class="form-control" ' . $_input_attrs . ' />
     <span class="input-group-addon"><i></i></span>
-</div>';
+    </div>';
     $picker .= '</div>';
     return $picker;
 }
@@ -609,8 +644,59 @@ function render_date_input($name, $label = '', $value = '', $input_attrs = array
     $input .= '<div class="input-group date">';
     $input .= '<input type="text" id="' . $name . '" name="' . $name . '" class="form-control datepicker' . $input_class . '" ' . $_input_attrs . ' value="' . set_value($name,$value) . '">';
     $input .= '<div class="input-group-addon">
-    <i class="fa fa-calendar calendar-icon"></i>
-</div>';
+        <i class="fa fa-calendar calendar-icon"></i>
+    </div>';
+    $input .= '</div>';
+    $input .= '</div>';
+    return $input;
+}
+/**
+ * Render inline date picker input for admin area
+ * @param  [type] $name             input name
+ * @param  string $label            input label
+ * @param  string $value            default value
+ * @param  array  $input_attrs      input attributes
+ * @param  array  $form_group_attr  <div class="form-group"> div wrapper html attributes
+ * @param  string $form_group_class form group div wrapper additional class
+ * @param  string $input_class      <input> additional class
+ * @return string
+ */
+function render_inline_date_input($name, $label = '', $value = '', $input_attrs = array(), $form_group_attr = array(), $form_group_class = '', $input_class = '',$form_group_lable='')
+{
+    $input            = '';
+    $_form_group_attr = '';
+    $_input_attrs     = '';
+    foreach ($input_attrs as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_input_attrs .= $key . '=' . '"' . $val . '"';
+    }
+    foreach ($form_group_attr as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_form_group_attr .= $key . '=' . '"' . $val . '"';
+    }
+    if (!empty($form_group_class)) {
+        $form_group_class = ' ' . $form_group_class;
+    }
+    if (!empty($input_class)) {
+        $input_class = ' ' . $input_class;
+    }
+    $input .= '<div class="form-group' . $form_group_class . '" ' . $_form_group_attr . '>';
+    if ($label != '') {
+        $input .= '<label for="' . $name . '" class="control-label col-sm-4 '.$form_group_lable.'">' . _l($label,'',false) . '</label>';
+    }
+    $input .= '<div class="col-sm-8">';
+    $input .= '<div class="input-group date">';
+    $input .= '<input type="text" id="' . $name . '" name="' . $name . '" class="form-control datepicker' . $input_class . '" ' . $_input_attrs . ' value="' . set_value($name,$value) . '">';
+    $input .= '<div class="input-group-addon">
+        <i class="fa fa-calendar calendar-icon"></i>
+    </div>';
+    $input .= '</div>';
     $input .= '</div>';
     $input .= '</div>';
     return $input;
@@ -807,6 +893,118 @@ function render_select($name, $options, $option_attrs = array(), $label = '', $s
         $select .= '<option value="' . $key . '"' . $_selected . $data_content . '' . $data_sub_text . '>' . $val . '</option>';
     }
     $select .= '</select>';
+    $select .= '</div>';
+    return $select;
+}
+function render_inline_select($name, $options, $option_attrs = array(), $label = '', $selected = '', $select_attrs = array(), $form_group_attr = array(), $form_group_class = '', $select_class = '', $include_blank = true, $form_group_lable='')
+{
+
+    $callback_translate = '';
+    if (isset($options['callback_translate'])) {
+        $callback_translate = $options['callback_translate'];
+        unset($options['callback_translate']);
+    }
+    $select           = '';
+    $_form_group_attr = '';
+    $_select_attrs    = '';
+    if (!isset($select_attrs['data-width'])) {
+        $select_attrs['data-width'] = '100%';
+    }
+    if (!isset($select_attrs['data-none-selected-text'])) {
+        $select_attrs['data-none-selected-text'] = _l('dropdown_non_selected_tex');
+    }
+    foreach ($select_attrs as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_select_attrs .= $key . '=' . '"' . $val . '"';
+    }
+    foreach ($form_group_attr as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_form_group_attr .= $key . '=' . '"' . $val . '"';
+    }
+    if (!empty($select_class)) {
+        $select_class = ' ' . $select_class;
+    }
+    if (!empty($form_group_class)) {
+        $form_group_class = ' ' . $form_group_class;
+    }
+    $select .= '<div class="form-group ' . $form_group_class . '" ' . $_form_group_attr . '>';
+    if ($label != '') {
+        $select .= '<label for="' . $name . '" class="control-label col-sm-4 '.$form_group_lable.'">' . _l($label,'',false) . '</label>';
+    }
+    $select .= '<div class="col-sm-8">';
+    $select .= '<select id="' . $name . '" name="' . $name . '" class="selectpicker' . $select_class . '" ' . $_select_attrs . ' data-live-search="true">';
+    if ($include_blank == true) {
+        $select .= '<option value=""></option>';
+    }
+    foreach ($options as $option) {
+        $val       = '';
+        $_selected = '';
+        $key       = '';
+        if (isset($option[$option_attrs[0]]) && !empty($option[$option_attrs[0]])) {
+            $key = $option[$option_attrs[0]];
+        }
+        if (!is_array($option_attrs[1])) {
+            $val = $option[$option_attrs[1]];
+        } else {
+            foreach ($option_attrs[1] as $_val) {
+                $val .= $option[$_val] . ' ';
+            }
+        }
+        $val = trim($val);
+        if ($callback_translate != '') {
+            if (function_exists($callback_translate) && is_callable($callback_translate)) {
+                $val = call_user_func($callback_translate, $key);
+            }
+        }
+        $data_sub_text = '';
+        if (!is_array($selected)) {
+            if ($selected != '') {
+                if ($selected == $key) {
+                    $_selected = ' selected';
+                }
+            }
+        } else {
+            foreach ($selected as $id) {
+                if ($key == $id) {
+                    $_selected = ' selected';
+                }
+            }
+        }
+        if (isset($option_attrs[2])) {
+
+            if (strpos($option_attrs[2], ',') !== false) {
+                $sub_text = '';
+                $_temp    = explode(',', $option_attrs[2]);
+                foreach ($_temp as $t) {
+                    if (isset($option[$t])) {
+                        $sub_text .= $option[$t] . ' ';
+                    }
+                }
+            } else {
+                if (isset($option[$option_attrs[2]])) {
+                    $sub_text = $option[$option_attrs[2]];
+                } else {
+                    $sub_text = $option_attrs[2];
+                }
+            }
+            $data_sub_text = ' data-subtext=' . '"' . $sub_text . '"';
+        }
+        $data_content = '';
+        if (isset($option['option_attributes'])) {
+            foreach ($option['option_attributes'] as $_opt_attr_key => $_opt_attr_val) {
+                $data_content .= $_opt_attr_key . '=' . '"' . $_opt_attr_val . '"';
+            }
+        }
+        $select .= '<option value="' . $key . '"' . $_selected . $data_content . '' . $data_sub_text . '>' . $val . '</option>';
+    }
+    $select .= '</select>';
+    $select .= '</div>';
     $select .= '</div>';
     return $select;
 }

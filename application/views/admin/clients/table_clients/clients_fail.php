@@ -80,7 +80,7 @@ $clients = $clients_fail;
                         <?php
                             if($thuTuCot <= 2) {
                                 ?>
-                                <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=2')?>">
+                                <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=3')?>">
                                 <?php
                             }
                             switch ($objectTableHeading->id) {

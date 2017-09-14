@@ -1,12 +1,27 @@
 <?php init_head(); ?>
 <style>
-    fieldset {
-        padding: .35em .625em .75em!important;
-        margin: 0 2px!important;
-        border: 1px solid silver!important;
-    }
-    legend{
-        width: auto!important;
+    fieldset 
+    {
+        border: 1px solid #ddd !important;
+        margin: 0;
+        xmin-width: 0;
+        padding: 10px;       
+        position: relative;
+        border-radius:4px;
+        background-color:#f5f5f5;
+        padding-left:10px!important;
+    }   
+    
+    legend
+    {
+        font-size:14px;
+        font-weight:bold;
+        margin-bottom: 0px; 
+        width: 35%; 
+        border: 1px solid #ddd;
+        border-radius: 4px; 
+        padding: 5px 5px 5px 10px; 
+        background-color: #ffffff;
     }
 </style>
 <div id="wrapper" class="customer_profile">
@@ -19,7 +34,7 @@
                 <div class="panel-body">
                     <?php if (has_permission('customers', '', 'delete') || is_admin()) { ?>
                     <div class="btn-group pull-left mright10">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-left">
@@ -38,7 +53,7 @@
                         </li>
                         <?php 
                     } ?>
-                    </ul>
+                    </ul> -->
                     </div>
                     <?php 
                 } ?>

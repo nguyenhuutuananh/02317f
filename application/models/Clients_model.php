@@ -141,15 +141,6 @@ class Clients_model extends CRM_Model
     }
 
 
-
-
-
-
-
-
-
-
-
     /**
      * Get customers contacts
      * @param  mixed $customer_id

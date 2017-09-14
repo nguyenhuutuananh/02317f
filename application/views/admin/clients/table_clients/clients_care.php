@@ -122,6 +122,8 @@ $clients = $clients_care;
                     ?>
                     <td>
                         <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=1')?>" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
+
+                        <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=1&convert=true')?>" class="btn btn-warning btn-xs"><i class="fa fa-exchange"></i></a>
                     </td>
                     <?php
                 }

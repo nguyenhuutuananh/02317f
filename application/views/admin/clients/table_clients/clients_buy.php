@@ -140,6 +140,8 @@ $clients = $clients_buy;
                     ?>
                     <td>
                         <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=2')?>" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
+
+                        <a href="<?=admin_url('clients/client/' . $rowItem['userid'] . '?type_client=2&convert=true')?>" class="btn btn-warning btn-xs"><i class="fa fa-exchange"></i></a>
                     </td>
                     <?php
                 }
