@@ -544,9 +544,13 @@ class Clients extends Admin_controller
     public function client($id)
     { 
         $data['type_client']=$this->input->get('type_client');
-        if(!$data['type_client']) {
-            redirect(admin_url('clients/'));
+        
+        if (!$this->input->get('group')) {
+            $group = 'profile';
+        } else {
+            $group = $this->input->get('group');
         }
+        
         if($this->input->post()){
             $data=$this->input->post();
             $data['time_bonus']=implode(',',$data['time_bonus']);
@@ -560,13 +564,10 @@ class Clients extends Admin_controller
                     $id=$this->clients_model->add_client($data);
                     if($id)
                     {
-                        exit("success");
                         set_alert('success','thêm thành công');
                     }
                     else
                     {
-                        print_r($data);
-                        exit("error");
                         set_alert('danger','Thêm không thành công');
                     }
                     
@@ -576,7 +577,7 @@ class Clients extends Admin_controller
             else
             {
                 if(!is_null($this->input->get('type_client'))) {
-                    $data['type_client']=$this->input->get('type_client')+1;
+                    $data['type_client'] = $this->input->get('type_client')+1;
                 }
                 $result=$this->clients_model->update_client($id,$data);
                 if($result)
@@ -591,7 +592,11 @@ class Clients extends Admin_controller
             if($id!="")
             {
                 $data['client'] = $this->clients_model->get_data_clients($id);
-
+                if($group == 'profile' && $data['client']) {
+                    if(!$data['type_client']) {
+                        redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                    }
+                }
             }
             else
             {
@@ -602,11 +607,7 @@ class Clients extends Admin_controller
                     redirect(admin_url('clients'));
                 }
             }
-            if (!$this->input->get('group')) {
-                $group = 'profile';
-            } else {
-                $group = $this->input->get('group');
-            }
+            
             
             $data['group']  = $group;
             $data['groups'] = $this->clients_model->get_groups();

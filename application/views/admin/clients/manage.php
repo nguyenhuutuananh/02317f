@@ -269,9 +269,9 @@
     </div>
 </div>
 <?php init_tail(); ?>
-
-<?php include_once(APPPATH . 'views/admin/clients/client_js.php');?>
 <script src="<?=base_url()?>assets/js/dataTables.fixedColumns.min.js"></script>
+
+<?php include_once(APPPATH . 'views/admin/clients/manage_js.php');?>
 <script>
     var CustomersServerParams = {};
     $.each($('._hidden_inputs._filters input'),function(){

@@ -23,6 +23,10 @@
         padding: 5px 5px 5px 10px; 
         background-color: #ffffff;
     }
+    div:not(.dataTables_scrollFoot)::-webkit-scrollbar { 
+        display: none; 
+    }
+
 </style>
 <div id="wrapper" class="customer_profile">
     <div class="content">
@@ -77,6 +81,8 @@
     </div>
 </div>
 <?php init_tail(); ?>
+<?php include_once(APPPATH . 'views/admin/clients/client_js.php');?>
+
 <script>
 
     function get_project(id)
@@ -103,29 +109,34 @@
         var re_num=$('input[name="num_bonus[]"]').length+1;
         console.log(re_num);
 
-        $('.time_bonus').append('<fieldset class="fieldset review_bonus_'+re_num+'">'+
+        $('.time_bonus').parent().append('<div class="col-md-3"><fieldset class="fieldset review_bonus_'+re_num+'">'+
                                     '<legend class="legend">Đợt:'+re_num+'<a href="javacript:void(0)" class="text-danger _delete" onclick="remove_field('+re_num+')"><i class="fa fa fa-times"></i></a></legend>'+
                                         '<div class="form-group">' +
-                                            '<label for="time_num" class="control-label label-time">Ngày thu tiền đợt:'+re_num+'</label>' +
+                                            '<label for="time_num" class="control-label label-time col-sm-4">Ngày thu đợt:'+re_num+'</label>' +
+                                            '<div class="col-sm-8">'+
                                             '<div class="input-group date">' +
                                                 '<input type="text"  name="time_bonus[]" class="form-control datepicker" value="">' +
                                                 '<div class="input-group-addon">'+
                                                     '<i class="fa fa-calendar calendar-icon"></i>'+
-                                                '</div>'+
-                                            '</div>'+
-                                        '</div>'+
+                                                '</div>' +
+                                            '</div>' +
+                                            '</div>' +
+                                        '</div>' +
                                         '<div class="form-group review_bonus_'+re_num+'">' +
-                                            '<label for="date_movein" class="control-label label-num">Đợt:'+re_num+'</label>' +
+                                            '<label for="date_movein" class="control-label col-sm-4 label-num">Đợt:'+re_num+'</label>' +
+                                            '<div class="col-sm-8">'+
                                             '<input type="text"  name="num_bonus[]" class="form-control" value="">'+
+                                            '</div>' +
                                         '</div>'+
-                                '</fieldset>'
+                                '</fieldset></div>'
         );
         init_datepicker();
 
     }
     function remove_field(key)
     {
-        $('.review_bonus_'+key).remove();
+
+        $('.review_bonus_'+key).parent().remove();
         var re_num=$('input[name="num_bonus[]"]').length;
         var legend=$('.legend');
         var field=$('.fieldset');

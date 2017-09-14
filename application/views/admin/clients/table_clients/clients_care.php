@@ -3,7 +3,7 @@ $table_heads = $table_heads_clients_care;
 $clients = $clients_care;
 ?>
 <div class="table-responsive no-dt">
-    <table id="table_clients_care" class="table display stripe table_all row-border order-column" style="margin-bottom: 0px !important;">
+    <table id="table_clients_care" class="table stripe table_all row-border order-column" style="margin-bottom: 0px !important;">
         <thead>
         <tr>
             <!-- Row 2-->

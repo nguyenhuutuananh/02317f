@@ -3,7 +3,7 @@ $table_heads = $table_heads_clients_buy;
 $clients = $clients_buy;
 ?>
 <div class="table-responsive no-dt">
-    <table id="table_clients_buy" class="table display stripe table_all row-border order-column">
+    <table id="table_clients_buy" class="table stripe table_all row-border order-column">
         <thead>
         <tr>
             <!-- Row 1-->

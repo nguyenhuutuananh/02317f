@@ -139,60 +139,8 @@ if(!is_null($convert_to)) {
                                 <?php echo render_inline_select('district', $district, array('districtid', 'name', 'type'), 'Quận/huyện', $selected, array()); ?>
                                 
                             </fieldset>
-                            <?php if ( ($type_client == 2 && !$convert) || ($type_client == 1 && $convert)) { ?>
-                            <p class="text-dark text-uppercase" style="text-align: center;"></p>
-                            <hr class="no-mtop">
-                            <fieldset>
-                                <legend>Hoa hồng</legend>
-
-                                    <div class="col-md-6">
-                                        <?php $value = (isset($client) ? $client->status_bonus : ''); ?>
-                                        <?php echo render_inline_input('status_bonus', 'Trạng thái hoa hồng', $value); ?>
-                                        <button type="button" class="btn btn-success" onclick="append_colum()">
-                                            Thêm Đợt Thanh toán Hoa hồng
-                                        </button>
-                                    </div>
-                                    <div class="col-md-6 time_bonus">
-                                        <?php if (isset($client)) {
-                                            $time_bonus = explode(',', $client->time_bonus);
-                                            $num_bonus = explode(',', $client->num_bonus);
-                                            ?>
-                                            <?php foreach ($time_bonus as $num => $rom) { ?>
-                                                <fieldset class="fieldset review_bonus_<?= $num + 1 ?>">
-                                                    <legend class="legend">Đợt: <?= $num + 1 ?>  <a href="javacript:void(0)" class="text-danger _delete" onclick="remove_field(<?= $num + 1 ?>)"><i class="fa fa fa-times"></i></a></legend>
-                                                    <div class="form-group">
-                                                        <label for="time_bonus" class="control-label label-time">Ngày thu tiền đợt: <?= $num + 1 ?></label>
-                                                        <div class="input-group date">
-                                                            <input type="text"  name="time_bonus[]" class="form-control datepicker" value="<?= $rom ?>">
-                                                            <div class="input-group-addon">
-                                                                <i class="fa fa-calendar calendar-icon"></i>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="num_bonus" class="control-label label-num">Đợt: <?= $num + 1 ?></label>
-                                                        <input type="text"  name="num_bonus[]" class="form-control" value="<?= $num_bonus[$num] ?>">
-                                                    </div>
-                                                </fieldset>
-
-
-                                            <?php 
-                                        } ?>
-                                    </div>
-                                <?php 
-                            } ?>
-
-
-                                    <div class="col-md-6 money_bonus">
-                                    </div>
-                                <?php 
-                            } ?>
-
-
-                            </fieldset>
-
-
                         </div>
+
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <?php
                                 if($type_client == 1 || $type_client == 3)
@@ -262,6 +210,64 @@ if(!is_null($convert_to)) {
                                 ?>
                             </fieldset>
                         </div>
+                        
+                        
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <?php if ( ($type_client == 2 && !$convert) || ($type_client == 1 && $convert)) { ?>
+                                <p class="text-dark text-uppercase" style="text-align: center;"></p>
+                                <hr class="no-mtop">
+                                <fieldset>
+                                    <legend>Hoa hồng</legend>
+
+                                        <div class="col-md-6">
+                                            <?php $value = (isset($client) ? $client->status_bonus : ''); ?>
+                                            <?php echo render_inline_input('status_bonus', 'Trạng thái hoa hồng', $value); ?>
+                                            <button type="button" class="btn btn-success" onclick="append_colum()">
+                                                Thêm Đợt Thanh toán Hoa hồng
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="clearfix">
+                                        
+                                        </div>
+                                        
+                                        <hr />
+                                        
+                                        <div class="col-md-3 time_bonus">
+                                            <?php if (isset($client)) {
+                                                $time_bonus = explode(',', $client->time_bonus);
+                                                $num_bonus = explode(',', $client->num_bonus);
+                                                ?>
+                                                <?php foreach ($time_bonus as $num => $rom) { ?>
+                                                    <fieldset class="fieldset review_bonus_<?= $num + 1 ?>">
+                                                        <legend class="legend">Đợt: <?= $num + 1 ?>  <a href="javacript:void(0)" class="text-danger _delete" onclick="remove_field(<?= $num + 1 ?>)"><i class="fa fa fa-times"></i></a></legend>
+                                                        <div class="form-group">
+                                                            <label for="time_bonus" class="control-label label-time">Ngày thu tiền đợt: <?= $num + 1 ?></label>
+                                                            <div class="input-group date">
+                                                                <input type="text"  name="time_bonus[]" class="form-control datepicker" value="<?= $rom ?>">
+                                                                <div class="input-group-addon">
+                                                                    <i class="fa fa-calendar calendar-icon"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="num_bonus" class="control-label label-num">Đợt: <?= $num + 1 ?></label>
+                                                            <input type="text"  name="num_bonus[]" class="form-control" value="<?= $num_bonus[$num] ?>">
+                                                        </div>
+                                                    </fieldset>
+
+
+                                                <?php 
+                                            } ?>
+                                        </div>
+                                    <?php 
+                                    } ?>
+                                </fieldset>
+                                <?php 
+                                } ?>
+                        </div>
+                        
+
                     </div>
                 <div>
                     <button class="btn btn-info mtop20 only-save customer-form-submiter">
