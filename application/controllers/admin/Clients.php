@@ -552,7 +552,7 @@ class Clients extends Admin_controller
         }
         
         if($this->input->post()){
-            $data=$this->input->post();
+            $data = $this->input->post();
             $data['time_bonus']=implode(',',$data['time_bonus']);
             $data['num_bonus']=implode(',',$data['num_bonus']);
             $data['type_client']=$this->input->get('type_client');
@@ -576,7 +576,7 @@ class Clients extends Admin_controller
             }
             else
             {
-                if(!is_null($this->input->get('type_client'))) {
+                if(!is_null($this->input->get('type_client')) && !is_null($this->input->get('convert'))) {
                     $data['type_client'] = $this->input->get('type_client')+1;
                 }
                 $result=$this->clients_model->update_client($id,$data);
@@ -592,6 +592,8 @@ class Clients extends Admin_controller
             if($id!="")
             {
                 $data['client'] = $this->clients_model->get_data_clients($id);
+                // print_r($data['client']);
+                // exit();
                 if($group == 'profile' && $data['client']) {
                     if(!$data['type_client']) {
                         redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));

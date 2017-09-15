@@ -123,20 +123,93 @@ if(!is_null($convert_to)) {
                                 ?>
                                     
                                 </legend>
-                                <?php $selected = (isset($client) ? $client->type_bds : ''); ?>
-                                <?php echo render_inline_select('type_bds', $menu_project, array('id', 'menu_name'), 'Loại bất động sản', $selected, array('onchange' => 'get_project(this.value)')); ?>
-                                <?php $selected = (isset($client) ? $client->province : ''); ?>
-                                <?php echo render_inline_select('province', $province, array('provinceid', 'name', 'type'), 'Tỉnh/Thành phố', $selected, array('onchange' => 'get_district(this.value)')); ?>
-                                <?php $selected = (isset($client) ? $client->id_project_bds : ''); ?>
-                                <?php if (isset($client->type_bds)) {
-                                    $id_project_bds = $this->clients_model->get_project($client->type_bds);
-                                } ?>
-                                <?php echo render_inline_select('id_project_bds', $id_project_bds, array('id', 'project_name', 'code'), 'Dự án', $selected, array()); ?>
-                                <?php $selected = (isset($client) ? $client->district : ''); ?>
-                                <?php if (isset($client->province)) {
-                                    $district = $this->clients_model->get_district($client->province);
-                                } ?>
-                                <?php echo render_inline_select('district', $district, array('districtid', 'name', 'type'), 'Quận/huyện', $selected, array()); ?>
+                                <?php
+                                echo render_inline_select('items[0][city]', $province, array('provinceid', 'name', 'type'), 'Tỉnh/Thành phố', '', array('onchange' => 'get_district_client(this)')); 
+                                ?>
+                                
+                                <?php
+                                echo render_inline_select('items[0][district]', $district, array('districtid', 'name', 'type'), 'Quận/huyện', '', array()); 
+                                ?>
+
+                                <?php
+                                echo render_inline_select('items[0][menuBdsId]', $menu_project, array('id', 'menu_name'), 'Loại bất động sản', '', array('onchange' => 'get_project(this)'));
+                                ?>
+
+                                <?php echo render_inline_select('items[0][projectBdsId]', $id_project_bds, array('id', 'project_name', 'code'), 'Dự án', '', array()); ?>
+                                <?php
+                                $type_options = array(
+                                    array(
+                                        'id' => 1,
+                                        'value' => 'Mua'
+                                    ),
+                                    array(
+                                        'id' => 2,
+                                        'value' => 'Thuê'
+                                    ),
+                                );
+                                echo render_inline_select('items[0][type]', $type_options, array('id', 'value'), 'Hình thức', '', array(), array(), '', '', false);
+                                ?>
+
+                                <?php
+                                echo render_inline_input('items[0][price]', 'Giá');
+                                ?>
+
+                                <?php
+                                $period_options = array(
+                                    array(
+                                        'id' => 1,
+                                        'value' => '1 tháng'
+                                    ),
+                                    array(
+                                        'id' => 2,
+                                        'value' => '2 tháng'
+                                    ),
+                                    array(
+                                        'id' => 3,
+                                        'value' => '3 tháng'
+                                    ),
+                                    array(
+                                        'id' => 4,
+                                        'value' => '4 tháng'
+                                    ),
+                                    array(
+                                        'id' => 5,
+                                        'value' => '5 tháng'
+                                    ),
+                                    array(
+                                        'id' => 6,
+                                        'value' => '6 tháng'
+                                    ),
+                                    array(
+                                        'id' => 7,
+                                        'value' => '7 tháng'
+                                    ),
+                                    array(
+                                        'id' => 8,
+                                        'value' => '8 tháng'
+                                    ),
+                                    array(
+                                        'id' => 9,
+                                        'value' => '9 tháng'
+                                    ),
+                                    array(
+                                        'id' => 10,
+                                        'value' => '10 tháng'
+                                    ),
+                                    array(
+                                        'id' => 11,
+                                        'value' => '11 tháng'
+                                    ),
+                                    array(
+                                        'id' => 12,
+                                        'value' => '12 tháng'
+                                    ),
+                                );
+                                echo render_inline_select('items[0][rentalPeriod]', $period_options, array('id', 'value'), 'Thời hạn thuê');
+                                ?>
+                                <?php
+                                echo render_inline_date_input('items[0][dateStart]', 'Ngày mua/thuê', date('Y-m-d'));
+                                ?>
                                 
                             </fieldset>
                         </div>

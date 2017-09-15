@@ -90,7 +90,7 @@
         jQuery.ajax({
             type: "post",
             dataType:'json',
-            url: "<?=admin_url()?>clients/get_project/"+id,
+            url: "<?=admin_url()?>clients/get_project/"+id.value,
             data: '',
             cache: false,
             success: function (data) {
@@ -98,7 +98,7 @@
                 $.each(data, function( index, value ) {
                     option=option+'<option data-subtext="'+value.code+'" value="'+value.id+'">'+value.project_name+'</option>';
                 });
-                $('#id_project_bds').html(option).selectpicker('refresh');
+                $(id).parents('.form-group').next().find('select').html(option).selectpicker('refresh');
 
             }
         });
@@ -152,12 +152,12 @@
             $(lable_num[i]).html('Đợt: '+(i+1));
         }
     }
-    function get_district(id)
+    function get_district_client(id)
     {
         jQuery.ajax({
             type: "post",
             dataType:'json',
-            url: "<?=admin_url()?>clients/get_district/"+id,
+            url: "<?=admin_url()?>clients/get_district/"+id.value,
             data: '',
             cache: false,
             success: function (data) {
@@ -165,11 +165,52 @@
                 $.each(data, function( index, value ) {
                     option=option+'<option data-subtext="'+value.type+'" value="'+value.districtid+'">'+value.name+'</option>';
                 });
-                $('#district').html(option).selectpicker('refresh');
+                $(id).parents('.form-group').next().find('select').html(option).selectpicker('refresh');
 
             }
         });
     }
+
+    function view_init_department(id)
+    {
+        $('#newProduct').modal('show');
+        jQuery.ajax({
+            type: "post",
+            url:admin_url+"kind_of_warehouse/get_row/"+id,
+            data: '',
+            cache: false,
+            success: function (data) {
+                var json = JSON.parse(data);
+//                if($data!="")
+                {
+                    $('#name').val(json.name);
+                    jQuery('#id_type').prop('action',admin_url+'kind_of_warehouse/update/'+id);
+                }
+            }
+        });
+    }
+    function new_product(){
+        $('#newProduct').modal('show');
+        jQuery('#id_type').prop('action', admin_url + 'clients/addProduct/<?=(isset($client) ? $client->userid : "")?>');
+    }
+    $(() => {
+        _validate_form($('form'),{},send_data_form);
+    });
+    function send_data_form(form) {
+        var data = $(form).serialize();
+        var url = form.action;
+        $.post(url, data).done(function(response) {
+            response = JSON.parse(response);
+            if(response.success == true){
+                alert_float('success',response.message);
+            }
+            $('.table-client-items').DataTable().ajax.reload();
+            $('#newProduct').modal('hide');
+        });
+        return false;
+    }
+
+
     initDataTable('.table-call-logs','<?=admin_url()?>newview/init_relation_logs/<?php echo $id_bds; ?>' , [0], [0]);
     initDataTable('.table-master_bds','<?=admin_url()?>newview/init_relation_master_bds/<?php echo $id_bds; ?>' , [0], [0]);
     initDataTable('.table-people-take','<?=admin_url()?>newview/init_relation_take/<?php echo $id_bds; ?>' , [3], [3]);

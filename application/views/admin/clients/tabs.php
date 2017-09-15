@@ -18,8 +18,8 @@ $customer_tabs = array(
       'order'=>2
       ),
   array(
-        'name'=>'projects',
-        'url'=>admin_url('clients/client/'.$client->userid.'?group=projects'),
+        'name'=>'items',
+        'url'=>admin_url('clients/client/'.$client->userid.'?group=items'),
         'icon'=>'fa fa-bars',
         'lang'=>_l('Lịch sử mua hàng'),
         'visible'=>true,

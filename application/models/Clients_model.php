@@ -87,7 +87,12 @@ class Clients_model extends CRM_Model
             ->join('tblpurpose','tblpurpose.id=tblclients.purpose','left')
             ->join('tblclass_client','tblclass_client.id=tblclients.class_type','left');
         $this->db->where('tblclients.type_client',$type);
-        return $this->db->get('tblclients')->result_array();
+        $clients = $this->db->get('tblclients')->result_array();
+        foreach($clients as $key=>$client) {
+            $this->db->where('clientId', $client['id']);
+            $clients[$key]['bds'] = $this->db->get('tblclient_bds')->result_array();
+        }
+        return $clients;
     }
 
     public function get_table_array($table)
@@ -115,26 +120,69 @@ class Clients_model extends CRM_Model
     public function get_data_clients($id)
     {
         $this->db->where('userid',$id);
-        return $this->db->get('tblclients')->row();
+        $client = $this->db->get('tblclients')->row();
+        $this->db->where('clientId', $id);
+        $client->bds_list = $this->db->get('tblclient_bds')->result();
+        return $client;
     }
     public function add_client($data)
     {
+        $items = $data['items'];
+        unset($data['items']);
+
         $this->db->insert('tblclients',$data);
         $return_id=$this->db->insert_id();
         if($return_id)
         {
             logActivity('Thêm khách hàng '.$data['company'].' [' . $return_id . ']');
+            if($data['type_client'] == 2) {
+                foreach($items as $value) {
+                    if(isset($value['id']) && $value['id'] != '' && $value['id'] != 0) {
+                        exit('what?');
+                    }
+                    else {
+                        $this->db->insert('tblclient_bds', $value);
+                        if($this->db->affected_rows() > 0) {
+
+                        }
+                        else {
+                            echo $this->db->last_query();
+                        }
+                        exit();
+                    }
+                }
+            }
             return $return_id;
         }
         return false;
     }
     public function update_client($id,$data)
     {
+        $items = $data['items'];
+        unset($data['items']);
+
         $this->db->where('userid',$id);
         $this->db->update('tblclients',$data);
-        if ($this->db->affected_rows() > 0) {
+        if ($this->db->affected_rows() > 0 || is_array($items)) {
             do_action('after_contract_updated', $id);
             logActivity('Cập nhật khách hàng [' . $id . ']');
+            if($data['type_client'] == 2) {
+                foreach($items as $value) {
+                    $value['clientId'] = $id;
+                    if(isset($value['id']) && $value['id'] != '' && $value['id'] != 0) {
+                        
+                    }
+                    else {
+                        $this->db->insert('tblclient_bds', $value);
+                        if($this->db->affected_rows() > 0) {
+
+                        }
+                        else {
+
+                        }
+                    }
+                }
+            }
             return true;
         }
         return false;
