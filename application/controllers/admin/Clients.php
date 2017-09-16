@@ -551,6 +551,12 @@ class Clients extends Admin_controller
             $group = $this->input->get('group');
         }
         
+        if($group == 'items' && $this->input->is_ajax_request()) {
+            $this->perfex_base->get_table_data('client_items', array(
+                'clientId' => $id,
+            ));
+        }
+
         if($this->input->post()){
             $data = $this->input->post();
             $data['time_bonus']=implode(',',$data['time_bonus']);
@@ -594,9 +600,11 @@ class Clients extends Admin_controller
                 $data['client'] = $this->clients_model->get_data_clients($id);
                 // print_r($data['client']);
                 // exit();
-                if($group == 'profile' && $data['client']) {
-                    if(!$data['type_client']) {
-                        redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                if($data['client']) {
+                    if($group == 'profile') {
+                        if(!$data['type_client']) {
+                            redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                        }
                     }
                 }
             }
@@ -731,5 +739,34 @@ class Clients extends Admin_controller
             $this->db->update('tblorder_table_clients', $array);
         }
         echo 'Cập nhật thành công';
+    }
+    public function getProduct($idClient, $id) {
+        $result = new stdClass();
+        $result->success = false;
+        $result->data = '';
+        
+        $item =  $this->clients_model->get_item($idClient, $id);
+        if($item) {
+            $result->success = true;
+            $result->data = $item;
+        }
+        exit(json_encode($result));
+    }
+    public function addProduct($idClient) {
+        $client = $this->clients_model->get_data_clients($idClient);
+        $success = false;
+        $message = "Thêm thất bại!";
+        $data = $this->input->post();
+        if($client && $data) {
+            $result = $this->clients_model->add_item($idClient, $data['items'][0]);
+            if($result) {
+                $success = true;
+                $message = "Thêm thành công!";
+            }
+        }
+        exit(json_encode(array(
+            'success' => $success,
+            'message' => $message
+        )));
     }
 }

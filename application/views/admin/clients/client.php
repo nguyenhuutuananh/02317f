@@ -173,18 +173,48 @@
 
     function view_init_department(id)
     {
-        $('#newProduct').modal('show');
         jQuery.ajax({
             type: "post",
-            url:admin_url+"kind_of_warehouse/get_row/"+id,
+            url:admin_url+"clients/getProduct/<?=(isset($client) ? $client->userid : '' )?>/"+id,
             data: '',
             cache: false,
+            dataType: 'json',
             success: function (data) {
-                var json = JSON.parse(data);
-//                if($data!="")
+                if(data.success)
                 {
-                    $('#name').val(json.name);
-                    jQuery('#id_type').prop('action',admin_url+'kind_of_warehouse/update/'+id);
+                    let item = data.data;
+                    $('#viewProduct').modal('show');
+                    $('#viewProduct .modal-body .col-sm-8').each((i, v) => {
+                        switch(i) {
+                            case 0:
+                                $(v).html(item.project_name);
+                                break;
+                            case 1:
+                                $(v).html(item.project_name);
+                                break;
+                            case 2:
+                                $(v).html(item.project_name);
+                                break;
+                            case 3:
+                                $(v).html(item.project_name);
+                                break;
+                            case 4:
+                                $(v).html(item.project_name);
+                                break;
+                            case 5:
+                                $(v).html(item.project_name);
+                                break;
+                            case 6:
+                                $(v).html(item.project_name);
+                                break;
+                            case 7:
+                                $(v).html(item.project_name);
+                                break;
+                        }
+                    });
+                }
+                else {
+                    alert_float('danger', 'Lấy dữ liệu thất bại!');
                 }
             }
         });
@@ -194,7 +224,15 @@
         jQuery('#id_type').prop('action', admin_url + 'clients/addProduct/<?=(isset($client) ? $client->userid : "")?>');
     }
     $(() => {
-        _validate_form($('form'),{},send_data_form);
+        _validate_form($('.form-item'),{
+            'items[0][city]': 'required',
+            'items[0][district]': 'required',
+            'items[0][menuBdsId]': 'required',
+            'items[0][projectBdsId]': 'required',
+            'items[0][type]': 'required',
+            'items[0][price]': 'required',
+            'items[0][dateStart]': 'required',
+        },send_data_form);
     });
     function send_data_form(form) {
         var data = $(form).serialize();
@@ -204,13 +242,25 @@
             if(response.success == true){
                 alert_float('success',response.message);
             }
+            else {
+                alert_float('danger',response.message);
+            }
+            $(form)[0].reset();
+            
+            $('.selectpicker').val('');
+            $('.selectpicker').change();
+            $('.selectpicker').selectpicker('refresh');
+
+            $(form).find('.datepicker').val('<?=date('Y-m-d')?>');
             $('.table-client-items').DataTable().ajax.reload();
             $('#newProduct').modal('hide');
         });
         return false;
     }
-
-
+    if($('.table-client-items').length) {
+        initDataTable('.table-client-items', window.location.href, [0], [0]);
+    }
+    
     initDataTable('.table-call-logs','<?=admin_url()?>newview/init_relation_logs/<?php echo $id_bds; ?>' , [0], [0]);
     initDataTable('.table-master_bds','<?=admin_url()?>newview/init_relation_master_bds/<?php echo $id_bds; ?>' , [0], [0]);
     initDataTable('.table-people-take','<?=admin_url()?>newview/init_relation_take/<?php echo $id_bds; ?>' , [3], [3]);

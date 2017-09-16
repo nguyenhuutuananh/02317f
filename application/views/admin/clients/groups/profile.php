@@ -255,10 +255,10 @@ if(!is_null($convert_to)) {
                                     echo render_inline_input('id_contract', 'Mã hợp đồng', $value);
                                     
                                     $value = (isset($client) ? $client->date_deal : '');
-                                    echo render_inline_input('date_deal', 'Ngày giao dịch', $value); 
+                                    echo render_inline_date_input('date_deal', 'Ngày giao dịch', $value); 
     
                                     $value = (isset($client) ? $client->expire_contract : ''); 
-                                    echo render_inline_input('expire_contract', 'Ngày HHĐ', $value); 
+                                    echo render_inline_date_input('expire_contract', 'Ngày HHĐ', $value); 
     
                                     $value = (isset($client) ? $client->bonus_period : '');
                                     echo render_inline_input('bonus_period', 'Hoa hồng gia hạn', $value);

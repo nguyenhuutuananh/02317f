@@ -135,6 +135,7 @@ class Clients_model extends CRM_Model
         if($return_id)
         {
             logActivity('Thêm khách hàng '.$data['company'].' [' . $return_id . ']');
+            /*
             if($data['type_client'] == 2) {
                 foreach($items as $value) {
                     if(isset($value['id']) && $value['id'] != '' && $value['id'] != 0) {
@@ -152,9 +153,35 @@ class Clients_model extends CRM_Model
                     }
                 }
             }
+            */
             return $return_id;
         }
         return false;
+    }
+    public function add_item($id_client, $data) {
+        $this->db->where('userid',$id_client);
+        $client = $this->db->get('tblclients',$data)->row();
+        $data['clientId'] = $id_client;
+        $this->db->insert('tblclient_bds', $data);
+        
+        if($this->db->affected_rows() > 0) {
+            return true;
+        }
+        return false;
+    }
+    public function get_item($id_client, $id) {
+        $this->db->select(
+            'id,
+            (select tblprojectmenu.project_name from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId) as project_name,
+            type,
+            price,
+            rentalPeriod,
+            dateStart'
+        );
+        $this->db->where('clientId', $id_client);
+        $this->db->where('id', $id);
+        
+        return $this->db->get('tblclient_bds')->row();
     }
     public function update_client($id,$data)
     {
@@ -166,6 +193,7 @@ class Clients_model extends CRM_Model
         if ($this->db->affected_rows() > 0 || is_array($items)) {
             do_action('after_contract_updated', $id);
             logActivity('Cập nhật khách hàng [' . $id . ']');
+            /*
             if($data['type_client'] == 2) {
                 foreach($items as $value) {
                     $value['clientId'] = $id;
@@ -183,6 +211,7 @@ class Clients_model extends CRM_Model
                     }
                 }
             }
+            */
             return true;
         }
         return false;
