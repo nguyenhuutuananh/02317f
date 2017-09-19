@@ -234,6 +234,7 @@ function init_relation_tasks_table($table_attributes = array())
         _l('task_status')
     );
 
+
     $custom_fields = get_custom_fields('tasks', array(
         'show_on_table' => 1
     ));
@@ -278,10 +279,9 @@ function init_relation_tasks_table($table_attributes = array())
     }
     echo "<div class='clearfix'></div>";
 
-
     $table .= render_datatable($table_data, $name, array(), $table_attributes);
-
     return $table;
+
 }
 /**
  * Function used to render <option> for relation

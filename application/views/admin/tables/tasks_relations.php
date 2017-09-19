@@ -48,6 +48,7 @@ $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, ar
     'invoice_id',
     '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM tblstafftaskassignees WHERE taskid=tblstafftasks.id) as assignees_ids'
 ));
+
 $output  = $result['output'];
 $rResult = $result['rResult'];
 foreach ($rResult as $aRow) {

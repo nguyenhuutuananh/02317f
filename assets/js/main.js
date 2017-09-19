@@ -2081,6 +2081,7 @@ function init_rel_tasks_table(rel_id, rel_type, selector) {
         TasksServerParams[$(this).attr('name')] = '[name="' + $(this).attr('name') + '"]';
     });
     not_sortable_tasks = ($('body').find(selector).find('th').length - 1);
+    console.log(admin_url + 'tasks/init_relation_tasks/' + rel_id + '/' + rel_type);
     initDataTable(selector, admin_url + 'tasks/init_relation_tasks/' + rel_id + '/' + rel_type, [not_sortable_tasks], [not_sortable_tasks], TasksServerParams, [2, 'ASC']);
 }
 

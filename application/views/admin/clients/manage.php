@@ -27,6 +27,7 @@
     }
     .DTFC_LeftBodyWrapper{
         background-color: white!important;
+        top: -13px!important;
     }
     .DTFC_LeftHeadWrapper{
         background-color: white!important;
@@ -48,15 +49,17 @@
                     <div class="panel-body">
                         <div class="_buttons">
                             <?php if (has_permission('customers','','create')) { ?>
-                            <a href="<?php echo admin_url('clients/client'); ?>" onclick="openWin()" class="btn btn-info mright5 test pull-left display-block">
-                                <?php echo _l('new_client'); ?></a>
                                 <a href="<?php echo admin_url('clients/import'); ?>" class="btn btn-info pull-left display-block mright5">
-                                    <?php echo _l('import_customers'); ?></a>
+                                    <?php echo _l('import_customers'); ?>
+                                </a>
                                     <?php } ?>
+                                <a href="javacript:void(0)" data-toggle="collapse" data-target="#view_total" class="btn btn-default">
+                                    <i class="fa fa-bar-chart"></i>
+                                </a>
                                     <div class="visible-xs">
                                         <div class="clearfix"></div>
                                     </div>
-                                    <div class="btn-group pull-right btn-with-tooltip-group _filter_data" data-toggle="tooltip" data-title="<?php echo _l('filter_by'); ?>">
+                                    <div class="btn-group pull-right btn-with-tooltip-group _filter_data" style="display:none;" data-toggle="tooltip" data-title="<?php echo _l('filter_by'); ?>">
                                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                         </button>
@@ -168,34 +171,29 @@
                                         $where_summary = ' AND userid IN (SELECT customer_id FROM tblcustomeradmins WHERE staff_id='.get_staff_user_id().')';
                                     }
                                     ?>
+                                   
+                                    <div id="view_total" class="collapse">
                                     <hr />
-                                    <div class="row mbot15">
-                                        <div class="col-md-12">
-                                            <h3 class="text-success no-margin"><?php echo _l('customers_summary'); ?></h3>
-                                        </div>
-                                        <div class="col-md-2 col-xs-6 border-right">
-                                            <h3 class="bold"><?php echo total_rows('tblclients',($where_summary != '' ? substr($where_summary,5) : '')); ?></h3>
-                                            <span class="text-dark"><?php echo _l('customers_summary_total'); ?></span>
-                                        </div>
-                                        <div class="col-md-2 col-xs-6 border-right">
-                                            <h3 class="bold"><?php echo total_rows('tblclients','active=1'.$where_summary); ?></h3>
-                                            <span class="text-success"><?php echo _l('active_customers'); ?></span>
-                                        </div>
-                                        <div class="col-md-2 col-xs-6 border-right">
-                                            <h3 class="bold"><?php echo total_rows('tblclients','active=0'.$where_summary); ?></h3>
-                                            <span class="text-danger"><?php echo _l('inactive_active_customers'); ?></span>
-                                        </div>
-                                        <div class="col-md-2 col-xs-6 border-right">
-                                            <h3 class="bold"><?php echo total_rows('tblcontacts','active=1'.$where_summary); ?></h3>
-                                            <span class="text-info"><?php echo _l('customers_summary_active'); ?></span>
-                                        </div>
-                                        <div class="col-md-2  col-xs-6 border-right">
-                                            <h3 class="bold"><?php echo total_rows('tblcontacts','active=0'.$where_summary); ?></h3>
-                                            <span class="text-danger"><?php echo _l('customers_summary_inactive'); ?></span>
-                                        </div>
-                                        <div class="col-md-2 col-xs-6">
-                                            <h3 class="bold"><?php echo total_rows('tblcontacts','last_login LIKE "'.date('Y-m-d').'%"'.$where_summary); ?></h3>
-                                            <span class="text-muted"><?php echo _l('customers_summary_logged_in_today'); ?></span>
+                                        <div class="row mbot15">
+                                            <div class="col-md-12">
+                                                <h3 class="text-success no-margin"><?php echo _l('customers_summary'); ?></h3>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6 border-right">
+                                                <h3 class="bold"><?php echo total_rows('tblclients',($where_summary != '' ? substr($where_summary,5) : '')); ?></h3>
+                                                <span class="text-dark"><?php echo _l('customers_summary_total'); ?></span>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6 border-right">
+                                                <h3 class="bold"><?php echo total_rows('tblclients','active=1'.$where_summary); ?></h3>
+                                                <span class="text-success"><?php echo _l('active_customers'); ?></span>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6 border-right">
+                                                <h3 class="bold"><?php echo total_rows('tblclients','active=0'.$where_summary); ?></h3>
+                                                <span class="text-danger"><?php echo _l('inactive_active_customers'); ?></span>
+                                            </div>
+                                            <div class="col-md-3 col-xs-6 border-right">
+                                                <h3 class="bold"><?php echo total_rows('tblcontacts','active=1'.$where_summary); ?></h3>
+                                                <span class="text-info"><?php echo _l('customers_summary_active'); ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                     <?php } ?>

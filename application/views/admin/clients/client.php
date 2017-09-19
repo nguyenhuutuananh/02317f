@@ -31,11 +31,43 @@
 <div id="wrapper" class="customer_profile">
     <div class="content">
         <div class="row">
+            <?php 
+                $mess="";
+                $font="font-size: 10px";
+            ?>
+            <?php if($type_client){
+                if($type_client==1)
+                {
+                    $mess="Đang quan tâm";
+                    $font="font-size: 10px";
+                    $class="info";
+                }
+                if($type_client==2)
+                {
+                    $mess="Đã giao dịch";
+                    $class="success";
+                }
+                if($type_client==3)
+                {
+                    $mess="Khách hàng Fail";
+                    $font="font-size: 9px";
+                    $class="danger";
+                }
+               
+            }
+            ?>
 
         <?php if (isset($client)) { ?>
+            
             <div class="col-md-3">
                 <div class="panel_s">
+               
                 <div class="panel-body">
+                    <?php if($type_client){?>
+                        <div class="ribbon <?=$class?>">
+                            <span style="<?=$font?>"><?=$mess?></span>
+                        </div>
+                    <?php }?>
                     <?php if (has_permission('customers', '', 'delete') || is_admin()) { ?>
                     <div class="btn-group pull-left mright10">
                     <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -71,6 +103,7 @@
             <div class="col-md-<?=(!isset($client)? 12 : 9)?>">
                 <div class="panel_s">
                     <div class="panel-body">
+                
                         <div class="tab-content">
                         <?php $this->load->view('admin/clients/groups/'.$group); ?>
                         </div>
@@ -266,5 +299,16 @@
     initDataTable('.table-people-take','<?=admin_url()?>newview/init_relation_take/<?php echo $id_bds; ?>' , [3], [3]);
 </script>
 <?php include_once(APPPATH . 'views/admin/newview/script_project.php');?>
+<?php if (isset($client)) { ?>
+<script>
+// init_rel_tasks_table(<?php echo $client->userid; ?>,'customer');
+ <?php if($group=='tasks'){?>
+     initDataTable('.table-rel-tasks','<?=admin_url()?>tasks/init_relation_tasks/<?=$client->userid?>/customer' , [0], [3]);
+     <?php }?>
+</script>
+
+</script>
+<?php 
+} ?>
 </body>
 </html>

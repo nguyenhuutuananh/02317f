@@ -3,66 +3,118 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $custom_fields = get_custom_fields('customers', array(
     'show_on_table' => 1
 ));
-if($type_master=='0')
+if($master)
 {
-    $aColumns     = array(
-        '1',
-        'code_master',
-        'name',
-        'relation',
-        'state',
-        'vocative',
-        'birthday',
-        'CMND',
-        'phonenumber',
-        'email_master',
-        'TNCN',
-        'address',
-        'address_permanent',
-        'company',
-        'position',
-        'hear',
-        'hobby',
-        'facebook'
+    if($type==3)
+    {
+        $aColumns     = array(
+            '1',
+            'code_master',
+            'name',
+            'relation',
+            'state',
+            'vocative',
+            'birthday',
+            'CMND',
+            'phonenumber',
+            'email_master',
+            'TNCN',
+            'address',
+            'address_permanent',
+            'company',
+            'position',
+            'hear',
+            'hobby',
+            'facebook'
 
-    );
+        );
+    }
+    else
+    {
+        $aColumns     = array(
+            '1',
+            'code_master',
+            'phonenumber',
+            'name',
+            'email_master',
+            'address',
+            'tax',
+            'hear',
+            'website',
+            'note'
+        );
+    }
 }
 else
 {
-    $aColumns     = array(
-        '1',
-        'code_master',
-        'name',
-        'relation',
-        'state',
-        'vocative',
-        'birthday',
-        'CMND',
-        'phonenumber',
-        'email_master',
-        'TNCN',
-        'address',
-        'address_permanent',
-        'company',
-        'position',
-        'hear',
-        'hobby',
-        'facebook'
+ if($type_master=='0')
+    {
+        $aColumns     = array(
+            '1',
+            'code_master',
+            'name',
+            'relation',
+            'state',
+            'vocative',
+            'birthday',
+            'CMND',
+            'phonenumber',
+            'email_master',
+            'TNCN',
+            'address',
+            'address_permanent',
+            'company',
+            'position',
+            'hear',
+            'hobby',
+            'facebook'
 
-    );
+        );
+    }
+    else
+    {
+        $aColumns     = array(
+            '1',
+            'code_master',
+            'name',
+            'relation',
+            'state',
+            'vocative',
+            'birthday',
+            'CMND',
+            'phonenumber',
+            'email_master',
+            'TNCN',
+            'address',
+            'address_permanent',
+            'company',
+            'position',
+            'hear',
+            'hobby',
+            'facebook'
+
+        );
+    }
+   
 }
+
 
 $sIndexColumn = "id";
 $sTable       = 'tblmaster_bds';
-if($type_master==0)
-{
-    $where        ="AND idproject = ".$project_id." AND _delete=0 AND (type_master= ".$type_master." or type_master=3)";
+if(!$master){
+    if($type_master==0)
+    {
+        $where        ="AND idproject = ".$project_id." AND _delete=0 AND (type_master= ".$type_master." or type_master=3)";
+    }
+    else
+    {
+        $where        ="AND idproject = ".$project_id." AND _delete=0 AND type_master= ".$type_master;
+    }
 }
 else
 {
-    $where        ="AND idproject = ".$project_id." AND _delete=0 AND type_master= ".$type_master;
+         $where ="AND _delete=0  and type_master=".$type;
 }
-
 //$where        ="AND idproject = ".$project_id." AND _delete=0";
 $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, array(), array($where), array(
     'id',
@@ -85,13 +137,27 @@ foreach ($rResult as $aRow) {
         }
         if($aColumns[$i] == 'code_master')
         {
-            if($type_master==0)
+            if($master)
             {
-                $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add('.$aRow['id'].',0)" data-target="#view_master" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+                if($type_master==3)
+                {
+                    $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add('.$aRow['id'].',0)" data-target="#view_master" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+                }
+                else
+                {
+                    $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add_company('.$aRow['id'].',1)" data-target="#view_master_company" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+                }
             }
             else
             {
-                $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add('.$aRow['id'].',1)" data-target="#view_master" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+                if($type_master==0)
+                {
+                    $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add('.$aRow['id'].',0)" data-target="#view_master" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+                }
+                else
+                {
+                    $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add('.$aRow['id'].',1)" data-target="#view_master" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+                }
             }
         }
         if($aColumns[$i]=='vocative')
@@ -176,6 +242,10 @@ foreach ($rResult as $aRow) {
             $icon='glyphicon glyphicon-star';
         }
     $options="";
+    if($master)
+    {
+        $options.='<a onclick="get_relation('.$aRow['idproject'].','.$aRow['type_master'].')" data-toggle="modal" data-target="#view_relation" class="btn btn-success btn-icon"><i class="glyphicon glyphicon-fullscreen"></i></a>';
+    }
     if($aRow['type_master']==0||$aRow['type_master']==3)
     {
         $options .= '<a onclick="onchange_type('.$aRow['id'].','.$aRow['type_master'].')" class="btn"><i class="'.$icon.'"></i></a>';

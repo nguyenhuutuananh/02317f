@@ -36,7 +36,7 @@ if(!is_null($convert_to)) {
                         <div class="col-md-12">
                             <fieldset>
                                 <legend>Khách hàng</legend>
-                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                         <?php $value = (isset($client) ? $client->company : ''); ?>
                                         <?php echo render_inline_input('company', 'Tên Khách hàng', $value); ?>
                                         <?php $value = (isset($client) ? $client->email : ''); ?>
@@ -44,13 +44,13 @@ if(!is_null($convert_to)) {
                                         <?php $selected = (isset($client) ? $client->exigency : ''); ?>
                                         <?php echo render_inline_select('exigency', $exigency, array('id', 'name'), 'Nhu cầu', $selected, array()); ?>
                                     </div>
-                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                         <?php $selected = (isset($client) ? $client->purpose : ''); ?>
                                         <?php echo render_inline_select('purpose', $purpose, array('id', 'name'), 'Mục đích', $selected, array()); ?>
                                         <?php $value = (isset($client) ? $client->phonenumber : ''); ?>
                                         <?php echo render_inline_input('phonenumber', 'Số điện thoại', $value); ?>
                                     </div>
-                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                         <?php $selected = (isset($client) ? $client->country : ''); ?>
                                         <?php echo render_inline_select('country', $countries, array('country_id', 'short_name'), 'Quốc tịch', $selected, array()); ?>
                                         <!--                                                        --><?php //$selected=( isset($client) ? $client->type_client : ''); ?>
@@ -59,7 +59,7 @@ if(!is_null($convert_to)) {
                                         <?php echo render_inline_select('source', $source, array('id', 'name'), 'Nguồn', $selected, array()); ?>
                                     </div>
 
-                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                         <?php $selected = (isset($client) ? $client->class_type : ''); ?>
                                         <?php echo render_inline_select('class_type', $class_client, array('id', 'name'), 'Loại khách hàng', $selected, array()); ?>
                                         
@@ -86,17 +86,18 @@ if(!is_null($convert_to)) {
                             <fieldset>
                                 <legend>Tổng hợp</legend>
                                 
-                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <?php $selected = (isset($client) ? $client->status : ''); ?>
                                     <?php echo render_inline_select('status', $status, array('id', 'name'), 'Trạng thái', $selected, array()); ?>
                                     <?php $selected = (isset($client) ? $client->nvgd : ''); ?>
                                     <?php echo render_inline_select('nvgd', $staff, array('staffid', 'lastname'), 'Nhân viên giám định', $selected, array()); ?>
-                                </div>
-
-                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                                     <?php $value = (isset($client) ? $client->requirements : ''); ?>
                                     <?php echo render_inline_input('requirements', 'Yêu cầu khác', $value); ?>
                                 </div>
+
+                                <!-- <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                   
+                                </div> -->
                             </fieldset>
                         </div>
                         <div class="clearfix">

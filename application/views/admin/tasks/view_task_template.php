@@ -48,12 +48,12 @@
 </a>
 </p>
 <?php } ?>
-<p class="no-margin pull-left mright5">
+<!-- <p class="no-margin pull-left mright5">
  <a href="#" class="btn btn-default mright5" data-toggle="tooltip" data-title="<?php echo _l('task_timesheets'); ?>"onclick="slideToggle('#task_single_timesheets'); return false;">
   <i class="fa fa-th-list"></i>
 </a>
-</p>
-<?php if($task->billed == 0){
+</p> -->
+<!-- <?php if($task->billed == 0){
  $is_assigned = $this->tasks_model->is_task_assignee(get_staff_user_id(),$task->id);
  if(!$this->tasks_model->is_timer_started($task->id)) { ?>
  <p class="no-margin pull-left"<?php if(!$is_assigned){ ?> data-toggle="tooltip" data-title="<?php echo _l('task_start_timer_only_assignee'); ?>"<?php } ?>>
@@ -68,7 +68,7 @@
  </a>
 </p>
 <?php } ?>
-<?php } ?>
+<?php } ?> -->
 <div class="clearfix"></div>
 <hr />
 <div id="task_single_timesheets" class="<?php if(!$this->session->flashdata('task_single_timesheets_open')){echo 'hide';} ?>">
@@ -423,7 +423,7 @@ echo $comments;
 </h5>
 </div>
 <?php if((has_permission('tasks','','create') || has_permission('tasks','','edit'))){ ?>
-<div class="task-info">
+<!-- <div class="task-info">
  <h5><i class="fa task-info-icon pull-left fa-clock-o"></i>
   <?php
   echo _l('task_hourly_rate'); ?>: <?php if($task->rel_type == 'project' && $task->project_data->billing_type == 2){
@@ -433,19 +433,19 @@ echo $comments;
   }
   ?>
 </h5>
-</div>
-<div class="task-info">
+</div> -->
+<!-- <div class="task-info">
  <h5><i class="fa task-info-icon pull-left fa fa-money"></i>
   <?php echo _l('task_billable'); ?>: <?php echo ($task->billable == 1 ? _l('task_billable_yes') : _l('task_billable_no')) ?>
 </h5>
-</div>
-<?php if($task->billable == 1){ ?>
+</div> -->
+<!-- <?php if($task->billable == 1){ ?>
 <div class="task-info<?php if($task->billed == 0){echo ' text-warning';} ?>">
  <h5><i class="fa task-info-icon pull-left fa-check"></i>
   <?php echo _l('task_billed'); ?>: <?php echo ($task->billed == 1 ? _l('task_billed_yes') : _l('task_billed_no')) ?>
 </h5>
 </div>
-<?php } ?>
+<?php } ?> -->
 <?php } ?>
 <?php if($task->status == 5){ ?>
 <div class="task-info text-success" data-toggle="tooltip" data-title="<?php echo _dt($task->datefinished); ?>" data-placement="bottom">
@@ -472,13 +472,13 @@ if($value == ''){continue;}?>
 </h5>
 </div>
 <?php } ?>
-<?php if(has_permission('tasks','','create')){ ?>
+<!-- <?php if(has_permission('tasks','','create')){ ?>
 <div class="task-info text-success">
  <h5><i class="fa task-info-icon fa-clock-o"></i>
   <?php echo _l('task_total_logged_time'); ?> <?php echo seconds_to_time_format($this->tasks_model->calc_task_total_time($task->id)); ?>
 </h5>
 </div>
-<?php } ?>
+<?php } ?> -->
 <?php if($task->recurring == 1){
   echo '<span class="label label-warning inline-block mbot10 mtop5">'._l('recurring_task').'</span>';
 }
