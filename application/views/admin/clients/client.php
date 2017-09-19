@@ -57,7 +57,7 @@
             }
             ?>
 
-        <?php if (isset($client)) { ?>
+        <?php if (isset($client)  && is_null($this->input->get('convert'))) { ?>
             
             <div class="col-md-3">
                 <div class="panel_s">
@@ -100,7 +100,7 @@
             </div>
             <?php 
             } ?>
-            <div class="col-md-<?=(!isset($client)? 12 : 9)?>">
+            <div class="col-md-<?=(!isset($client) || !is_null($this->input->get('convert')) ? 12 : 9)?>">
                 <div class="panel_s">
                     <div class="panel-body">
                 
@@ -136,13 +136,12 @@
             }
         });
     }
-    function append_colum()
+    function append_colum(buttonElement)
     {
         var time=$('.class_time').html();
         var re_num=$('input[name="num_bonus[]"]').length+1;
-        console.log(re_num);
-
-        $('.time_bonus').parent().append('<div class="col-md-3"><fieldset class="fieldset review_bonus_'+re_num+'">'+
+        let parentFieldSet = $(buttonElement).parents('fieldset');
+        parentFieldSet.append('<div class="col-md-3"><fieldset class="fieldset review_bonus_'+re_num+'">'+
                                     '<legend class="legend">Đợt:'+re_num+'<a href="javacript:void(0)" class="text-danger _delete" onclick="remove_field('+re_num+')"><i class="fa fa fa-times"></i></a></legend>'+
                                         '<div class="form-group">' +
                                             '<label for="time_num" class="control-label label-time col-sm-4">Ngày thu đợt:'+re_num+'</label>' +
@@ -203,7 +202,9 @@
             }
         });
     }
-
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
     function view_init_department(id)
     {
         jQuery.ajax({
@@ -216,32 +217,34 @@
                 if(data.success)
                 {
                     let item = data.data;
+                    console.log(item);
                     $('#viewProduct').modal('show');
                     $('#viewProduct .modal-body .col-sm-8').each((i, v) => {
+                        
                         switch(i) {
                             case 0:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+item.cityName+"</p>");
                                 break;
                             case 1:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+item.districtName+"</p>");
                                 break;
                             case 2:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+item.menuBdsName+"</p>");
                                 break;
                             case 3:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
                                 break;
                             case 4:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Mua" : "Bán")+"</p>");
                                 break;
                             case 5:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+numberWithCommas(item.price)+"</p>");
                                 break;
                             case 6:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
                                 break;
                             case 7:
-                                $(v).html(item.project_name);
+                                $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
                                 break;
                         }
                     });

@@ -1328,6 +1328,20 @@ function get_all_countries()
     return $CI->db->get('tblcountries')->result_array();
 }
 /**
+ * Get all districts from city id
+ *
+ * @param int $idCity
+ * @return array
+ */
+function get_district_from_city($idCity) {
+    $CI =& get_instance();
+    return $CI->db->where('provinceid', $idCity)->get('district')->result_array();
+}
+function get_project_from_type($idType) {
+    $CI =& get_instance();
+    return $CI->db->where('id_menu', $idType)->get('tblprojectmenu')->result_array();
+}
+/**
  * Get country row from database based on passed country id
  * @param  mixed $id
  * @return object

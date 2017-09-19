@@ -39,6 +39,15 @@
         min-width: 160px!important;
     }
     th, td { white-space: nowrap !important; }
+    div.dataTables_wrapper {
+        margin: 0 auto;
+    }
+    .table_all {
+        background-color: white;
+    }
+    .DTFC_RightBodyWrapper {
+        top: -8px !important;
+    }
 </style>
 <link href="<?=base_url()?>assets/css/fixedColumns.dataTables.min.css" rel="stylesheet">
 <div id="wrapper">
@@ -183,16 +192,16 @@
                                                 <span class="text-dark"><?php echo _l('customers_summary_total'); ?></span>
                                             </div>
                                             <div class="col-md-3 col-xs-6 border-right">
-                                                <h3 class="bold"><?php echo total_rows('tblclients','active=1'.$where_summary); ?></h3>
-                                                <span class="text-success"><?php echo _l('active_customers'); ?></span>
+                                                <h3 class="bold"><?php echo total_rows('tblclients','type_client=1'.$where_summary); ?></h3>
+                                                <span class="text-info">KHÁCH HÀNG ĐANG QUAN TÂM</span>
                                             </div>
                                             <div class="col-md-3 col-xs-6 border-right">
-                                                <h3 class="bold"><?php echo total_rows('tblclients','active=0'.$where_summary); ?></h3>
-                                                <span class="text-danger"><?php echo _l('inactive_active_customers'); ?></span>
+                                                <h3 class="bold"><?php echo total_rows('tblclients','type_client=2'.$where_summary); ?></h3>
+                                                <span class="text-success">KHÁCH HÀNG ĐÃ THUÊ/MUA</span>
                                             </div>
                                             <div class="col-md-3 col-xs-6 border-right">
-                                                <h3 class="bold"><?php echo total_rows('tblcontacts','active=1'.$where_summary); ?></h3>
-                                                <span class="text-info"><?php echo _l('customers_summary_active'); ?></span>
+                                                <h3 class="bold"><?php echo total_rows('tblclients','type_client=3'.$where_summary); ?></h3>
+                                                <span class="text-danger">KHÁCH HÀNG ĐÃ FAIL/THUÊ/MUA TỪ CÔNG TY KHÁC</span>
                                             </div>
                                         </div>
                                     </div>

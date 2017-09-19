@@ -559,6 +559,8 @@ class Clients extends Admin_controller
 
         if($this->input->post()){
             $data = $this->input->post();
+            // print_r($data);
+            // exit();
             $data['time_bonus']=implode(',',$data['time_bonus']);
             $data['num_bonus']=implode(',',$data['num_bonus']);
             $data['type_client']=$this->input->get('type_client');
@@ -768,5 +770,20 @@ class Clients extends Admin_controller
             'success' => $success,
             'message' => $message
         )));
+    }
+    public function delete($idClient) {
+        if (!has_permission('customers', '', 'view')) {
+            if ($id != '' && !is_customer_admin($id)) {
+                access_denied('customers');
+            }
+        }
+        $response = new stdClass();
+        $response->alert_type = 'danger';
+        $response->message = "Xóa thất bại";
+        if($this->clients_model->delete($idClient)) {
+            $response->alert_type = 'success';
+            $response->message = "Xóa thành công";
+        }
+        exit(json_encode($response));
     }
 }

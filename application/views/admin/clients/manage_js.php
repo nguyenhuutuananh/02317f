@@ -64,8 +64,23 @@
         parentDiv.find('input[name="' + currentTarget.attr('name') + '"]').val(currentTarget.val());
         parentDiv.find('input[name="' + currentTarget.attr('name') + '"]').change();
     });
-        
+    $('body').on('click', '.delete-reminder-client', function() {
+        var r = confirm(confirm_action_prompt);
+        const thisButton = $(this);
+        if (r == false) {
+            return false;
+        } else {
+            $.get($(this).attr('href'), function(response) {
+                alert_float(response.alert_type, response.message);
+                if(response.alert_type != 'danger') {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+                
+            }, 'json');
+        }
+        return false;
+    });
  });
  </script>
-
- 

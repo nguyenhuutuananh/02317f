@@ -129,31 +129,22 @@ class Clients_model extends CRM_Model
     {
         $items = $data['items'];
         unset($data['items']);
-
+        if($data['type_client'] != 2) {
+            $data['province'] = $items[0]['city'];
+            $data['district'] = $items[0]['district'];
+            $data['type_bds'] = $items[0]['menuBdsId'];
+            $data['bds']      = $items[0]['projectBdsId'];
+        }
         $this->db->insert('tblclients',$data);
         $return_id=$this->db->insert_id();
         if($return_id)
         {
             logActivity('Thêm khách hàng '.$data['company'].' [' . $return_id . ']');
-            /*
+            
             if($data['type_client'] == 2) {
-                foreach($items as $value) {
-                    if(isset($value['id']) && $value['id'] != '' && $value['id'] != 0) {
-                        exit('what?');
-                    }
-                    else {
-                        $this->db->insert('tblclient_bds', $value);
-                        if($this->db->affected_rows() > 0) {
-
-                        }
-                        else {
-                            echo $this->db->last_query();
-                        }
-                        exit();
-                    }
-                }
+                $this->add_item($return_id, $items[0]);
             }
-            */
+            
             return $return_id;
         }
         return false;
@@ -171,47 +162,45 @@ class Clients_model extends CRM_Model
     }
     public function get_item($id_client, $id) {
         $this->db->select(
-            'id,
+            'tblclient_bds.id,
             (select tblprojectmenu.project_name from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId) as project_name,
-            type,
-            price,
-            rentalPeriod,
-            dateStart'
-        );
-        $this->db->where('clientId', $id_client);
-        $this->db->where('id', $id);
+            tblclient_bds.type,
+            tblclient_bds.price,
+            tblclient_bds.rentalPeriod,
+            tblclient_bds.dateStart,
+            province.name as cityName,
+            district.name as districtName,
+            tblmenubds.menu_name as menuBdsName,
+        ');
+
+        $this->db->join('province', 'province.provinceid = tblclient_bds.city', 'left');
+        $this->db->join('district', 'district.districtid = tblclient_bds.district', 'left');
+        $this->db->join('tblmenubds', 'tblmenubds.id = tblclient_bds.menuBdsId', 'left');
+
+        $this->db->where('tblclient_bds.clientId', $id_client);
+        $this->db->where('tblclient_bds.id', $id);
         
         return $this->db->get('tblclient_bds')->row();
     }
     public function update_client($id,$data)
     {
+        
         $items = $data['items'];
         unset($data['items']);
-
+        if($data['type_client'] != 2) {
+            $data['province'] = $items[0]['city'];
+            $data['district'] = $items[0]['district'];
+            $data['type_bds'] = $items[0]['menuBdsId'];
+            $data['bds']      = $items[0]['projectBdsId'];
+        }
         $this->db->where('userid',$id);
         $this->db->update('tblclients',$data);
         if ($this->db->affected_rows() > 0 || is_array($items)) {
             do_action('after_contract_updated', $id);
             logActivity('Cập nhật khách hàng [' . $id . ']');
-            /*
             if($data['type_client'] == 2) {
-                foreach($items as $value) {
-                    $value['clientId'] = $id;
-                    if(isset($value['id']) && $value['id'] != '' && $value['id'] != 0) {
-                        
-                    }
-                    else {
-                        $this->db->insert('tblclient_bds', $value);
-                        if($this->db->affected_rows() > 0) {
-
-                        }
-                        else {
-
-                        }
-                    }
-                }
+                $this->add_item($id, $items[0]);
             }
-            */
             return true;
         }
         return false;
@@ -916,7 +905,9 @@ class Clients_model extends CRM_Model
         $this->db->delete('tblclients');
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
-
+            // Delete all table tblclient_bds's records
+            $this->db->where('clientId', $id);
+            $this->db->delete('tblclient_bds');
             // Delete all tickets start here
             $this->db->where('userid', $id);
             $tickets = $this->db->get('tbltickets')->result_array();
