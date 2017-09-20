@@ -1689,3 +1689,7 @@ function get_hdhh()
 
 }
 
+function customGetPaymentMethods() {
+    $CI = &get_instance();
+    return $CI->db->get('tblinvoicepaymentsmodes')->result_array();
+}

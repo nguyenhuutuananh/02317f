@@ -18,8 +18,7 @@ $where        = array(
 $join         = array(
 );
 $result       = data_tables_init($aColumns, $sIndexColumn, $sTable,$join, $where, array(
-    // 'tblroles.name',
-    // 'tblroles.roleid'
+    'tblclient_bds.clientId',
 ));
 $output       = $result['output'];
 $rResult      = $result['rResult'];
@@ -64,7 +63,7 @@ foreach ($rResult as $aRow) {
 
         // $_data.= icon_btn('kind_of_warehouse/delete/'. $aRow['id'] , 'remove', 'btn-danger delete-reminder');
         $_data = "";
-        
+        $_data .= icon_btn('clients/client/'. $aRow['clientId'] . '?group=billingperiod&id='.$aRow['id'] , 'bars', 'btn-primary');
         $row[] = $_data;
 
 

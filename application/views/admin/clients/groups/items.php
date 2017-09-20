@@ -181,7 +181,7 @@ $table_data = array(
                     ?>
 
                     <?php
-                    echo render_inline_input('items[0][price]', 'Giá');
+                    echo render_inline_input('items[0][price]', 'Giá', '', 'text', array('onclick' => "formatNumber(this.value)"));
                     ?>
 
                     <?php

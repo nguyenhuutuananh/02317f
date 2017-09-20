@@ -202,6 +202,27 @@
             }
         });
     }
+    $('[name="items[0][price]"], #value, #realValue').on('keyup', (e) => {
+        const current = $(e.currentTarget);
+        var charCode = (e.which) ? e.which : event.keyCode
+        
+        // Remove grop seperate
+
+        current.val( current.val().replace(/\D/g, '') );
+        current.val(formatNumber(current.val()));
+    });
+    //format currency
+    function formatNumber(nStr, decSeperate=".", groupSeperate=",") {
+        nStr += '';
+        x = nStr.split(decSeperate);
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + groupSeperate + '$2');
+        }
+        return x1 + x2;
+    }
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
@@ -235,16 +256,16 @@
                                 $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
                                 break;
                             case 4:
-                                $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Mua" : "Bán")+"</p>");
+                                $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Mua" : "Thuê")+"</p>");
                                 break;
                             case 5:
-                                $(v).html("<p class='form-control-static'>"+numberWithCommas(item.price)+"</p>");
+                                $(v).html("<p class='form-control-static'>"+formatNumber(item.price)+"</p>");
                                 break;
                             case 6:
-                                $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
+                                $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Không" : (item.rentalPeriod + ' tháng'))+"</p>");
                                 break;
                             case 7:
-                                $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
+                                $(v).html("<p class='form-control-static'>"+item.dateStart+"</p>");
                                 break;
                         }
                     });
@@ -259,6 +280,7 @@
         $('#newProduct').modal('show');
         jQuery('#id_type').prop('action', admin_url + 'clients/addProduct/<?=(isset($client) ? $client->userid : "")?>');
     }
+    
     $(() => {
         _validate_form($('.form-item'),{
             'items[0][city]': 'required',
@@ -307,7 +329,106 @@
 // init_rel_tasks_table(<?php echo $client->userid; ?>,'customer');
  <?php if($group=='tasks'){?>
      initDataTable('.table-rel-tasks','<?=admin_url()?>tasks/init_relation_tasks/<?=$client->userid?>/customer' , [0], [3]);
-     <?php }?>
+<?php }?>
+// Billing period
+<?php
+    if($group == 'billingperiod') {
+        ?>
+initDataTable('.table-billing-period','<?=admin_url()?>clients/getBillingPeriod/<?=$client->userid?>/<?=$this->input->get('id')?>' , [0], [3], {}, [1, 'ASC']);
+function new_period(){
+    if(typeof $('#formAddPeriod').validate != 'undefined') {
+        $('#formAddPeriod').validate().resetForm();
+    }
+    $('#addPeriod').modal('show');
+    jQuery('#formAddPeriod').prop('action', admin_url + 'clients/addPeriod/<?=(isset($client) ? $client->userid : "")?>/<?=$this->input->get('id')?>');
+}
+$(document).ready(() => {    
+    _validate_form('#formAddPeriod', {
+        'datePay': 'required',
+        'value': 'required',
+    }, send_data_period_form);
+    _validate_form('#formAddPay', {
+        'datePay': 'required',
+        'realValue': 'required',
+        'idPaymentMethod': 'required',
+    }, send_data_period_form);
+    
+});
+function send_data_period_form(form) {
+    var data = $(form).serialize();
+    var url = form.action;
+    $.post(url, data).done(function(response) {
+        response = JSON.parse(response);
+        if(response.success == true){
+            alert_float('success',response.message);
+            $('#addPeriod').modal('hide');
+            $('#addPayment').modal('hide');
+            $('.table-billing-period').DataTable().ajax.reload();
+
+            $(form)[0].reset();
+            
+            $(form).find('input').val('');
+            $(form).find('select').val('');
+            $(form).find('select').selectpicker('refresh');
+        }
+        else {
+            alert_float('danger',response.message);
+        }
+        
+    }).fail(function() {
+        alert_float('danger', 'Lỗi nhận dữ liệu!');
+    });
+    return false;
+}
+// Payment
+function new_payment(stt, paymentId){
+    if(typeof $('#formAddPay').validate != 'undefined') {
+        $('#formAddPay').validate().resetForm();
+    }
+    
+    
+    $('#addPayment').modal('show');
+    $('#addPayment').find('.edit-title').html('Thanh toán đợt '+stt);
+    jQuery('#formAddPay').prop('action', admin_url + 'clients/addPayment/<?=(isset($client) ? $client->userid : "")?>/<?=$this->input->get('id')?>/'+paymentId);
+}
+function view_payment(stt, paymentId) {
+    const htmlTableDetail = `
+    <?php
+            $table_data = array(
+                _l('STT'),
+                _l('Ngày thanh toán'),
+                _l('Số tiền'),
+                _l('Thanh toán bằng'),
+                _l('actions'),
+                );
+                render_datatable($table_data,'billing-payment');
+            ?>
+    `;
+    $('#viewPaymentList').find('.edit-title').html('Danh sách thanh toán đợt '+stt);
+    $('#viewPaymentList').find('.modal-body').html(htmlTableDetail);
+    $('#viewPaymentList').modal('show');
+    initDataTable('.table-billing-payment','<?=admin_url()?>clients/getPayment/<?=$this->input->get('id')?>/' + paymentId , [0], [3], {}, [1, 'DESC']);
+}
+$('body').on('click', '.delete-reminder-client', function() {
+    var r = confirm(confirm_action_prompt);
+    const thisButton = $(this);
+    if (r == false) {
+        return false;
+    } else {
+        $.get($(this).attr('href'), function(response) {
+            alert_float(response.alert_type, response.message);
+            if(response.alert_type != 'danger') {
+                $('.table-billing-payment').DataTable().ajax.reload();
+                $('.table-billing-period').DataTable().ajax.reload();
+            }
+        }, 'json');
+    }
+    return false;
+});
+        <?php
+    }
+?>
+
 </script>
 
 </script>

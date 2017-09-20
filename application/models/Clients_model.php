@@ -182,6 +182,121 @@ class Clients_model extends CRM_Model
         
         return $this->db->get('tblclient_bds')->row();
     }
+    
+    // Billing period
+    public function add_period($idClient, $idItem, $data) {
+        $this->db->where('userid',$idClient);
+        $client = $this->db->get('tblclients',$data)->row();
+        
+        $this->db->where('id',$idItem);
+        $item = $this->db->get('tblclient_bds',$data)->row();
+
+        $data['idClientBds'] = $item->id;
+
+        if($data['value']*1 <= 0)
+        {
+            return false;
+        }
+
+        if($item && $client && $item->clientId == $client->userid) {
+            $this->db->insert('tblclient_bds_payment', $data);
+            if($this->db->affected_rows() > 0) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    public function updatePaymentStatus($idClientBdsPayment) {
+        // Cập nhật status cho payment
+        $this->db->select_sum('realValue');
+        $this->db->where('idClientBdsPayment', $idClientBdsPayment);
+        $itemSumDetail = $this->db->get('tblclient_bds_payment_details')->row();
+        
+        $this->db->where('id', $idClientBdsPayment);
+        $itemPayment = $this->db->get('tblclient_bds_payment')->row();
+
+        if($itemPayment && $itemSumDetail) {
+            $this->db->where('id', $idClientBdsPayment);
+            // Dư hoặc vừa đủ thì cập nhật đủ
+            if($itemPayment->value <= $itemSumDetail->realValue) {
+                $data = array(
+                    'status' => '1',
+                );
+            }
+            // Bằng 0 thì chưa nhận
+            else if($itemSumDetail->realValue == 0)
+            {
+                $data = array(
+                    'status' => '0',
+                );
+            }
+            // Thiếu thì xác nhận nhận chưa đủ
+            else {
+                $data = array(
+                    'status' => '2',
+                );
+            }
+            $this->db->update('tblclient_bds_payment', $data);
+        }
+    }
+    public function add_payment($idClient, $idItem, $idClientBdsPayment, $data) {
+        
+        $this->db->where('userid',$idClient);
+        $client = $this->db->get('tblclients')->row();
+        
+        $this->db->where('id',$idItem);
+        $item = $this->db->get('tblclient_bds')->row();
+    
+        $this->db->where('id', $idClientBdsPayment);
+        $payment = $this->db->get('tblclient_bds_payment')->row();
+        
+        
+        $data['idClientBdsPayment'] = $idClientBdsPayment;
+
+        if($data['realValue']*1 <= 0)
+        {
+            return false;
+        }
+        
+        if($item && $client && $item->clientId == $client->userid && $payment->idClientBds == $item->id) {
+            $this->db->insert('tblclient_bds_payment_details', $data);
+            
+            if($this->db->affected_rows() > 0) {
+                $this->updatePaymentStatus($idClientBdsPayment);
+                return true;
+            }
+            else {
+                exit($this->db->last_query());
+            }
+        }
+        
+        return false;
+    }
+
+    public function deletePayment($idClientBds, $idPayment, $idPaymentDetail) {
+        $this->db->where('id', $idPaymentDetail);
+        $paymentDetail = $this->db->get('tblclient_bds_payment_details')->row();
+
+        $this->db->where('id', $idPayment);
+        $payment = $this->db->get('tblclient_bds_payment')->row();
+
+        $this->db->where('id', $idClientBds);
+        $clientBds = $this->db->get('tblclient_bds')->row();
+
+        if($paymentDetail->idClientBdsPayment == $payment->id && $payment->idClientBds == $clientBds->id)
+        {
+            $this->db->where('id', $idPaymentDetail);
+            $this->db->delete('tblclient_bds_payment_details');
+            if($this->db->affected_rows() > 0) {
+                $this->updatePaymentStatus($paymentDetail->idClientBdsPayment);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // End Billing period
     public function update_client($id,$data)
     {
         

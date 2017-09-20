@@ -760,6 +760,7 @@ class Clients extends Admin_controller
         $message = "Thêm thất bại!";
         $data = $this->input->post();
         if($client && $data) {
+            $data['items'][0]['price'] = preg_replace('/\D/', '', $data['items'][0]['price']);
             $result = $this->clients_model->add_item($idClient, $data['items'][0]);
             if($result) {
                 $success = true;
@@ -772,7 +773,7 @@ class Clients extends Admin_controller
         )));
     }
     public function delete($idClient) {
-        if (!has_permission('customers', '', 'view')) {
+        if(!has_permission('customers', '', 'view')) {
             if ($id != '' && !is_customer_admin($id)) {
                 access_denied('customers');
             }
@@ -785,5 +786,79 @@ class Clients extends Admin_controller
             $response->message = "Xóa thành công";
         }
         exit(json_encode($response));
+    }
+
+    // Billing period
+    public function addPeriod($idClient, $idProduct) {
+        $success = false;
+        $message = "Thêm thất bại!";
+        $data = $this->input->post();
+        if($data) {
+            $data['status'] = 0;
+            $data['value'] = preg_replace('/\D/', '', $data['value']);
+            $result = $this->clients_model->add_period($idClient, $idProduct, $data);
+            if($result) {
+                $success = true;
+                $message = "Thêm thành công!";
+            }
+        }
+        exit(json_encode(array(
+            'success' => $success,
+            'message' => $message
+        )));
+    }
+    public function getBillingPeriod($idClient, $idProduct)
+    {
+        $this->perfex_base->get_table_data('client_item_billing_period', array(
+            'clientId' => $idClient,
+            'idProduct' => $idProduct,
+        ));
+    }
+    
+    public function addPayment($idClient, $idProduct, $idClientBdsPayment) {
+        $success = false;
+        $message = "Thêm thất bại!";
+        $data = $this->input->post();
+        if($data) {
+            $data['realValue'] = preg_replace('/\D/', '', $data['realValue']);
+            
+            $result = $this->clients_model->add_payment($idClient, $idProduct, $idClientBdsPayment, $data);
+            if($result) {
+                $success = true;
+                $message = "Thêm thành công!";
+            }
+        }
+        exit(json_encode(array(
+            'success' => $success,
+            'message' => $message
+        )));
+    }
+    public function getPayment($idClientBds, $idPayment)
+    {
+        $this->perfex_base->get_table_data('client_item_billing_period_payment', array(
+            'idClientBds' => $idClientBds,
+            'idPayment' => $idPayment,
+        ));
+    }
+    public function deletePayment($idClientBds, $idPayment, $idPaymentDetail)
+    {
+        if(!has_permission('customers', '', 'view')) {
+            if ($id != '' && !is_customer_admin($id)) {
+                access_denied('customers');
+            }
+        }
+        $response = new stdClass();
+        $response->alert_type = 'danger';
+        $response->message = "Xóa thất bại";
+
+        
+        if($this->clients_model->deletePayment($idClientBds, $idPayment, $idPaymentDetail)) {
+            $response->alert_type = 'success';
+            $response->message = "Xóa thành công";
+        }
+        exit(json_encode($response));
+
+        
+        
     }
 }
