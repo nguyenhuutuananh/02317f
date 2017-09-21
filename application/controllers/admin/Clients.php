@@ -561,8 +561,11 @@ class Clients extends Admin_controller
             $data = $this->input->post();
             // print_r($data);
             // exit();
-            $data['time_bonus']=implode(',',$data['time_bonus']);
-            $data['num_bonus']=implode(',',$data['num_bonus']);
+            if(isset($data['time_bonus'])) {
+
+            }
+            // $data['time_bonus']=implode(',',$data['time_bonus']);
+            // $data['num_bonus']=implode(',',$data['num_bonus']);
             $data['type_client']=$this->input->get('type_client');
             if($id=="")
             {
@@ -608,6 +611,28 @@ class Clients extends Admin_controller
                             redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
                         }
                     }
+
+                    if($group == 'billingperiod') {
+                        $idItem = $this->input->get('id');
+                        if(!is_null($this->input->get('id'))) {
+                            $result = $this->clients_model->get_period($id, $this->input->get('id'));
+                            if($result) {
+                                $data['period'] = $result;
+                                $data['total_period'] = $this->clients_model->count_period($id, $idItem);
+                            }
+                            else
+                            {
+                                redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));    
+                            }
+                        }
+                        else {
+                            redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                        }
+                    }
+                    $data['total_item'] = $this->clients_model->count_items($id);
+                    $data['total_value'] = $this->clients_model->sum_item_value($id, $idItem);
+                    $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($id, $idItem);
+                    
                 }
             }
             else
@@ -860,5 +885,15 @@ class Clients extends Admin_controller
 
         
         
+    }
+    public function paymentHistory($idClient) {
+        if(!has_permission('customers', '', 'view')) {
+            if ($id != '' && !is_customer_admin($id)) {
+                access_denied('customers');
+            }
+        }
+        $this->perfex_base->get_table_data('client_payment', array(
+            'idClient' => $idClient,
+        ));
     }
 }

@@ -129,6 +129,18 @@ class Clients_model extends CRM_Model
     {
         $items = $data['items'];
         unset($data['items']);
+
+        $time_bonus = $data['time_bonus'];
+        $num_bonus = $data['num_bonus'];
+
+        $period = array(
+            'time_bonus' => $time_bonus,
+            'num_bonus' => $num_bonus,
+        );
+
+        unset($data['time_bonus']);
+        unset($data['num_bonus']);
+
         if($data['type_client'] != 2) {
             $data['province'] = $items[0]['city'];
             $data['district'] = $items[0]['district'];
@@ -142,20 +154,34 @@ class Clients_model extends CRM_Model
             logActivity('Thêm khách hàng '.$data['company'].' [' . $return_id . ']');
             
             if($data['type_client'] == 2) {
-                $this->add_item($return_id, $items[0]);
+                $this->add_item($return_id, $items[0], $period);
             }
             
             return $return_id;
         }
         return false;
     }
-    public function add_item($id_client, $data) {
+    public function add_item($id_client, $data, $period = array()) {
         $this->db->where('userid',$id_client);
         $client = $this->db->get('tblclients',$data)->row();
         $data['clientId'] = $id_client;
+        $data['price'] = preg_replace('/\D/', '', $data['price']);
         $this->db->insert('tblclient_bds', $data);
-        
+        $insert_id = $this->db->insert_id();
+
         if($this->db->affected_rows() > 0) {
+            if(count($period) > 0 && count($period['time_bonus']) > 0 ) {
+                foreach($period['time_bonus'] as $key => $value) {
+                    
+                    $data = array(
+                        'idClientBds' => $insert_id,
+                        'value' => $period['num_bonus'][$key],
+                        'datePay' => $value,
+                    );
+                    $data['value'] = preg_replace('/\D/', '', $data['value']);
+                    $this->db->insert('tblclient_bds_payment', $data);
+                }
+            }
             return true;
         }
         return false;
@@ -184,6 +210,18 @@ class Clients_model extends CRM_Model
     }
     
     // Billing period
+    public function get_period($idClient, $idItem) {
+        $this->db->where('userid',$idClient);
+        $client = $this->db->get('tblclients',$data)->row();
+        
+        $this->db->where('tblclient_bds.id',$idItem);
+        $this->db->join('tblprojectmenu', 'tblprojectmenu.id=tblclient_bds.projectBdsId');
+        $item = $this->db->get('tblclient_bds',$data)->row();
+        if($item && $client && $item->clientId == $client->userid) {
+            return $item;
+        }
+        return false;
+    }
     public function add_period($idClient, $idItem, $data) {
         $this->db->where('userid',$idClient);
         $client = $this->db->get('tblclients',$data)->row();
@@ -296,12 +334,60 @@ class Clients_model extends CRM_Model
         return false;
     }
 
+    public function count_items($idClient) {
+        $this->db->where('clientId', $idClient);
+        return count($this->db->get('tblclient_bds')->result());
+    }
+    public function count_period($idClient, $idItem)
+    {
+        $this->db->join('tblclient_bds', 'tblclient_bds.id = tblclient_bds_payment.idClientBds');
+        $this->db->where('tblclient_bds.clientId', $idClient);
+        $this->db->where('tblclient_bds.id', $idItem);
+        return count($this->db->get('tblclient_bds_payment')->result());
+    }
+    public function sum_item_value($idClient, $idItem='')
+    {
+        $this->db->select_sum('tblclient_bds.price');
+        $this->db->where('tblclient_bds.clientId', $idClient);
+        if($idItem)
+        {
+            $this->db->where('tblclient_bds.id', $idItem);
+        }
+        return $this->db->get('tblclient_bds')->row()->price;
+    }
+
+    public function sum_item_paid_value($idClient, $idItem='') {
+        $this->db->select_sum('tblclient_bds_payment_details.realValue');
+
+        $this->db->join('tblclient_bds_payment', 'tblclient_bds_payment.id = tblclient_bds_payment_details.idClientBdsPayment');
+        $this->db->join('tblclient_bds', 'tblclient_bds.id = tblclient_bds_payment.idClientBds');
+        $this->db->where('tblclient_bds.clientId', $idClient);
+        if($idItem)
+        {
+            $this->db->where('tblclient_bds.id', $idItem);
+        }
+        return $this->db->get('tblclient_bds_payment_details')->row()->realValue;
+    }
+
     // End Billing period
     public function update_client($id,$data)
     {
         
         $items = $data['items'];
         unset($data['items']);
+
+        $time_bonus = $data['time_bonus'];
+        $num_bonus = $data['num_bonus'];
+
+        $period = array(
+            'time_bonus' => $time_bonus,
+            'num_bonus' => $num_bonus,
+        );
+
+        unset($data['time_bonus']);
+        unset($data['num_bonus']);
+
+
         if($data['type_client'] != 2) {
             $data['province'] = $items[0]['city'];
             $data['district'] = $items[0]['district'];
@@ -309,12 +395,14 @@ class Clients_model extends CRM_Model
             $data['bds']      = $items[0]['projectBdsId'];
         }
         $this->db->where('userid',$id);
+        // print_r($items[0]);
+        // exit();
         $this->db->update('tblclients',$data);
         if ($this->db->affected_rows() > 0 || is_array($items)) {
             do_action('after_contract_updated', $id);
             logActivity('Cập nhật khách hàng [' . $id . ']');
             if($data['type_client'] == 2) {
-                $this->add_item($id, $items[0]);
+                $this->add_item($id, $items[0], $period);
             }
             return true;
         }

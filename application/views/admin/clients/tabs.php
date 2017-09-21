@@ -22,15 +22,15 @@ $customer_tabs = array(
         'url'=>admin_url('clients/client/'.$client->userid.'?group=items'),
         'icon'=>'fa fa-bars',
         'lang'=>_l('Lịch sử mua hàng'),
-        'visible'=>true,
+        'visible'=> (isset($client) && $client->type_client >= 2),
         'order'=>3
         ),
   array(
-      'name'=>'payments',
-      'url'=>admin_url('clients/client/'.$client->userid.'?group=payments'),
+      'name'=>'paymenthistory',
+      'url'=>admin_url('clients/client/'.$client->userid.'?group=paymenthistory'),
       'icon'=>'fa fa-line-chart',
       'lang'=>_l('client_payments_tab'),
-      'visible'=>(has_permission('payments','','view') || has_permission('invoices','','view_own')),
+      'visible'=> (isset($client) && $client->type_client >= 2) && (has_permission('payments','','view') || has_permission('invoices','','view_own')),
       'order'=> 4
       ),
   array(

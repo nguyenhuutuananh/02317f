@@ -6,6 +6,8 @@ $aColumns     = array(
     'id',
     'datePay',
     'value',
+    '(select sum(tblclient_bds_payment_details.realValue) as paid from tblclient_bds_payment_details where tblclient_bds_payment_details.idClientBdsPayment = tblclient_bds_payment.id) as paid',
+    'value as value2',
     'status',
 );
 $sIndexColumn = "id";
@@ -59,7 +61,14 @@ foreach ($rResult as $aRow) {
             case 'value':
                 $_data = number_format($_data); 
                 break;
-            
+            case '(select sum(tblclient_bds_payment_details.realValue) as paid from tblclient_bds_payment_details where tblclient_bds_payment_details.idClientBdsPayment = tblclient_bds_payment.id) as paid':
+                $_data = $aRow['paid'];
+                $_data = number_format($_data); 
+                break;
+            case 'value as value2':
+                $_data = $aRow['value']-$aRow['paid'];
+                $_data = number_format($_data); 
+                break;
         }
 
         $row[] = $_data;

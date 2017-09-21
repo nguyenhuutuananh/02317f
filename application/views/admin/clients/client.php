@@ -32,42 +32,43 @@
     <div class="content">
         <div class="row">
             <?php 
-                $mess="";
-                $font="font-size: 10px";
+            $mess = "";
+            $font = "font-size: 10px";
             ?>
-            <?php if($type_client){
-                if($type_client==1)
-                {
-                    $mess="Đang quan tâm";
-                    $font="font-size: 10px";
-                    $class="info";
+            <?php if ($type_client) {
+                if ($type_client == 1)
+                    {
+                    $mess = "Đang quan tâm";
+                    $font = "font-size: 10px";
+                    $class = "info";
                 }
-                if($type_client==2)
-                {
-                    $mess="Đã giao dịch";
-                    $class="success";
+                if ($type_client == 2)
+                    {
+                    $mess = "Đã giao dịch";
+                    $class = "success";
                 }
-                if($type_client==3)
-                {
-                    $mess="Khách hàng Fail";
-                    $font="font-size: 9px";
-                    $class="danger";
+                if ($type_client == 3)
+                    {
+                    $mess = "Khách hàng Fail";
+                    $font = "font-size: 9px";
+                    $class = "danger";
                 }
-               
+
             }
             ?>
 
-        <?php if (isset($client)  && is_null($this->input->get('convert'))) { ?>
+        <?php if (isset($client) && is_null($this->input->get('convert'))) { ?>
             
             <div class="col-md-3">
                 <div class="panel_s">
                
                 <div class="panel-body">
-                    <?php if($type_client){?>
-                        <div class="ribbon <?=$class?>">
-                            <span style="<?=$font?>"><?=$mess?></span>
+                    <?php if ($type_client) { ?>
+                        <div class="ribbon <?= $class ?>">
+                            <span style="<?= $font ?>"><?= $mess ?></span>
                         </div>
-                    <?php }?>
+                    <?php 
+                } ?>
                     <?php if (has_permission('customers', '', 'delete') || is_admin()) { ?>
                     <div class="btn-group pull-left mright10">
                     <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -99,13 +100,124 @@
                 </div>
             </div>
             <?php 
-            } ?>
-            <div class="col-md-<?=(!isset($client) || !is_null($this->input->get('convert')) ? 12 : 9)?>">
+        } ?>
+            <div class="col-md-<?= (!isset($client) || !is_null($this->input->get('convert')) ? 12 : 9) ?>">
                 <div class="panel_s">
                     <div class="panel-body">
                 
                         <div class="tab-content">
-                        <?php $this->load->view('admin/clients/groups/'.$group); ?>
+                        <?php $this->load->view('admin/clients/groups/' . $group); ?>
+                        <div class="modal fade lead-modal" id="viewProduct" tabindex="-1" role="dialog"  >
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">
+                                            <span class="edit-title">Khách hàng mua/thuê</span>
+                                        </h4>
+                                    </div>
+                                    <?php echo form_open('#', array('id' => 'id_type', 'class' => 'form-item form-horizontal')); ?>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <?php
+                                            echo render_inline_select('items[0][city]', $province, array('provinceid', 'name', 'type'), 'Tỉnh/Thành phố', '', array('onchange' => 'get_district_client(this)'));
+                                            ?>
+                                            
+                                            <?php
+                                            echo render_inline_select('items[0][district]', $district, array('districtid', 'name', 'type'), 'Quận/huyện', '', array());
+                                            ?>
+
+                                            <?php
+                                            echo render_inline_select('items[0][menuBdsId]', $menu_project, array('id', 'menu_name'), 'Loại bất động sản', '', array('onchange' => 'get_project(this)'));
+                                            ?>
+
+                                            <?php echo render_inline_select('items[0][projectBdsId]', $id_project_bds, array('id', 'project_name', 'code'), 'Dự án', '', array()); ?>
+                                            <?php
+                                            $type_options = array(
+                                                array(
+                                                    'id' => 1,
+                                                    'value' => 'Mua'
+                                                ),
+                                                array(
+                                                    'id' => 2,
+                                                    'value' => 'Thuê'
+                                                ),
+                                            );
+                                            echo render_inline_select('items[0][type]', $type_options, array('id', 'value'), 'Hình thức', '', array(), array(), '', '', false);
+                                            ?>
+
+                                            <?php
+                                            echo render_inline_input('items[0][price]', 'Giá', '', 'text', array('onclick' => "formatNumber(this.value)"));
+                                            ?>
+
+                                            <?php
+                                            $period_options = array(
+                                                array(
+                                                    'id' => 1,
+                                                    'value' => '1 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 2,
+                                                    'value' => '2 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 3,
+                                                    'value' => '3 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 4,
+                                                    'value' => '4 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 5,
+                                                    'value' => '5 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 6,
+                                                    'value' => '6 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 7,
+                                                    'value' => '7 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 8,
+                                                    'value' => '8 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 9,
+                                                    'value' => '9 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 10,
+                                                    'value' => '10 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 11,
+                                                    'value' => '11 tháng'
+                                                ),
+                                                array(
+                                                    'id' => 12,
+                                                    'value' => '12 tháng'
+                                                ),
+                                            );
+                                            echo render_inline_select('items[0][rentalPeriod]', $period_options, array('id', 'value'), 'Thời hạn thuê');
+                                            ?>
+                                            <?php
+                                            echo render_inline_date_input('items[0][dateStart]', 'Ngày mua/thuê', date('Y-m-d'));
+                                            ?>
+                                            
+                                            </div> 
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
+                                    </div>
+                                    <?php echo form_close(); ?>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
                         </div>
                     </div>
                 </div>
@@ -114,7 +226,7 @@
     </div>
 </div>
 <?php init_tail(); ?>
-<?php include_once(APPPATH . 'views/admin/clients/client_js.php');?>
+<?php include_once (APPPATH . 'views/admin/clients/client_js.php'); ?>
 
 <script>
 
@@ -123,7 +235,7 @@
         jQuery.ajax({
             type: "post",
             dataType:'json',
-            url: "<?=admin_url()?>clients/get_project/"+id.value,
+            url: "<?= admin_url() ?>clients/get_project/"+id.value,
             data: '',
             cache: false,
             success: function (data) {
@@ -189,7 +301,7 @@
         jQuery.ajax({
             type: "post",
             dataType:'json',
-            url: "<?=admin_url()?>clients/get_district/"+id.value,
+            url: "<?= admin_url() ?>clients/get_district/"+id.value,
             data: '',
             cache: false,
             success: function (data) {
@@ -202,7 +314,7 @@
             }
         });
     }
-    $('[name="items[0][price]"], #value, #realValue').on('keyup', (e) => {
+    $(document).on('keyup', '[name="items[0][price]"], #value, #realValue, input[name="num_bonus[]"]', (e) => {
         const current = $(e.currentTarget);
         var charCode = (e.which) ? e.which : event.keyCode
         
@@ -230,7 +342,7 @@
     {
         jQuery.ajax({
             type: "post",
-            url:admin_url+"clients/getProduct/<?=(isset($client) ? $client->userid : '' )?>/"+id,
+            url:admin_url+"clients/getProduct/<?= (isset($client) ? $client->userid : '') ?>/"+id,
             data: '',
             cache: false,
             dataType: 'json',
@@ -265,7 +377,8 @@
                                 $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Không" : (item.rentalPeriod + ' tháng'))+"</p>");
                                 break;
                             case 7:
-                                $(v).html("<p class='form-control-static'>"+item.dateStart+"</p>");
+                                const d = new Date(item.dateStart);
+                                $(v).html("<p class='form-control-static'>"+d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+"</p>");
                                 break;
                         }
                     });
@@ -278,7 +391,7 @@
     }
     function new_product(){
         $('#newProduct').modal('show');
-        jQuery('#id_type').prop('action', admin_url + 'clients/addProduct/<?=(isset($client) ? $client->userid : "")?>');
+        jQuery('#id_type').prop('action', admin_url + 'clients/addProduct/<?= (isset($client) ? $client->userid : "") ?>');
     }
     
     $(() => {
@@ -309,7 +422,7 @@
             $('.selectpicker').change();
             $('.selectpicker').selectpicker('refresh');
 
-            $(form).find('.datepicker').val('<?=date('Y-m-d')?>');
+            $(form).find('.datepicker').val('<?= date('Y-m-d') ?>');
             $('.table-client-items').DataTable().ajax.reload();
             $('#newProduct').modal('hide');
         });
@@ -319,28 +432,29 @@
         initDataTable('.table-client-items', window.location.href, [0], [0]);
     }
     
-    initDataTable('.table-call-logs','<?=admin_url()?>newview/init_relation_logs/<?php echo $id_bds; ?>' , [0], [0]);
-    initDataTable('.table-master_bds','<?=admin_url()?>newview/init_relation_master_bds/<?php echo $id_bds; ?>' , [0], [0]);
-    initDataTable('.table-people-take','<?=admin_url()?>newview/init_relation_take/<?php echo $id_bds; ?>' , [3], [3]);
+    initDataTable('.table-call-logs','<?= admin_url() ?>newview/init_relation_logs/<?php echo $id_bds; ?>' , [0], [0]);
+    initDataTable('.table-master_bds','<?= admin_url() ?>newview/init_relation_master_bds/<?php echo $id_bds; ?>' , [0], [0]);
+    initDataTable('.table-people-take','<?= admin_url() ?>newview/init_relation_take/<?php echo $id_bds; ?>' , [3], [3]);
 </script>
-<?php include_once(APPPATH . 'views/admin/newview/script_project.php');?>
+<?php include_once (APPPATH . 'views/admin/newview/script_project.php'); ?>
 <?php if (isset($client)) { ?>
 <script>
 // init_rel_tasks_table(<?php echo $client->userid; ?>,'customer');
- <?php if($group=='tasks'){?>
-     initDataTable('.table-rel-tasks','<?=admin_url()?>tasks/init_relation_tasks/<?=$client->userid?>/customer' , [0], [3]);
-<?php }?>
+ <?php if ($group == 'tasks') { ?>
+     initDataTable('.table-rel-tasks','<?= admin_url() ?>tasks/init_relation_tasks/<?= $client->userid ?>/customer' , [0], [3]);
+<?php 
+} ?>
 // Billing period
 <?php
-    if($group == 'billingperiod') {
-        ?>
-initDataTable('.table-billing-period','<?=admin_url()?>clients/getBillingPeriod/<?=$client->userid?>/<?=$this->input->get('id')?>' , [0], [3], {}, [1, 'ASC']);
+if ($group == 'billingperiod') {
+    ?>
+initDataTable('.table-billing-period','<?= admin_url() ?>clients/getBillingPeriod/<?= $client->userid ?>/<?= $this->input->get('id') ?>' , [0], [3], {}, [1, 'ASC']);
 function new_period(){
     if(typeof $('#formAddPeriod').validate != 'undefined') {
         $('#formAddPeriod').validate().resetForm();
     }
     $('#addPeriod').modal('show');
-    jQuery('#formAddPeriod').prop('action', admin_url + 'clients/addPeriod/<?=(isset($client) ? $client->userid : "")?>/<?=$this->input->get('id')?>');
+    jQuery('#formAddPeriod').prop('action', admin_url + 'clients/addPeriod/<?= (isset($client) ? $client->userid : "") ?>/<?= $this->input->get('id') ?>');
 }
 $(document).ready(() => {    
     _validate_form('#formAddPeriod', {
@@ -385,29 +499,28 @@ function new_payment(stt, paymentId){
     if(typeof $('#formAddPay').validate != 'undefined') {
         $('#formAddPay').validate().resetForm();
     }
-    
-    
+
     $('#addPayment').modal('show');
     $('#addPayment').find('.edit-title').html('Thanh toán đợt '+stt);
-    jQuery('#formAddPay').prop('action', admin_url + 'clients/addPayment/<?=(isset($client) ? $client->userid : "")?>/<?=$this->input->get('id')?>/'+paymentId);
+    jQuery('#formAddPay').prop('action', admin_url + 'clients/addPayment/<?= (isset($client) ? $client->userid : "") ?>/<?= $this->input->get('id') ?>/'+paymentId);
 }
 function view_payment(stt, paymentId) {
     const htmlTableDetail = `
     <?php
-            $table_data = array(
-                _l('STT'),
-                _l('Ngày thanh toán'),
-                _l('Số tiền'),
-                _l('Thanh toán bằng'),
-                _l('actions'),
-                );
-                render_datatable($table_data,'billing-payment');
-            ?>
+    $table_data = array(
+        _l('STT'),
+        _l('Ngày thanh toán'),
+        _l('Số tiền'),
+        _l('Thanh toán bằng'),
+        _l('actions'),
+    );
+    render_datatable($table_data, 'billing-payment');
+    ?>
     `;
     $('#viewPaymentList').find('.edit-title').html('Danh sách thanh toán đợt '+stt);
     $('#viewPaymentList').find('.modal-body').html(htmlTableDetail);
     $('#viewPaymentList').modal('show');
-    initDataTable('.table-billing-payment','<?=admin_url()?>clients/getPayment/<?=$this->input->get('id')?>/' + paymentId , [0], [3], {}, [1, 'DESC']);
+    initDataTable('.table-billing-payment','<?= admin_url() ?>clients/getPayment/<?= $this->input->get('id') ?>/' + paymentId , [0], [3], {}, [1, 'DESC']);
 }
 $('body').on('click', '.delete-reminder-client', function() {
     var r = confirm(confirm_action_prompt);
@@ -426,13 +539,21 @@ $('body').on('click', '.delete-reminder-client', function() {
     return false;
 });
         <?php
+
     }
+    ?>
+<?php 
+}
+if ($group == 'paymenthistory') {
+    ?>
+initDataTable('.table-payment-history','<?= admin_url() ?>clients/paymentHistory/<?= $client->userid ?>' , [0], [3], {}, [2, 'DESC']);
+<?php
+
+}
 ?>
 
 </script>
 
-</script>
-<?php 
-} ?>
+
 </body>
 </html>

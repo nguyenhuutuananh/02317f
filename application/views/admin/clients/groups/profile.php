@@ -14,6 +14,31 @@ if(!is_null($convert_to)) {
 </a>
 <h4 class="bold no-margin"><?php echo _l('Thông tin Khách hàng '); ?></h4>
 
+<div class="clearfix">
+    <br />
+</div>
+<div class="row">
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_item)?></h3>
+        <span class="text-info">TỔNG SẢN PHẨM</span>
+    </div>
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_value)?></h3>
+        <span class="text-warning">TỔNG CÔNG NỢ</span>
+    </div>
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_value_paid)?></h3>
+        <span class="text-success">ĐÃ THANH TOÁN</span>
+    </div>
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_value-$total_value_paid)?></h3>
+        <span class="text-danger">CHƯA THANH TOÁN</span>
+    </div>
+</div>
+<div class="clearfix">
+    <br />
+</div>
+
 <hr class="no-mbot no-border" />
 <div class="row">
     <div class="additional"></div>
@@ -108,10 +133,17 @@ if(!is_null($convert_to)) {
                         {
                         ?>
                         <span class="text-center">
-                            <a class="btn btn-primary" href="<?=admin_url('clients/client/')?><?=$client->userid?>?type_client=2&convert=true">Chuyển sang khách hàng FAIL</a>
+                            <a class="btn btn-primary" href="<?=admin_url('clients/client/')?><?=$client->userid?>?type_client=2&convert=true&back=1">Chuyển sang khách hàng FAIL</a>
                         </span>
-                            
                         <?php
+                        }
+
+                        if($type_client == 2 && $convert && !is_null($this->input->get('back'))) {
+                            ?>
+                        <span class="text-center">
+                            <a class="btn btn-warning" href="<?=admin_url('clients/client/')?><?=$client->userid?>?type_client=1&convert=true">Trở lại chuyển sang khách hàng MUA/THUÊ</a>
+                        </span>
+                            <?php
                         }
                         ?>
                         <p class="text-dark text-uppercase" style="text-align: center;"></p>
@@ -124,7 +156,7 @@ if(!is_null($convert_to)) {
                             <fieldset>
                                 <legend>
                                 <?php
-                                    if($type_client == 2 || ($type_client == 1 && !is_null($convert))) {
+                                    if(($type_client == 1 && !is_null($convert))) {
                                         ?>
                                             Thông tin sản phẩm
                                         <?php
@@ -323,7 +355,7 @@ if(!is_null($convert_to)) {
                         ?>
                         
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <?php if ( ($type_client == 2 && !$convert) || ($type_client == 1 && $convert)) { ?>
+                            <?php if (($type_client == 1 && $convert)) { ?>
                                 <p class="text-dark text-uppercase" style="text-align: center;"></p>
                                 <hr class="no-mtop">
                                 <fieldset>

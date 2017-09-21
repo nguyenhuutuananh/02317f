@@ -1,7 +1,6 @@
 
-<h4 class="no-mtop bold"><?php echo _l('Đợt thanh toán'); ?></h4>
+<h4 class="no-mtop bold"><?php echo _l('Đợt thanh toán cho ') . $period->project_name . ' / ' . date('Y-m-d', strtotime($period->dateStart));  ?></h4>
 <hr />
-
 <?php
     if(has_permission('projects','','view')){
 ?>
@@ -11,13 +10,34 @@
 ?>
 
 <div class="row">
-
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_period)?></h3>
+        <span class="text-info">TỔNG ĐỢT THANH TOÁN</span>
+    </div>
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_value)?></h3>
+        <span class="text-warning">TỔNG CÔNG NỢ</span>
+    </div>
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_value_paid)?></h3>
+        <span class="text-success">ĐÃ THANH TOÁN</span>
+    </div>
+    <div class="col-md-3 col-xs-6 border-right text-center">
+        <h3 class="bold"><?=number_format($total_value-$total_value_paid)?></h3>
+        <span class="text-danger">CHƯA THANH TOÁN</span>
+    </div>
 </div>
+<div class="clearfix">
+    <br />
+</div>
+
 <?php
 $table_data = array(
     _l('Đợt'),
     _l('Hạn thanh toán'),
     _l('Số tiền'),
+    _l('Đã thanh toán'),
+    _l('Còn lại'),
     _l('Trạng thái'),
     _l('actions'),
     );
