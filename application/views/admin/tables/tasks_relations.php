@@ -155,13 +155,13 @@ foreach ($rResult as $aRow) {
             $tooltip = ' data-toggle="tooltip" data-title="' . _l('task_start_timer_only_assignee') . '"';
         }
     }
-    if (!$this->_instance->tasks_model->is_timer_started($aRow['id'])) {
-        $options .= '<span' . $tooltip . ' class="pull-right">' . icon_btn('#', 'clock-o', $class . ' no-margin', $atts) . '</span>';
-    } else {
-        $options .= icon_btn('#', 'clock-o', 'btn-danger pull-right no-margin', array(
-            'onclick' => 'timer_action(this,' . $aRow['id'] . ',' . $this->_instance->tasks_model->get_last_timer($aRow['id'])->id . '); return false'
-        ));
-    }
+    // if (!$this->_instance->tasks_model->is_timer_started($aRow['id'])) {
+    //     $options .= '<span' . $tooltip . ' class="pull-right">' . icon_btn('#', 'clock-o', $class . ' no-margin', $atts) . '</span>';
+    // } else {
+    //     $options .= icon_btn('#', 'clock-o', 'btn-danger pull-right no-margin', array(
+    //         'onclick' => 'timer_action(this,' . $aRow['id'] . ',' . $this->_instance->tasks_model->get_last_timer($aRow['id'])->id . '); return false'
+    //     ));
+    // }
     $row[]              = $options;
     $rowClass = '';
     if ((!empty($aRow['duedate']) && $aRow['duedate'] < date('Y-m-d')) && $aRow['status'] != 5) {

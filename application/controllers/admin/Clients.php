@@ -632,7 +632,13 @@ class Clients extends Admin_controller
                     $data['total_item'] = $this->clients_model->count_items($id);
                     $data['total_value'] = $this->clients_model->sum_item_value($id, $idItem);
                     $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($id, $idItem);
-                    
+                    $data['attachments']   = $this->clients_model->get_all_customer_attachments($id);
+                    $data['staff']           = $this->staff_model->get('', 1);
+                    // Get all active staff members (used to add reminder)
+                    $this->load->model('staff_model');
+                    $data['members'] = $this->staff_model->get('', 1);
+                    // print_r($data['attachments']);
+                    // exit();
                 }
             }
             else
@@ -895,5 +901,26 @@ class Clients extends Admin_controller
         $this->perfex_base->get_table_data('client_payment', array(
             'idClient' => $idClient,
         ));
+    }
+    /**
+     * Attachment
+     *
+     */
+    public function upload_attachment($id)
+    {
+        handle_client_attachments_upload($id);
+    }
+    public function add_external_attachment()
+    {
+        if ($this->input->post()) {
+            $this->misc_model->add_attachment_to_database($this->input->post('clientid'), 'customer', $this->input->post('files'), $this->input->post('external'));
+        }
+    }
+    public function delete_attachment($customer_id, $id)
+    {
+        if (has_permission('customers', '', 'delete') || is_customer_admin($customer_id)) {
+            $this->clients_model->delete_attachment($id);
+        }
+        redirect($_SERVER['HTTP_REFERER']);
     }
 }

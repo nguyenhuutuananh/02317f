@@ -29,6 +29,7 @@
 
 </style>
 <div id="wrapper" class="customer_profile">
+    <input type="hidden" name="userid" value="<?=(isset($client) ? $client->userid : '')?>">
     <div class="content">
         <div class="row">
             <?php 

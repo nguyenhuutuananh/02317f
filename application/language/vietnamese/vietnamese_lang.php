@@ -2075,7 +2075,7 @@ $lang['email_template_proposals_fields_heading'] = 'Đề xuất';
 # Tasks
 $lang['add_task_attachments']                 = 'Tập tin đính kèm';
 $lang['task_view_attachments']                = 'File đính kèm';
-$lang['task_view_description']                = 'Sự miêu tả';
+$lang['task_view_description']                = 'Nội dung';
 
 # Customer Groups
 $lang['customer_group_add_heading']  = 'Thêm Nhóm khách hàng mới';
@@ -3481,3 +3481,4 @@ $lang['rule_super_admin']       =            "Super admin";
 $lang['rule_admin']             =            "Quyền admin";
 $lang['rule_staff']             =            "Quản lý phòng ban";
 $lang['rule_not_staff']         =            "Nhân viên";
+$lang['als_master']             = "Chủ sở hữu";

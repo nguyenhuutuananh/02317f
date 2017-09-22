@@ -137,7 +137,58 @@
     </div>
 </div>
 
+<div id="view_relation" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body body_relation">
+         <div class="_buttons" style="margin-bottom: 10px;">
+                    <a class="btn btn-info mright5" onclick="view_update_or_add(0,0)" data-toggle="modal" data-target="#view_master">Thêm chủ sở hữu</a>
+                    <a class="btn btn-danger mright5 test" onclick="_delete_all('table-master_bds','master_bds')" >Xóa số lượng lớn</a>
+                    <div class="clearfix"></div>
+        </div>
+                <?php
+                $table_data = array();
+                $table_data = array(
+                    _l('Mã chủ sở hữu'),
+                    _l('Họ Tên'),
+                    _l('Quan hệ'),
+                    _l('Quốc tịch'),
+                    _l('Xưng hô'),
+                    _l('Ngày sinh'),
+                    _l('CMND'),
+                    _l('Số điện thoại'),
+                    _l('Email'),
+                    _l('Thuế TNCN'),
+                    _l('Địa chỉ'),
+                    _l('Địa chỉ thường trú'),
+                    _l('Công ty'),
+                    _l('Chức vụ'),
+                    _l('Nghề nghiệp'),
+                    _l('Sở thích'),
+                    _l('Facebook'),
+                    _l('options')
+                );
+                array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="master_bds"><label></label></div>');
+
+                render_datatable($table_data,'master_bds_profile_company');
+                ?>
+
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 <div class="modal fade" id="view_master" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -224,58 +275,6 @@
         </div>
     </div>
 </div>
-<div id="view_relation" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body body_relation">
-         <div class="_buttons" style="margin-bottom: 10px;">
-                    <a class="btn btn-info mright5" onclick="view_update_or_add(0,0)" data-toggle="modal" data-target="#view_master">Thêm chủ sở hữu</a>
-                    <a class="btn btn-danger mright5 test" onclick="_delete_all('table-master_bds','master_bds')" >Xóa số lượng lớn</a>
-                    <div class="clearfix"></div>
-        </div>
-                <?php
-                $table_data = array();
-                $table_data = array(
-                    _l('Mã chủ sở hữu'),
-                    _l('Họ Tên'),
-                    _l('Quan hệ'),
-                    _l('Quốc tịch'),
-                    _l('Xưng hô'),
-                    _l('Ngày sinh'),
-                    _l('CMND'),
-                    _l('Số điện thoại'),
-                    _l('Email'),
-                    _l('Thuế TNCN'),
-                    _l('Địa chỉ'),
-                    _l('Địa chỉ thường trú'),
-                    _l('Công ty'),
-                    _l('Chức vụ'),
-                    _l('Nghề nghiệp'),
-                    _l('Sở thích'),
-                    _l('Facebook'),
-                    _l('options')
-                );
-                array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="master_bds"><label></label></div>');
-
-                render_datatable($table_data,'master_bds_profile_company');
-                ?>
-
-        </div>
-      </div>
-      <div class="clearfix"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
 <?php init_tail(); ?>
 <script type="text/javascript">
 
@@ -286,7 +285,7 @@
     });
     function get_relation(id_project,type)
     {
-        initDataTable('.table-master_bds_profile_company', admin_url+'master/init_profile/'+id_project+'/'.type , [4],[4]);
+        initDataTable('.table-master_bds_profile_company', admin_url+'master/init_profile/'+id_project+'/'+type , [4],[4]);
     }
     function view_update_or_add(id,type)
     {
@@ -348,7 +347,6 @@
                     }
                 }
             });
-
         }
         else
         {
@@ -500,6 +498,36 @@
             }
         });
     };
+    function delete_true(id,table)
+    {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: '<?=admin_url()?>newview/delete_true/'+id,
+            data: {table:table},
+            success: function (response) {
+                if (response.success) {
+                    alert_float('success', response.message);
+                    if(table=='call_logs')
+                    {
+                        $('.table-call-logs').DataTable().ajax.reload();
+                    }
+                    else
+                    {
+                        if(table=='master_bds')
+                        {
+                            $('.table-master_bds_profile').DataTable().ajax.reload();
+                            $('.table-master_bds_company').DataTable().ajax.reload();
+                        }
+                    }
+
+                }
+                else {
+                    alert_float('danger', response.message);
+                }
+            }
+        });
+    }
 
 </script>
 </body>

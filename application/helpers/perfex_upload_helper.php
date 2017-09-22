@@ -372,9 +372,6 @@ function handle_sales_attachments($rel_id,$rel_type)
 function handle_client_attachments_upload($id,$customer_upload = false)
 {
     $path = get_upload_path_by_type('customer') . $id . '/';
-      $id_category = $_POST['one'];
-      
-  
     $CI =& get_instance();
     if (isset($_FILES['file']['name'])) {
         do_action('before_upload_client_attachment',$id);
@@ -403,7 +400,7 @@ function handle_client_attachments_upload($id,$customer_upload = false)
                     $attachment['visible_to_customer'] = 1;
                 }
 
-                $CI->misc_model->add_attachment_to_database($id_category,$id,'customer',$attachment);
+                $CI->misc_model->add_attachment_to_database($id,'customer',$attachment);
             }
         }
     }

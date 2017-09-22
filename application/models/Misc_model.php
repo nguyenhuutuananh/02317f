@@ -182,13 +182,11 @@ class Misc_model extends CRM_Model
         }
     }
 
-    public function add_attachment_to_database($id_category,$rel_id, $rel_type, $attachment, $external = false)
+    public function add_attachment_to_database($rel_id, $rel_type, $attachment, $external = false)
     {
 
         $data['dateadded'] = date('Y-m-d H:i:s');
         $data['rel_id']    = $rel_id;
-        $data['id_category']    = $id_category;
-        
         if (!isset($attachment[0]['staffid'])) {
             $data['staffid'] = get_staff_user_id();
         } else {
@@ -216,7 +214,7 @@ class Misc_model extends CRM_Model
                 $data['thumbnail_link'] = $attachment[0]['thumbnailLink'];
             }
         }
-
+        
         $this->db->insert('tblfiles', $data);
         $insert_id = $this->db->insert_id();
 

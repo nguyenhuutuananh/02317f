@@ -26,7 +26,6 @@ if($master)
             'hear',
             'hobby',
             'facebook'
-
         );
     }
     else
@@ -68,7 +67,6 @@ else
             'hear',
             'hobby',
             'facebook'
-
         );
     }
     else
@@ -92,10 +90,8 @@ else
             'hear',
             'hobby',
             'facebook'
-
         );
     }
-   
 }
 
 
@@ -113,8 +109,15 @@ if(!$master){
 }
 else
 {
-         $where ="AND _delete=0  and type_master=".$type;
+    $where ="AND _delete=0  and type_master=".$type;
 }
+if($type == 2 && isset($manage)) {
+    $where        ="AND idproject = ".$project_id." AND _delete=0 AND (type_master= 1 or type_master = 2)";
+}
+
+// print_r($where);
+// exit();
+
 //$where        ="AND idproject = ".$project_id." AND _delete=0";
 $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, array(), array($where), array(
     'id',
@@ -246,13 +249,16 @@ foreach ($rResult as $aRow) {
     {
         $options.='<a onclick="get_relation('.$aRow['idproject'].','.$aRow['type_master'].')" data-toggle="modal" data-target="#view_relation" class="btn btn-success btn-icon"><i class="glyphicon glyphicon-fullscreen"></i></a>';
     }
-    if($aRow['type_master']==0||$aRow['type_master']==3)
-    {
-        $options .= '<a onclick="onchange_type('.$aRow['id'].','.$aRow['type_master'].')" class="btn"><i class="'.$icon.'"></i></a>';
+    if(!isset($manage)) {
+        if($aRow['type_master']==0||$aRow['type_master']==3)
+        {
+            $options .= '<a onclick="onchange_type('.$aRow['id'].','.$aRow['type_master'].')" class="btn"><i class="'.$icon.'"></i></a>';
+        }
+        $options .= '<a onclick="onchange_status('.$aRow['id'].','.$aRow['view'].')" class="btn"><i class="'.$__data.'"></i></a>';
+    
+        $options .= '<a onclick="delete_true('.$aRow['id'].',\'master_bds\')" class="btn btn-danger _delete"><i class="fa fa-remove"></i></a>';
     }
-    $options .= '<a onclick="onchange_status('.$aRow['id'].','.$aRow['view'].')" class="btn"><i class="'.$__data.'"></i></a>';
-
-    $options .= '<a onclick="delete_true('.$aRow['id'].',\'master_bds\')" class="btn btn-danger _delete"><i class="fa fa-remove"></i></a>';
+    
 
     $row[]   = $options;
     $output['aaData'][] = $row;
