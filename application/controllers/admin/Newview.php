@@ -603,7 +603,6 @@ class Newview extends Admin_controller
             }
             else
             {
-
                     $this->db->where('idproject',$data['idproject']);
                     if($data['type_master']==1)
                     {

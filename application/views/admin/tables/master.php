@@ -162,6 +162,9 @@ foreach ($rResult as $aRow) {
                     $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add('.$aRow['id'].',1)" data-target="#view_master" data-id="'.$aRow['id'].'">'.$_data.'</a>';
                 }
             }
+            if(isset($manage) && isset($type) && $type==2) {
+                $_data = '<a href="#" id="edit_menu" data-toggle="modal" onclick="view_update_or_add_company('.$aRow['id'].',1)" data-target="#view_master_company" data-id="'.$aRow['id'].'">'.$_data.'</a>';
+            }
         }
         if($aColumns[$i]=='vocative')
         {

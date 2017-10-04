@@ -4,8 +4,11 @@
     _l('tasks_dt_name'),
     _l('tasks_dt_datestart'),
     _l('task_duedate'),
+    _l('task_time_taken'),
     _l('tags'),
     _l('task_assigned'),
+    _l('task_single_supporters'),
+    _l('task_single_followers'),
     _l('tasks_list_priority'),
      _l('task_status')
     );

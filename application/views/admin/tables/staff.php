@@ -48,7 +48,8 @@ $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, ar
     'staffid',
     'role',
     'rule',
-    'admin'
+    'admin',
+    '(select tblworksheet.id from tblworksheet where tblworksheet.userid = tblstaff.staffid)'
     ));
 
 $output  = $result['output'];
@@ -100,8 +101,11 @@ foreach ($rResult as $aRow) {
             }
             $row[] = $_data;
         }
-
-        $options = icon_btn('staff/member/' . $aRow['staffid'], 'pencil-square-o');
+        $options = "";
+        if($aRow['(select tblworksheet.id from tblworksheet where tblworksheet.userid = tblstaff.staffid)'] == '') {
+            $options .= icon_btn('worksheet/create/' . $aRow['staffid'], 'exchange');    
+        }
+        $options .= icon_btn('staff/member/' . $aRow['staffid'], 'pencil-square-o');
         if (has_permission('staff', '', 'delete') && $output['iTotalRecords'] > 1 && $aRow['staffid'] != get_staff_user_id()) {
             $options .= icon_btn('#', 'remove', 'btn-danger', array(
                 'onclick' => 'delete_staff_member(' . $aRow['staffid'] . '); return false;',

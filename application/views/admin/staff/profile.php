@@ -4,7 +4,6 @@
         <div class="row">
             <div class="col-md-7">
                 <div class="panel_s">
-
                     <div class="panel-body">
                     <h4 class="bold no-margin font-medium">
                          <?php echo $title; ?>

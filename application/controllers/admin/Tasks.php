@@ -422,6 +422,15 @@ class Tasks extends Admin_controller
             ));
         }
     }
+    /* Add task supporter / ajax */
+    public function add_task_supporters()
+    {
+        if (has_permission('tasks', '', 'edit') || has_permission('tasks', '', 'create')) {
+            echo json_encode(array(
+                'success' => $this->tasks_model->add_task_supporters($this->input->post())
+            ));
+        }
+    }
     public function edit_comment()
     {
         if ($this->input->post()) {
@@ -451,6 +460,21 @@ class Tasks extends Admin_controller
             $message = '';
             if ($success) {
                 $message = _l('task_assignee_removed');
+            }
+            echo json_encode(array(
+                'success' => $success,
+                'message' => $message
+            ));
+        }
+    }
+    /* Remove supporter / ajax */
+    public function remove_supporter($id, $taskid)
+    {
+        if (has_permission('tasks', '', 'edit') && has_permission('tasks', '', 'create')) {
+            $success = $this->tasks_model->remove_supporter($id, $taskid);
+            $message = '';
+            if ($success) {
+                $message = _l('task_supporter_removed');
             }
             echo json_encode(array(
                 'success' => $success,

@@ -47,7 +47,7 @@
                             </div>
                             <div id="company" class="tab-pane fade">
                                 <div class="_buttons" style="margin-bottom: 10px;">
-                                    <a class="btn btn-info mright5" onclick="view_update_or_add(0,0)" data-toggle="modal" data-target="#view_master">Thêm chủ sở hữu</a>
+                                    <a class="btn btn-info mright5" onclick="view_update_or_add_company(0,1)" data-toggle="modal" data-target="#view_master_company">Thêm chủ sở hữu</a>
                                     <a class="btn btn-danger mright5 test" onclick="_delete_all('table-master_bds','master_bds')" >Xóa số lượng lớn</a>
                                     <div class="clearfix"></div>
                                 </div>
@@ -152,38 +152,11 @@
                     <a class="btn btn-danger mright5 test" onclick="_delete_all('table-master_bds','master_bds')" >Xóa số lượng lớn</a>
                     <div class="clearfix"></div>
         </div>
-                <?php
-                $table_data = array();
-                $table_data = array(
-                    _l('Mã chủ sở hữu'),
-                    _l('Họ Tên'),
-                    _l('Quan hệ'),
-                    _l('Quốc tịch'),
-                    _l('Xưng hô'),
-                    _l('Ngày sinh'),
-                    _l('CMND'),
-                    _l('Số điện thoại'),
-                    _l('Email'),
-                    _l('Thuế TNCN'),
-                    _l('Địa chỉ'),
-                    _l('Địa chỉ thường trú'),
-                    _l('Công ty'),
-                    _l('Chức vụ'),
-                    _l('Nghề nghiệp'),
-                    _l('Sở thích'),
-                    _l('Facebook'),
-                    _l('options')
-                );
-                array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="master_bds"><label></label></div>');
-
-                render_datatable($table_data,'master_bds_profile_company');
-                ?>
-
+                
+            <div class="listDetail">
+                
+            </div>
         </div>
-      </div>
-      <div class="clearfix"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
 
@@ -213,7 +186,7 @@
                                 </div>
                             </div>
                         </div>
-                            <?php echo render_input('idproject','',$id_bds,'hidden'); ?>
+                            <!-- <?php echo render_input('idproject','',$id_bds,'hidden'); ?> -->
                             <?php echo render_input('code_master','','','hidden'); ?>
                             <?php echo render_input('type_master','','','hidden'); ?>
                             <div class="col-md-6">
@@ -285,6 +258,34 @@
     });
     function get_relation(id_project,type)
     {
+        var contentDetail = `
+                <?php
+                    $table_data = array();
+                    $table_data = array(
+                        _l('Mã chủ sở hữu'),
+                        _l('Họ Tên'),
+                        _l('Quan hệ'),
+                        _l('Quốc tịch'),
+                        _l('Xưng hô'),
+                        _l('Ngày sinh'),
+                        _l('CMND'),
+                        _l('Số điện thoại'),
+                        _l('Email'),
+                        _l('Thuế TNCN'),
+                        _l('Địa chỉ'),
+                        _l('Địa chỉ thường trú'),
+                        _l('Công ty'),
+                        _l('Chức vụ'),
+                        _l('Nghề nghiệp'),
+                        _l('Sở thích'),
+                        _l('Facebook'),
+                        _l('options')
+                    );
+                    array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="master_bds"><label></label></div>');
+                    render_datatable($table_data,'master_bds_profile_company');
+                ?>
+        `;
+        $('.listDetail').html(contentDetail);
         initDataTable('.table-master_bds_profile_company', admin_url+'master/init_profile/'+id_project+'/'+type , [4],[4]);
     }
     function view_update_or_add(id,type)
@@ -294,6 +295,7 @@
         $('#update-master .view_file').html('');
         if(id!=0)
         {
+            
             $('#div_isset_master').hide();
             $('#phonenumber').tagit('removeAll');
             $('.title-master').html('Cập nhật chủ sở hữu');
@@ -351,7 +353,6 @@
         else
         {
             $('.title-master').html('Thêm chủ sở hữu cá nhân');
-//            $('#div_isset_master').show();
             $('#upload_file_master').prop('action','<?=admin_url('newview/upload_file_master')?>');
             $('#update-master').prop('action','<?=admin_url('newview/update_master')?>');
             $('#update-master #phonenumber').tagit('removeAll');
@@ -468,7 +469,9 @@
             $('#update_master_company #address').val('');
             $('#update-master-company #name').val('');
             $('#update-master-company #_file').val('');
-
+            $('#update-master-company #type_master').val(type); 
+            console.log($('#update-master-company'));
+            alert(type);
         }
     }
     function _delete_all(table,d_table)

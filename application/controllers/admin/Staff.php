@@ -19,10 +19,31 @@ class Staff extends Admin_controller
         $data['title'] = _l('staff_members');
         $this->load->view('admin/staff/manage', $data);
     }
+    public function get_bds($idStaff)
+    {
+        if (!has_permission('staff', '', 'view')) {
+            access_denied('staff');
+        }
+        if ($this->input->is_ajax_request()) {
+            $this->perfex_base->get_table_data('staff_projects_bds', array(
+                'idStaff' => $idStaff,
+            ));
+        }
+    }
+    public function get_clients($idStaff)
+    {
+        if (!has_permission('staff', '', 'view')) {
+            access_denied('staff');
+        }
+        if ($this->input->is_ajax_request()) {
+            $this->perfex_base->get_table_data('staff_clients', array(
+                'idStaff' => $idStaff,
+            ));
+        }
+    }
     /* Add new staff member or edit existing */
     public function member($id = '')
     {
-
         if(!true_small_admin($id))
         {
             if (!has_permission('staff', '', 'view')&&!has_permission('staff', '', 'edit')&&!has_permission('staff', '', 'create')) {

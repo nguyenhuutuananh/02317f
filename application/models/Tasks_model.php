@@ -41,6 +41,7 @@ class Tasks_model extends CRM_Model
         if ($task) {
             $task->comments        = $this->get_task_comments($id);
             $task->assignees       = $this->get_task_assignees($id);
+            $task->supporters      = $this->get_task_supporter($id);
             $task->followers       = $this->get_task_followers($id);
             $task->attachments     = $this->get_task_attachments($id);
             $task->timesheets      = $this->get_timesheeets($id);
@@ -763,6 +764,63 @@ class Tasks_model extends CRM_Model
         }
         return false;
     }
+    public function add_task_supporters($data, $integration = false)
+    {
+        $this->db->insert('tblstafftasksupporters', array(
+            'taskid' => $data['taskid'],
+            'staffid' => $data['supporter'],
+            'assigned_from' => (is_staff_logged_in() ? get_staff_user_id() : $data['supporter'])
+        ));
+        if ($this->db->affected_rows() > 0) {
+
+            $task = $this->get($data['taskid']);
+            if (get_staff_user_id() != $data['supporter']) {
+                $notification_data = array(
+                    'description' => ($integration == FALSE ? 'not_task_assigned_to_you_support' : 'new_task_assigned_non_user_support'),
+                    'touserid' => $data['supporter'],
+                    'link' => '#taskid=' . $task->id
+                );
+
+                $this->db->select('name');
+                $this->db->where('id', $data['taskid']);
+                $task_name                            = $this->db->get('tblstafftasks')->row()->name;
+                $notification_data['additional_data'] = serialize(array(
+                    $task_name
+                ));
+                if ($integration) {
+                    $notification_data['fromcompany'] = 1;
+                }
+                add_notification($notification_data);
+                $member = $this->staff_model->get($data['supporter']);
+
+                $merge_fields = array();
+                $merge_fields = array_merge($merge_fields, get_staff_merge_fields($data['supporter']));
+                $merge_fields = array_merge($merge_fields, get_task_merge_fields($task->id));
+                $this->load->model('emails_model');
+                $this->emails_model->send_email_template('task-assigned', $member->email, $merge_fields);
+            }
+
+            $description                  = 'not_task_assigned_someone_support';
+            $additional_notification_data = serialize(array(
+                get_staff_full_name($data['supporter']),
+                $task->name
+            ));
+            if ($data['supporter'] == get_staff_user_id()) {
+                $description                  = 'not_task_will_do_user';
+                $additional_notification_data = serialize(array(
+                    $task->name
+                ));
+            }
+
+            if ($task->rel_type == 'project') {
+                $this->projects_model->log_activity($task->rel_id, 'project_activity_new_task_supporter', $task->name . ' - ' . get_staff_full_name($data['supporter']), $task->visible_to_client);
+            }
+
+            $this->_send_task_responsible_users_notification($description, $data['taskid'], $data['supporter'], '', $additional_notification_data);
+            return true;
+        }
+        return false;
+    }
     /**
      * Get all task attachments
      * @param  mixed $taskid taskid
@@ -860,6 +918,13 @@ class Tasks_model extends CRM_Model
         $this->db->where('taskid', $id);
         return $this->db->get()->result_array();
     }
+    public function get_task_supporter($id) {
+        $this->db->select('id,tblstafftasksupporters.staffid as supporterid,assigned_from,firstname,lastname');
+        $this->db->from('tblstafftasksupporters');
+        $this->db->join('tblstaff', 'tblstaff.staffid = tblstafftasksupporters.staffid', 'left');
+        $this->db->where('taskid', $id);
+        return $this->db->get()->result_array();
+    }
     /**
      * Get task comment
      * @param  mixed $id task id
@@ -946,6 +1011,33 @@ class Tasks_model extends CRM_Model
         if ($this->db->affected_rows() > 0) {
             if ($task->rel_type == 'project') {
                 $this->projects_model->log_activity($task->rel_id, 'project_activity_task_assignee_removed', $task->name . ' - ' . get_staff_full_name($assignee_data->staffid), $task->visible_to_client);
+            }
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Remove task supporter from database
+     *
+     * @param int $id
+     * @param int $taskid
+     * @return void
+     */
+    public function remove_supporter($id, $taskid) {
+        $task = $this->get($taskid);
+        $this->db->where('id', $id);
+        $supporter_data = $this->db->get('tblstafftasksupporters')->row();
+
+        // Delete timers
+     //   $this->db->where('task_id', $taskid);
+     ////   $this->db->where('staff_id', $assignee_data->staffid);
+     ///   $this->db->delete('tbltaskstimers');
+
+        $this->db->where('id', $id);
+        $this->db->delete('tblstafftasksupporters');
+        if ($this->db->affected_rows() > 0) {
+            if ($task->rel_type == 'project') {
+                $this->projects_model->log_activity($task->rel_id, 'project_activity_task_supporter_removed', $task->name . ' - ' . get_staff_full_name($supporter_data->staffid), $task->visible_to_client);
             }
             return true;
         }
@@ -1234,6 +1326,23 @@ class Tasks_model extends CRM_Model
         }
         return true;
     }
+    /**
+     * Check is user is task supporter
+     *
+     * @param int $userid
+     * @param int $taskid
+     * @return boolean
+     */
+    public function is_task_supporter($userid, $taskid) {
+        if (total_rows('tblstafftasksupporters', array(
+            'staffid' => $userid,
+            'taskid' => $taskid
+        )) == 0) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Check is user is task creator
      * @param  mixed  $userid staff id

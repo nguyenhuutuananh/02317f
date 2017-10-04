@@ -1,8 +1,8 @@
-<?php if(isset($task)){
-  echo form_hidden('task_is_edit',$task->id);
+<?php if (isset($task)) {
+  echo form_hidden('task_is_edit', $task->id);
 }
 ?>
-<?php echo form_open(admin_url('tasks/task/'.$id),array('id'=>'task-form')); ?>
+<?php echo form_open(admin_url('tasks/task/' . $id), array('id' => 'task-form')); ?>
 <div class="modal fade" id="_task_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -18,46 +18,60 @@
             <?php
             $rel_type = '';
             $rel_id = '';
-            if(isset($task) || ($this->input->get('rel_id') && $this->input->get('rel_type'))){
-              if($this->input->get('rel_id')){
+            if (isset($task) || ($this->input->get('rel_id') && $this->input->get('rel_type'))) {
+              if ($this->input->get('rel_id')) {
                 $rel_id = $this->input->get('rel_id');
                 $rel_type = $this->input->get('rel_type');
-              } else {
+              }
+              else {
                 $rel_id = $task->rel_id;
                 $rel_type = $task->rel_type;
               }
               ?>
               <div class="clearfix"></div>
-              <?php } ?>
+              <?php 
+            } ?>
               <?php
-              if(isset($task) && $task->billed == 1){
-               echo '<p class="text-success no-margin">'._l('task_is_billed','<a href="'.admin_url('invoices/list_invoices/'.$task->invoice_id).'" target="_blank">'.format_invoice_number($task->invoice_id)). '</a></p><br />';
-             }
-             ?>
+              if (isset($task) && $task->billed == 1) {
+                echo '<p class="text-success no-margin">' . _l('task_is_billed', '<a href="' . admin_url('invoices/list_invoices/' . $task->invoice_id) . '" target="_blank">' . format_invoice_number($task->invoice_id)) . '</a></p><br />';
+              }
+              ?>
              <div class="checkbox checkbox-primary no-mtop checkbox-inline">
-              <input type="checkbox" id="task_is_public" name="is_public" <?php if(isset($task)){if($task->is_public == 1){echo 'checked';}}; ?>>
+              <input type="checkbox" id="task_is_public" name="is_public" <?php if (isset($task)) {
+                                                                            if ($task->is_public == 1) {
+                                                                              echo 'checked';
+                                                                            }
+                                                                          }; ?>>
               <label for="task_is_public" data-toggle="tooltip" data-placement="bottom" title="<?php echo _l('task_public_help'); ?>"><?php echo _l('task_public'); ?></label>
             </div>
-            <div class="task-visible-to-customer checkbox checkbox-inline checkbox-primary<?php if((isset($task) && $task->rel_type != 'project') || !isset($task) || (isset($task) && $task->rel_type == 'project' && total_rows('tblprojectsettings',array('project_id'=>$task->rel_id,'name'=>'view_tasks','value'=>0)) > 0)){echo ' hide';} ?>">
-              <input type="checkbox" id="task_visible_to_client" name="visible_to_client" <?php if(isset($task)){if($task->visible_to_client == 1){echo 'checked';}} ?>>
+            <div class="task-visible-to-customer checkbox checkbox-inline checkbox-primary<?php if ( (isset($task) && $task->rel_type != 'project') || !isset($task) || (isset($task) && $task->rel_type == 'project' && total_rows('tblprojectsettings', array('project_id' => $task->rel_id, 'name' => 'view_tasks', 'value' => 0)) > 0)) {
+                                                                                            echo ' hide';
+                                                                                          } ?>">
+              <input type="checkbox" id="task_visible_to_client" name="visible_to_client" <?php if (isset($task)) {
+                                                                                            if ($task->visible_to_client == 1) {
+                                                                                              echo 'checked';
+                                                                                            }
+                                                                                          } ?>>
               <label for="task_visible_to_client"><?php echo _l('task_visible_to_client'); ?></label>
             </div>
             <hr />
             <?php $value = (isset($task) ? $task->name : ''); ?>
-            <?php echo render_input('name','task_add_edit_subject',$value); ?>
+            <?php echo render_input('name', 'task_add_edit_subject', $value); ?>
             <div class="row">
               <div class="col-md-6">
-                <div class="form-group<?php if($rel_id == ''){echo ' hide';} ?>" id="rel_id_wrapper">
+                <div class="form-group<?php if ($rel_id == '') {
+                                        echo ' hide';
+                                      } ?>" id="rel_id_wrapper">
                   <label for="rel_id" class="control-label">Khách hàng<span class="rel_id_label"></span></label>
                   <div id="rel_id_select">
                     <select name="rel_id" id="rel_id" class="selectpicker" data-width="100%" data-live-search="true" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                      <?php if($rel_id != '' && $rel_type != ''){
-                        $rel_data = get_relation_data($rel_type,$rel_id);
-                        $rel_val = get_relation_values($rel_data,$rel_type);
-                        echo '<option value="'.$rel_val['id'].'">'.$rel_val['name'].'</option>';
+                      <?php if ($rel_id != '' && $rel_type != '') {
+                        $rel_data = get_relation_data($rel_type, $rel_id);
+                        $rel_val = get_relation_values($rel_data, $rel_type);
+                        echo '<option value="' . $rel_val['id'] . '">' . $rel_val['name'] . '</option>';
                       } ?>
                     </select>
-                    <?php echo render_input('rel_type','',$rel_type,'hidden');?>
+                    <?php echo render_input('rel_type', '', $rel_type, 'hidden'); ?>
                   </div>
                 </div>
               </div>
@@ -65,67 +79,107 @@
                <div class="form-group">
                 <label for="priority" class="control-label"><?php echo _l('task_add_edit_priority'); ?></label>
                 <select name="priority" class="selectpicker" id="priority" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                  <option value="1" <?php if(isset($task) && $task->priority == 1 || !isset($task) && get_option('default_task_priority') == 1){echo 'selected';} ?>><?php echo _l('task_priority_low'); ?></option>
-                  <option value="2" <?php if(isset($task) && $task->priority == 2 || !isset($task) && get_option('default_task_priority') == 2){echo 'selected';} ?>><?php echo _l('task_priority_medium'); ?></option>
-                  <option value="3" <?php if(isset($task) && $task->priority == 3 || !isset($task) && get_option('default_task_priority') == 3){echo 'selected';} ?>><?php echo _l('task_priority_high'); ?></option>
-                  <option value="4" <?php if(isset($task) && $task->priority == 4 || !isset($task) && get_option('default_task_priority') == 4){echo 'selected';} ?>><?php echo _l('task_priority_urgent'); ?></option>
-                  <?php do_action('task_priorities_select',(isset($task)?$task:0)); ?>
+                  <option value="1" <?php if (isset($task) && $task->priority == 1 || !isset($task) && get_option('default_task_priority') == 1) {
+                                      echo 'selected';
+                                    } ?>><?php echo _l('task_priority_low'); ?></option>
+                  <option value="2" <?php if (isset($task) && $task->priority == 2 || !isset($task) && get_option('default_task_priority') == 2) {
+                                      echo 'selected';
+                                    } ?>><?php echo _l('task_priority_medium'); ?></option>
+                  <option value="3" <?php if (isset($task) && $task->priority == 3 || !isset($task) && get_option('default_task_priority') == 3) {
+                                      echo 'selected';
+                                    } ?>><?php echo _l('task_priority_high'); ?></option>
+                  <option value="4" <?php if (isset($task) && $task->priority == 4 || !isset($task) && get_option('default_task_priority') == 4) {
+                                      echo 'selected';
+                                    } ?>><?php echo _l('task_priority_urgent'); ?></option>
+                  <?php do_action('task_priorities_select', (isset($task) ? $task : 0)); ?>
                 </select>
               </div>
             </div>
             </div>
           
-            <div class="project-details<?php if($rel_type != 'project'){echo ' hide';} ?>">
+            <div class="project-details<?php if ($rel_type != 'project') {
+                                          echo ' hide';
+                                        } ?>">
               <div class="form-group">
                 <label for="milestone"><?php echo _l('task_milestone'); ?></label>
                 <select name="milestone" id="milestone" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
                   <option value=""></option>
-                  <?php foreach($milestones as $milestone){ ?>
-                  <option value="<?php echo $milestone['id']; ?>" <?php if(isset($task) && $task->milestone == $milestone['id']){echo 'selected'; } ?>><?php echo $milestone['name']; ?></option>
-                  <?php } ?>
+                  <?php foreach ($milestones as $milestone) { ?>
+                  <option value="<?php echo $milestone['id']; ?>" <?php if (isset($task) && $task->milestone == $milestone['id']) {
+                                                                    echo 'selected';
+                                                                  } ?>><?php echo $milestone['name']; ?></option>
+                  <?php 
+                } ?>
                 </select>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6">
-                <?php if(isset($task)){
+                <?php if (isset($task)) {
                   $value = _d($task->startdate);
-                } else if(isset($start_date)){
+                }
+                else if (isset($start_date)) {
                   $value = $start_date;
-                } else {
+                }
+                else {
                   $value = _d(date('Y-m-d'));
                 }
                 ?>
-                <?php echo render_date_input('startdate','task_add_edit_start_date',$value); ?>
+                <?php echo render_date_input('startdate', 'task_add_edit_start_date', $value); ?>
               </div>
               <div class="col-md-6">
                 <?php $value = (isset($task) ? _d($task->duedate) : ''); ?>
-                <?php echo render_date_input('duedate','task_add_edit_due_date',$value,$project_end_date_attrs); ?>
+                <?php echo render_date_input('duedate', 'task_add_edit_due_date', $value, $project_end_date_attrs); ?>
               </div>
              
           
         </div>
 
-        <div class="recurring_custom <?php if((isset($task) && $task->custom_recurring != 1) || (!isset($task))){echo 'hide';} ?>">
+        <div class="recurring_custom <?php if ( (isset($task) && $task->custom_recurring != 1) || (!isset($task))) {
+                                        echo 'hide';
+                                      } ?>">
          <div class="row">
           <div class="col-md-6">
            <?php $value = (isset($task) && $task->custom_recurring == 1 ? $task->repeat_every : ''); ?>
-           <?php echo render_input('repeat_every_custom','',$value,'number'); ?>
+           <?php echo render_input('repeat_every_custom', '', $value, 'number'); ?>
          </div>
          <div class="col-md-6">
            <select name="repeat_type_custom" id="repeat_type_custom" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-            <option value="day" <?php if(isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'day'){echo 'selected';} ?>><?php echo _l('task_recuring_days'); ?></option>
-            <option value="week" <?php if(isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'week'){echo 'selected';} ?>><?php echo _l('task_recuring_weeks'); ?></option>
-            <option value="month" <?php if(isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'month'){echo 'selected';} ?>><?php echo _l('task_recuring_months'); ?></option>
-            <option value="year" <?php if(isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'year'){echo 'selected';} ?>><?php echo _l('task_recuring_years'); ?></option>
+            <option value="day" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'day') {
+                                  echo 'selected';
+                                } ?>><?php echo _l('task_recuring_days'); ?></option>
+            <option value="week" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'week') {
+                                    echo 'selected';
+                                  } ?>><?php echo _l('task_recuring_weeks'); ?></option>
+            <option value="month" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'month') {
+                                    echo 'selected';
+                                  } ?>><?php echo _l('task_recuring_months'); ?></option>
+            <option value="year" <?php if (isset($task) && $task->custom_recurring == 1 && $task->recurring_type == 'year') {
+                                    echo 'selected';
+                                  } ?>><?php echo _l('task_recuring_years'); ?></option>
           </select>
         </div>
       </div>
     </div>
-    <div id="recurring_ends_on" class="<?php if(!isset($task) || (isset($task) && $task->recurring == 0)){echo 'hide';}?>">
+    <div id="recurring_ends_on" class="<?php if (!isset($task) || (isset($task) && $task->recurring == 0)) {
+                                          echo 'hide';
+                                        } ?>">
       <?php $value = (isset($task) ? _d($task->recurring_ends_on) : ''); ?>
-      <?php echo render_date_input('recurring_ends_on','recurring_ends_on',$value); ?>
+      <?php echo render_date_input('recurring_ends_on', 'recurring_ends_on', $value); ?>
     </div>
+    
+    <div class="row">
+      <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+        <div class="form-group">
+          <label for="time_taken" class="control-label ">Thời gian làm</label>
+          <div class="input-group">
+            <input name="time_taken" value="<?=(isset($task) ? $task->time_taken : set_value('time_taken', 0))?>" id="time_taken" type="text" class="form-control" placeholder="Thực trong bao nhiêu" aria-describedby="basic-addon2">
+            <span class="input-group-addon" id="basic-addon2">giờ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="row">
       <!-- <div class="col-md-6">
         <div class="form-group">
@@ -133,18 +187,54 @@
           <select name="rel_type" class="selectpicker" id="rel_type" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
             <option value=""></option>
             <option value="project"
-            <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'project'){echo 'selected';}} ?>><?php echo _l('project'); ?></option>
-            <option value="invoice" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'invoice'){echo 'selected';}} ?>>
+            <?php if (isset($task) || $this->input->get('rel_type')) {
+              if ($rel_type == 'project') {
+                echo 'selected';
+              }
+            } ?>><?php echo _l('project'); ?></option>
+            <option value="invoice" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                      if ($rel_type == 'invoice') {
+                                        echo 'selected';
+                                      }
+                                    } ?>>
               <?php echo _l('invoice'); ?>
             </option>
             <option value="customer"
-            <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'customer'){echo 'selected';}} ?>> <?php echo _l('client'); ?></option>
-            <option value="estimate" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'estimate'){echo 'selected';}} ?>><?php echo _l('estimate'); ?></option>
-            <option value="contract" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'contract'){echo 'selected';}} ?>><?php echo _l('contract'); ?></option>
-            <option value="ticket" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'ticket'){echo 'selected';}} ?>><?php echo _l('ticket'); ?></option>
-            <option value="expense" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'expense'){echo 'selected';}} ?>><?php echo _l('expense'); ?></option>
-            <option value="lead" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'lead'){echo 'selected';}} ?>><?php echo _l('lead'); ?></option>
-            <option value="proposal" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'proposal'){echo 'selected';}} ?>><?php echo _l('proposal'); ?></option>
+            <?php if (isset($task) || $this->input->get('rel_type')) {
+              if ($rel_type == 'customer') {
+                echo 'selected';
+              }
+            } ?>> <?php echo _l('client'); ?></option>
+            <option value="estimate" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                        if ($rel_type == 'estimate') {
+                                          echo 'selected';
+                                        }
+                                      } ?>><?php echo _l('estimate'); ?></option>
+            <option value="contract" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                        if ($rel_type == 'contract') {
+                                          echo 'selected';
+                                        }
+                                      } ?>><?php echo _l('contract'); ?></option>
+            <option value="ticket" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                      if ($rel_type == 'ticket') {
+                                        echo 'selected';
+                                      }
+                                    } ?>><?php echo _l('ticket'); ?></option>
+            <option value="expense" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                      if ($rel_type == 'expense') {
+                                        echo 'selected';
+                                      }
+                                    } ?>><?php echo _l('expense'); ?></option>
+            <option value="lead" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                    if ($rel_type == 'lead') {
+                                      echo 'selected';
+                                    }
+                                  } ?>><?php echo _l('lead'); ?></option>
+            <option value="proposal" <?php if (isset($task) || $this->input->get('rel_type')) {
+                                        if ($rel_type == 'proposal') {
+                                          echo 'selected';
+                                        }
+                                      } ?>><?php echo _l('proposal'); ?></option>
           </select>
         </div>
       </div> -->
@@ -152,20 +242,23 @@
        
       </div>
     </div>
-    <?php if(isset($task) && $task->status == 5 && (has_permission('create') || has_permission('edit'))){
-      echo render_datetime_input('datefinished','task_finished',_dt($task->datefinished));
+    <?php if (isset($task) && $task->status == 5 && (has_permission('create') || has_permission('edit'))) {
+      echo render_datetime_input('datefinished', 'task_finished', _dt($task->datefinished));
     }
     ?>
     <div class="form-group">
       <label for="tags" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i> <?php echo _l('tags'); ?></label>
-      <input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo (isset($task) ? prep_tags_input(get_tags_in($task->id,'task')) : ''); ?>" data-role="tagsinput">
+      <input type="text" class="tagsinput" id="tags" name="tags" value="<?php echo (isset($task) ? prep_tags_input(get_tags_in($task->id, 'task')) : ''); ?>" data-role="tagsinput">
     </div>
     <?php $rel_id_custom_field = (isset($task) ? $task->id : false); ?>
-    <?php echo render_custom_fields('tasks',$rel_id_custom_field); ?>
+    <?php echo render_custom_fields('tasks', $rel_id_custom_field); ?>
     <hr />
     <p class="bold"><?php echo _l('task_add_edit_description'); ?></p>
-    <?php $contents = ''; if(isset($task)){$contents = $task->description;} ?>
-    <?php echo render_textarea('description','',$contents,array('data-task-ae-editor'=>true),array(),'','tinymce-task'); ?>
+    <?php $contents = '';
+    if (isset($task)) {
+      $contents = $task->description;
+    } ?>
+    <?php echo render_textarea('description', '', $contents, array('data-task-ae-editor' => true), array(), '', 'tinymce-task'); ?>
   </div>
 </div>
 </div>
@@ -241,16 +334,18 @@
    }
  });
 
-  <?php if(!isset($task) && $rel_id != ''){ ?>
+  <?php if (!isset($task) && $rel_id != '') { ?>
     _rel_id.change();
-    <?php } ?>
+    <?php 
+  } ?>
 
   });
 
- <?php if(isset($_milestone_selected_data)){ ?>
+ <?php if (isset($_milestone_selected_data)) { ?>
   _milestone_selected_data = '<?php echo json_encode($_milestone_selected_data); ?>';
   _milestone_selected_data = JSON.parse(_milestone_selected_data);
-  <?php } ?>
+  <?php 
+} ?>
 
   function task_rel_select(){
     clearInterval(autocheck_notifications_timer_id);
@@ -261,10 +356,11 @@
           data.q = '{{{q}}}';
           data.type = _rel_type.val();
           data.rel_id = _rel_id.val();
-          <?php if(isset($task)){ ?>
+          <?php if (isset($task)) { ?>
            data.connection_type = 'task';
            data.connection_id = '<?php echo $task->id; ?>';
-           <?php } ?>
+           <?php 
+          } ?>
            return data;
          }
        },

@@ -847,7 +847,7 @@ $lang['tasks_dt_name']            = 'Tên';
 
 $lang['task_single_priority']               = 'Sự ưu tiên';
 $lang['task_single_start_date']             = 'Ngày bắt đầu';
-$lang['task_single_due_date']               = 'Ngày đáo hạn';
+$lang['task_single_due_date']               = 'Hạn chút';
 $lang['task_single_finished']               = 'Đã kết thúc';
 $lang['task_single_mark_as_complete']       = 'Đánh dấu là hoàn tất';
 $lang['task_single_edit']                   = 'Sửa';
@@ -2379,7 +2379,7 @@ $lang['leads_sort_by_lastcontact'] = 'Liên lạc lần cuối';
 
 # Tasks
 $lang['task_comment_added'] = 'Đã thêm nhận xét thành công';
-$lang['task_duedate'] = 'Ngày đáo hạn';
+$lang['task_duedate'] = 'Hạn chót';
 $lang['task_view_comments'] = 'Bình luận';
 $lang['task_comment_updated'] = 'Thảo luận cập nhật';
 $lang['task_visible_to_client'] = 'Hiển thị với khách hàng';
@@ -3463,7 +3463,7 @@ $lang['Leads']                 =       "Khách hàng tiềm năng";
 $lang['type_roles']                                                    = 'Bonus nhân viên kỹ thuật/nhân viên sale';
 
 $lang['setting_rule']           =            "Quyền nhân viên";
-$lang['tasks_dt_name']           =            "Tên cuộc gọi";
+$lang['tasks_dt_name']           =           "Công việc";
 $lang['setting_department']     =            "Cài đặt phòng ban";
 $lang['Department']             =            "Phòng ban";
 $lang['btn_new_department']     =            "Thêm Phòng ban";
@@ -3482,3 +3482,24 @@ $lang['rule_admin']             =            "Quyền admin";
 $lang['rule_staff']             =            "Quản lý phòng ban";
 $lang['rule_not_staff']         =            "Nhân viên";
 $lang['als_master']             = "Chủ sở hữu";
+
+# reEdit
+$lang['add_checklist_item']       = 'Thêm công việc chi tiết';
+$lang['task_checklist_items']     = 'Công việc chi tiết';
+$lang['task_single_assignees']              = 'Người triển khai';
+$lang['task_single_assignees_select_title'] = 'Chỉ định người triển khai';
+$lang['task_single_followers']              = 'Người nhận báo cáo';
+$lang['task_single_followers_select_title'] = 'Thêm người nhận báo cáo';
+$lang['task_single_supporters']              = 'Người hỗ trợ';
+$lang['task_single_supporters_select_title'] = 'Thêm người hỗ trợ';
+$lang['task_no_assignees'] = 'Không có người nhận triển khai công việc này';
+$lang['task_no_followers'] = 'Không có người nhận báo cáo cho công việc này';
+$lang['task_follower_removed']   = 'Đã xóa thành công người nhận báo cáo';
+$lang['task_assignee_removed']   = 'Người triển khai công việc đã được xóa thành công';
+$lang['task_supporter_removed']   = 'Người hỗ trợ công việc đã được xóa thành công';
+
+$lang['not_task_assigned_to_you_support'] = 'Giao việc hỗ trợ cho bạn %s ...';
+$lang['not_task_assigned_someone_support'] = 'Được giao %s cho hỗ trợ công việc %s ...';
+$lang['new_task_assigned_non_user_support'] = 'Hỗ  trợ công việc mới được giao cho bạn - %s';
+$lang['task_no_supporters'] = 'Không có người hỗ trợ công việc này';
+$lang['task_time_taken']    = 'Thời gian làm';

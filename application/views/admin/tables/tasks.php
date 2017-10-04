@@ -1,22 +1,30 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$assignee_column = 4;
-$tags_column = 3;
+$assignee_column = 5;
+$supporter_column = 6;
+$follower_column = 7;
+$tags_column = 4;
 $aColumns = array(
     'name',
     'startdate',
     'duedate',
+    'time_taken',
     '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM tbltags_in JOIN tbltags ON tbltags_in.tag_id = tbltags.id WHERE rel_id = tblstafftasks.id and rel_type="task" ORDER by tag_order ASC) as tags',
     '(SELECT GROUP_CONCAT(CONCAT(firstname, \' \', lastname) SEPARATOR ",") FROM tblstafftaskassignees JOIN tblstaff ON tblstaff.staffid = tblstafftaskassignees.staffid WHERE taskid=tblstafftasks.id) as assignees',
+    '(SELECT GROUP_CONCAT(CONCAT(firstname, \' \', lastname) SEPARATOR ",") FROM tblstafftasksupporters JOIN tblstaff ON tblstaff.staffid = tblstafftasksupporters.staffid WHERE taskid=tblstafftasks.id) as supporters',
+    '(SELECT GROUP_CONCAT(CONCAT(firstname, \' \', lastname) SEPARATOR ",") FROM tblstafftasksfollowers JOIN tblstaff ON tblstaff.staffid = tblstafftasksfollowers.staffid WHERE taskid=tblstafftasks.id) as followers',
     'priority',
     'status'
 );
 
 if($this->_instance->input->get('bulk_actions')){
     array_unshift($aColumns, '1');
-    $assignee_column = 5;
-    $tags_column = 4;
+    $assignee_column = 6;
+    $supporter_column = 7;
+    $follower_column = 8;
+
+    $tags_column = 5;
 }
 
 $where = array();
@@ -53,7 +61,9 @@ $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, ar
     'rel_type',
     'rel_id',
     'invoice_id',
-    '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM tblstafftaskassignees WHERE taskid=tblstafftasks.id) as assignees_ids'
+    '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM tblstafftaskassignees WHERE taskid=tblstafftasks.id) as assignees_ids',
+    '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM tblstafftasksupporters WHERE taskid=tblstafftasks.id) as supporters_ids',
+    '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM tblstafftasksfollowers WHERE taskid=tblstafftasks.id) as followers_ids',
 ));
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -126,7 +136,7 @@ foreach ($rResult as $aRow) {
             } else {
                 $_data = '';
             }
-        } else if ($aColumns[$i] == $aColumns[$assignee_column]) {
+        } else if ($aColumns[$i] == $aColumns[$assignee_column] || $aColumns[$i] == $aColumns[$supporter_column] || $aColumns[$i] == $aColumns[$follower_column]) {
             $assignees        = explode(',', $_data);
             $assignee_ids        = explode(',', $aRow['assignees_ids']);
             $_data            = '';

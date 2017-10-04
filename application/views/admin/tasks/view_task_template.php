@@ -501,6 +501,8 @@ if($value == ''){continue;}?>
  }
 }
 } ?>
+
+
 <h4 class="task-info-heading mbot15"><i class="fa fa-users" aria-hidden="true"></i> <?php echo _l('task_single_assignees'); ?></h4>
 <?php if(has_permission('tasks','','edit') || has_permission('tasks','','create')){ ?>
 <select data-width="100%" <?php if($task->rel_type=='project'){ ?> data-live-search-placeholder="<?php echo _l('search_project_members'); ?>" <?php } ?> data-task-id="<?php echo $task->id; ?>" id="add_task_assignees" class="text-muted mbot10 task-action-select selectpicker<?php if(total_rows('tblstafftaskassignees',array('taskid'=>$task->id)) == 0){echo ' task-assignees-dropdown-indicator';} ?>" name="select-assignees" data-live-search="true" title='<?php echo _l('task_single_assignees_select_title'); ?>' data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
@@ -526,6 +528,8 @@ echo $options;
 ?>
 </select>
 <?php } ?>
+
+
 <div class="task_users_wrapper">
  <?php
  $_assignees = '';
@@ -548,6 +552,61 @@ echo $_assignees;
 ?>
 </div>
 <hr class="task-info-separator" />
+
+<!-- Supporters -->
+<h4 class="task-info-heading mbot15"><i class="fa fa-users" aria-hidden="true"></i> <?php echo _l('task_single_supporters'); ?></h4>
+<?php if(has_permission('tasks','','edit') || has_permission('tasks','','create')){ ?>
+<select data-width="100%" <?php if($task->rel_type=='project'){ ?> data-live-search-placeholder="<?php echo _l('search_project_members'); ?>" <?php } ?> data-task-id="<?php echo $task->id; ?>" id="add_task_supporters" class="text-muted mbot10 task-action-select selectpicker<?php if(total_rows('tblstafftasksupporters',array('taskid'=>$task->id)) == 0){echo ' task-assignees-dropdown-indicator';} ?>" name="select-supporters" data-live-search="true" title='<?php echo _l('task_single_supporters_select_title'); ?>' data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
+ <?php
+ $options = '';
+ foreach ($staff as $supporter) {
+   if (total_rows('tblstafftasksupporters', array(
+     'staffid' => $supporter['staffid'],
+     'taskid' => $task->id
+     )) == 0) {
+     if ($task->rel_type == 'project') {
+       if (total_rows('tblprojectmembers', array(
+         'project_id' => $task->rel_id,
+         'staff_id' => $supporter['staffid']
+         )) == 0) {
+         continue;
+     }
+   }
+   $options .= '<option value="' . $supporter['staffid'] . '">' . get_staff_full_name($supporter['staffid']) . '</option>';
+ }
+}
+echo $options;
+?>
+</select>
+<?php } ?>
+
+<div class="task_users_wrapper">
+ <?php
+ $_supporters = '';
+ foreach ($task->supporters as $supporter) {
+   $_remove_supporter = '';
+   if(has_permission('tasks','','edit') || has_permission('tasks','','create')){
+    $_remove_supporter = ' <a href="#" class="remove-task-user text-danger" onclick="remove_supporter(' . $supporter['id'] . ',' . $task->id . '); return false;"><i class="fa fa-remove"></i></a>';
+  }
+  $_supporters .= '
+  <div class="task-user"  data-toggle="tooltip" data-title="'.get_staff_full_name($supporter['supporterid']).'">
+    <a href="' . admin_url('profile/' . $supporter['supporterid']) . '" target="_blank">' . staff_profile_image($supporter['supporterid'], array(
+     'staff-profile-image-small'
+     )) .'</a> ' . $_remove_supporter . '</span>
+  </div>';
+}
+if ($_supporters == '') {
+  $_supporters = '<div class="mtop5 text-danger display-block">'._l('task_no_supporters').'</div>';
+}
+echo $_supporters;
+?>
+</div>
+<hr class="task-info-separator" />
+
+
+<!-- END Supporters -->
+
+
 <h4 class="task-info-heading mbot15"><i class="fa fa-users" aria-hidden="true"></i> <?php echo _l('task_single_followers'); ?></h4>
 <?php if(has_permission('tasks','','edit') || has_permission('tasks','','create')){ ?>
 <select data-width="100%" data-task-id="<?php echo $task->id; ?>" class="text-muted selectpicker task-action-select mbot10" name="select-followers" data-live-search="true" title='<?php echo _l('task_single_followers_select_title'); ?>' data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
@@ -671,4 +730,36 @@ success: function(files, response) {
  }
 }
 });
+
+// Assign task to staff member
+$('body').on('change', 'select[name="select-supporters"]', function() {
+    $('body').append('<div class="dt-loader"></div>');
+    var data = {};
+    data.supporter = $('select[name="select-supporters"]').val();
+    if (data.supporter != '') {
+        data.taskid = $(this).attr('data-task-id');
+        $.post(admin_url + 'tasks/add_task_supporters', data).done(function(response) {
+            $('body').find('.dt-loader').remove();
+            response = JSON.parse(response);
+            reload_tasks_tables();
+            init_task_modal(data.taskid);
+        });
+    }
+});
+// Remove task assignee
+function remove_supporter(id, task_id) {
+    var r = confirm(confirm_action_prompt);
+    if (r == false) {
+        return false;
+    } else {
+        $.get(admin_url + 'tasks/remove_supporter/' + id + '/' + task_id, function(response) {
+            if (response.success == true) {
+                alert_float('success', response.message);
+            } else {
+                alert_float('warning', response.message);
+            }
+            init_task_modal(task_id);
+        }, 'json');
+    }
+}
 </script>
