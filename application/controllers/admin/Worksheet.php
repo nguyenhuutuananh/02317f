@@ -13,7 +13,9 @@ class Worksheet extends Admin_Controller {
 
         $this->load->model('worksheet_model');
 
-        $data['staffsWorksheet'] = $this->worksheet_model->getWorksheet(date('m'), date('Y'));
+        $data['yearWorksheet'] = date('Y');
+        $data['monthWorksheet'] = date('m');
+        $data['staffsWorksheet'] = $this->worksheet_model->getWorksheet($data['monthWorksheet'], $data['yearWorksheet']);
         
         $staffs = [];
         
@@ -42,5 +44,37 @@ class Worksheet extends Admin_Controller {
         }
         
         $this->load->view('admin/worksheet/create', $data);
+    }
+    public function modal_create() {
+        $this->load->model('worksheet_model');
+        if(!true_small_admin($id))
+        {
+            if (!has_permission('staff', '', 'view')&&!has_permission('staff', '', 'edit')&&!has_permission('staff', '', 'create')) {
+                access_denied('staff');
+            }
+        }
+        
+        if($this->input->post()) {
+            $data_post = $this->input->post();
+            $idStaff = $data_post['userid'];
+            $result = new stdClass();
+            $result->success = $this->worksheet_model->createWorksheet($idStaff, $data_post);
+            $result->message = "Tạo thất bại!";
+            if($result->success) {
+                $result->message = "Tạo thành công!";
+            }
+            exit(json_encode($result));
+        }
+        
+        $data['staff_members'] = $this->staff_model->get('',1);
+        // $member                    = $this->staff_model->get($idStaff);
+        // if(!$member){
+        //     blank_page('Staff Member Not Found','danger');
+        // }
+
+        $data['title'] = "Tạo lịch làm việc cho nhân viên";
+        
+        
+        $this->load->view('admin/worksheet/modals/create', $data);
     }
 }

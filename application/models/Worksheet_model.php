@@ -19,25 +19,33 @@ class Worksheet_model extends CRM_Model
         $minDate = "$year-$month-01 00:00:00";
         $maxDate = "$year-$month-$dayOfWeek 23:59:59";
 
-        // $this->db->where("dateStartWork BETWEEN $minDate AND $maxDate");
-        $this->db->where('dateStartWork >=', $minDate);
-        $this->db->where('dateStartWork <=', $maxDate);
-        $this->db->join('tblstaff', 'tblstaff.staffid = tblworksheet.userid', 'left');
-        $this->db->order_by('dateStartWork', 'ASC');
-        if(is_numeric($idStaff)) {
-            $this->db->where('userid', $idStaff);
+        
+        if($idStaff) {
+            $this->db->where('staffid', $idStaff);
         }
-        $result = $this->db->get('tblworksheet')->result();
-        
-        
-        $filterByUser = new stdClass();
+        $result = $this->db->get('tblstaff')->result();
+   
+
+        $filterByUser = [];
         foreach($result as $row) {
-            $filterByUser[$row->userid]->current[] = $row;
+            
+            $this->db->where('dateStartWork >=', $minDate);
+            $this->db->where('dateStartWork <=', $maxDate);
+            $this->db->join('tblstaff', 'tblstaff.staffid = tblworksheet.userid', 'left');
+            $this->db->order_by('dateStartWork', 'ASC');
+            $this->db->where('userid', $row->staffid);
+            
+            $result_work = $this->db->get('tblworksheet')->result();
+
+            if(!isset($filterByUser[$row->staffid])) $filterByUser[$row->staffid] = new stdClass();
+            $filterByUser[$row->staffid]->info = $row;
+            $filterByUser[$row->staffid]->current = $result_work;
 
             $this->db->where('dateStartWork <', $minDate);
             $this->db->order_by('dateStartWork', 'DESC');
+            $this->db->where('userid', $row->staffid);
 
-            $filterByUser[$row->userid]->lastMonth = $this->db->get('tblworksheet')->row();
+            $filterByUser[$row->staffid]->lastMonth = $this->db->get('tblworksheet')->row();
         }
         return $filterByUser;
     }
