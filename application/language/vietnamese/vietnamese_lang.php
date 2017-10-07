@@ -3503,3 +3503,5 @@ $lang['not_task_assigned_someone_support'] = 'Được giao %s cho hỗ trợ c�
 $lang['new_task_assigned_non_user_support'] = 'Hỗ  trợ công việc mới được giao cho bạn - %s';
 $lang['task_no_supporters'] = 'Không có người hỗ trợ công việc này';
 $lang['task_time_taken']    = 'Thời gian làm';
+
+$lang['worksheet'] = 'Chấm công';

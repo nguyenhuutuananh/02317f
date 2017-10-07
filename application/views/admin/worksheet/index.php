@@ -4,17 +4,33 @@
 <!-- END Custom Timesheet plugin -->
 <div id="wrapper">
 	<div class="content">
-		<div class="row">
+        <div class="row">
+            <br />
             <button type="button" id="btnCreateWorkSheet" class="btn btn-info" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Load dữ liệu">Tạo lịch làm việc cho nhân viên</button>
-            <hr />
 
+            <button type="button" id="btnCreateDayOff" class="btn btn-info" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Load dữ liệu">Nhân viên nghỉ phép</button>
+            
+            
+                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-4 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+                    <form method="get" action="" class="form-inline">
+                    <?php
+                        echo render_inline_select('selectChangeYear', array(), array(), 'Năm');
+                        echo render_inline_select('selectChangeMonth', array(), array(), 'Tháng');
+                    ?>
+                    <button class="btn btn-primary">Thay đổi</button>
+                    </form>
+                </div>
+            <div class="clearfix">
+            
+            </div>
+            
+                
             <hr />
             <table>
                 <thead></thead>
                 <tbody id="J_timedSheet">
                 </tbody>
             </table>
-
         </div>
     </div>
 </div>
@@ -41,6 +57,29 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade lead-modal" id="modalCreateDayOff" tabindex="0" role="dialog"  >
+    <div class="modal-dialog" style="width: 50%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">
+                    <span class="edit-title">Nhân viên xin nghỉ phép</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-submit-virtual" class="btn btn-info"><?php echo _l('submit'); ?></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 <?php init_tail(); ?>
 <!-- Custom Timesheet plugin -->
 <script src="<?=base_url('assets/plugins/timesheet/js/')?>TimeSheet.js"></script>
@@ -49,9 +88,29 @@
     // 
     let sheetModal;
     
-    // TimedSheet
+    
 	$(function(){
+        let currentSelectedYear = <?=$yearWorksheet?>;
+        let currentSelectedMonth = <?=$monthWorksheet?>;
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+        $('#selectChangeYear').find('option').remove();
+        $('#selectChangeMonth').find('option').remove();
+        $('#selectChangeYear').append('<option'+(currentSelectedYear == currentYear ? ' selected="selected"' : '')+' value="'+currentYear+'">'+currentYear+'</option>');
         //$('#createWorksheet').modal('show');
+        for(let i=1;i<=5;i++) {
+            preYear = currentYear-i;
+            nextYear = currentYear+i;
+            $('#selectChangeYear').prepend('<option'+(currentSelectedYear == preYear ? ' selected="selected"' : '')+' value="'+preYear+'">'+preYear+'</option>');
+            $('#selectChangeYear').append('<option'+(currentSelectedYear == nextYear ? ' selected="selected"' : '')+' value="'+nextYear+'">'+nextYear+'</option>');
+        }
+        
+        for(let i=1;i<=12;i++) {
+            $('#selectChangeMonth').append('<option'+(currentSelectedMonth == i ? ' selected="selected"' : '')+' value="'+i+'">'+i+'</option>');
+        }
+        $('#selectChangeYear').selectpicker('refresh');
+        $('#selectChangeMonth').selectpicker('refresh');
+        // TimedSheet
         <?php
         $days = cal_days_in_month(CAL_GREGORIAN, date('m'), date('Y'));
         ?>
@@ -165,7 +224,7 @@
         }
         ?>
 
-        // Modal
+        // Modal create worksheet
         var dimensionsModal = [1, 7];
         var selectListModal = [
             {id:"0",name:"Chọn"},
@@ -207,6 +266,7 @@
         };
         let updateWorkingDays = () => {
             let rowArray = [];
+            // console.log(sheetDataModal);
             sheetDataModal.forEach((r, index) => {
                 rowArray.push(`[${sheetModal.getRowStates(index)}]`);
             });
@@ -247,15 +307,18 @@
         });
         
         $(document).on('click', '#createWorksheet #unSelectAll', function() {
-            let indexRow = $('.TimeSheet-remark .btn').index(this);
+            let indexRow = $('#createWorksheet .TimeSheet-remark .btn').index(this);
             sheetDataModal[indexRow] = sheetDataModal[indexRow].map(x => 0);
-            sheetDataModal = initSheet(sheetDataModal);
+            
+            sheetModal = initSheet(sheetDataModal);
             updateWorkingDays();
         });
         
         $(document).on('click', '#createWorksheet .TimeSheet-rowHead', function() {
             if($('#jobType').val() == 3) return;
-            let indexRow = $('.TimeSheet-rowHead').index(this);
+            let indexRow = $('#createWorksheet .TimeSheet-rowHead').index(this);
+            
+            
             sheetDataModal[indexRow] = sheetDataModal[indexRow].map(x => 1);
             sheetModal = initSheet(sheetDataModal);
             updateWorkingDays();
@@ -273,15 +336,36 @@
                 $(this).html('');
                 $(this).append(hour + ' giờ');
                 sheetHourDataModal[$(this).attr('data-row')][$(this).attr('data-col')] = hour;
-                $('#workingHours').val(`[${sheetHourDataModal.toString()}]`);
+                $('#createWorksheet #workingHours').val(`[${sheetHourDataModal.toString()}]`);
             }
             else if(e.button === 2) {
                 $(this).html('');
                 sheetHourDataModal[$(this).attr('data-row')][$(this).attr('data-col')] = 0;
-                $('#workingHours').val(`[${sheetHourDataModal.toString()}]`);
+                $('#createWorksheet #workingHours').val(`[${sheetHourDataModal.toString()}]`);
             }
         });
-	
+        
+        // Modal create day off
+        $('#btnCreateDayOff').click(function() {
+            let btnCreateDayOff = $(this);
+            btnCreateDayOff.button('loading');
+            $.get(admin_url + 'worksheet/modal_create_dayoff', function(data) {
+                $('#modalCreateDayOff .modal-body').html(data);
+                
+                // Init data
+                init_selectpicker();
+                init_datepicker();
+
+                $('#modalCreateDayOff').modal('show');
+                btnCreateDayOff.button('reset');
+            })
+            .fail((data) => {
+                btnCreateDayOff.button('reset');
+            });
+        });
+
+        
+
         // ALL
         $('#btnCreateWorkSheet').click(function() {
             let buttonCreate = $(this).button('loading');
@@ -295,7 +379,7 @@
                 sheetModal = initSheet(sheetDataModal);
                 
                 _validate_form($('#createWorksheet #form-create-worksheet'),{
-                    'staffid': 'required',
+                    'userid[]': 'required',
                     'workingDays': 'required',
                     'dateStartWork': 'required',
                 },send_data_form);
@@ -320,19 +404,10 @@
                 else {
                     alert_float('danger',response.message);
                 }
-                // $(form)[0].reset();
-                
-                // $('.selectpicker').val('');
-                // $('.selectpicker').change();
-                // $('.selectpicker').selectpicker('refresh');
-
-                // $(form).find('.datepicker').val('<?= date('Y-m-d') ?>');
-                // $('#createWorksheet').modal('show');
             });
             return false;
         }
         $('#btn-submit-virtual').click(function() {
-            console.log($('#createWorksheet #form-create-worksheet'));
             $('#createWorksheet #form-create-worksheet').submit();
         });
     });

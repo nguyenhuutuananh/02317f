@@ -1,13 +1,6 @@
 
     <div class="panel-body">
-            <h2 class="bold no-margin font-medium">
-                <?php echo $title; ?>
-            </h2>
-            <hr />
             <?php echo form_open_multipart($this->uri->uri_string(),array('id'=>'form-create-worksheet','autocomplete'=>'off')); ?>
-            <?php
-                echo render_select('userid', $staff_members, array('staffid', 'firstname', 'lastname'), 'Nhân viên');
-            ?>
             <?php
                 $options = array(
                     array(
@@ -25,6 +18,11 @@
                 );
                 echo render_select('jobType', $options, array('id', 'name'), 'Làm việc tính theo', '', array(), array(), '', '', false);
             ?>
+
+            <?php
+                echo render_select('userid[]', $staff_members, array('staffid', 'firstname', 'lastname'), 'Nhân viên', '', array('multiple' => 'multiple'), array(), '', '', false);
+            ?>
+            
             <div class="form-group">
                 <label for="workingHours" class="control-label ">Ngày làm việc</label>
                 <table class="table">
