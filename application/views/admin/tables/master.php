@@ -259,9 +259,8 @@ foreach ($rResult as $aRow) {
         }
         $options .= '<a onclick="onchange_status('.$aRow['id'].','.$aRow['view'].')" class="btn"><i class="'.$__data.'"></i></a>';
     
-        $options .= '<a onclick="delete_true('.$aRow['id'].',\'master_bds\')" class="btn btn-danger _delete"><i class="fa fa-remove"></i></a>';
+        $options .= '<a onclick="delete_true('.$aRow['id'].',\'master_bds\')" class="btn btn-danger"><i class="fa fa-remove"></i></a>';
     }
-    
 
     $row[]   = $options;
     $output['aaData'][] = $row;

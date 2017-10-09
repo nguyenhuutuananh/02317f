@@ -610,8 +610,11 @@
                                                                             <input id="images" name="images" style="width:0px; height:0px;border:0px!important;color: white" value="<?=$selected?>">
                                                                         </div>
                                                                     </th>
+                                                                    <th class="bold">
+                                                                        DS Chủ sở hữu
+                                                                    </th>
                                                                     <th class="bold"><p style="width: 150px;"><?=_l('options')?></p></th>
-
+                                                                    
                                                                     <th class="bold"> <input style="width:0px; height:0px;border:0px!important;color: white" name="filter"></th>
                                                                 </tr>
                                                             </thead>
@@ -806,6 +809,11 @@
                                                                                     <?php }?>
                                                                                 </td>
                                                                                 <td>
+                                                                                    <button data-loading-text="<i class='fa fa-spinner fa-spin '></i>" data-bmdSrc="<?=admin_url().'newview/project/'.$rom['id_menu'].'/'.$rom['id_project'].$type_project?>" class="btn btn-primary btn-icon bmd-modalButton" type="button">
+                                                                                        <i class="glyphicon glyphicon-user"></i>
+                                                                                    </button>
+                                                                                </td>
+                                                                                <td>
 
                                                                                     <div class="dropdown">
 
@@ -865,11 +873,143 @@
         </div>
     </div>
 </div>
+<style type="text/css">
+.bmd-modalButton {
+  /* display: block;
+  margin: 15px auto;
+  padding: 5px 15px; */
+}
+
+.close-button {
+  overflow: hidden;
+}
+
+.bmd-modalContent {
+  box-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+  
+.bmd-modalContent .close {
+  font-size: 30px;
+  line-height: 30px;
+  padding: 7px 4px 7px 13px;
+  text-shadow: none;
+  opacity: .7;
+  color:#fff;
+}
+
+.bmd-modalContent .close span {
+  display: block;
+}
+
+.bmd-modalContent .close:hover,
+.bmd-modalContent .close:focus {
+  opacity: 1;
+  outline: none;
+}
+
+.bmd-modalContent iframe {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+<div class="modal fade" id="modalPage">
+    <div class="modal-dialog" style="width: 90%;">
+        <div class="modal-content bmd-modalContent">
+
+            <div class="modal-body">
+        
+        <div class="close-button">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="embed-responsive" style="padding-bottom: 47.25%;">
+                            <iframe class="embed-responsive-item" frameborder="0"></iframe>
+        </div>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
     <?php init_tail(); ?>
     <div id="script">
     <div id="content-script">
         <script>
+            let latestButton;
+            (function($) {
+                
+                $.fn.bmdIframe = function( options ) {
+                    var self = this;
+                    var settings = $.extend({
+                        classBtn: '.bmd-modalButton',
+                        defaultW: 1240,
+                        defaultH: 635
+                    }, options );
+                
+                    $(settings.classBtn).on('click', function(e) {
+                    var allowFullscreen = $(this).attr('data-bmdVideoFullscreen') || false;
+                    
+                    var dataVideo = {
+                        'src': $(this).attr('data-bmdSrc'),
+                        'width': ($(this).attr('data-bmdWidth') || settings.defaultW) + 'px',
+                        'height': ($(this).attr('data-bmdHeight') || settings.defaultH) + 'px',
+                    };
+                    
+                    if ( allowFullscreen ) dataVideo.allowfullscreen = "";
+                    
+                    // stampiamo i nostri dati nell'iframe
+                    $(self).find("iframe").attr(dataVideo);
+                    });
+                    this.on('shown.bs.modal', function(){
+                        // $(this).find('iframe').hide();
+                    });
+                    // se si chiude la modale resettiamo i dati dell'iframe per impedire ad un video di continuare a riprodursi anche quando la modale è chiusa
+                    this.on('hidden.bs.modal', function(){
+                        $(this).find('iframe').html("").attr("src", "");
+                    });
+                
+                    return this;
+                };
+
+                $('#modalPage iframe').on('load', function() {
+                    if(!$(this).attr('src')) return;
+                    let iframeContent = $(this).contents();
+
+                    // Remove header
+                    iframeContent.find('div#header').hide();
+                    iframeContent.find('body').addClass('hide-sidebar');
+                                        
+                    // Tabs auto click
+                    iframeContent.find('a[href="#review_host"]').tab('show');
+                    iframeContent.find('.profile-tabs').next().find('.tab-pane.active').removeClass('active');
+                    iframeContent.find('#review_host').addClass('active');
+                    iframeContent.find('#profile').addClass('active');
+
+                    // Remove button
+                    iframeContent.find('.tab-content > a,h4,hr').remove();
+                    iframeContent.find('ul.profile-tabs').hide();
+
+                    // Remove footer
+                    iframeContent.find('div#wrapper').css('min-height', '');
+
+                    $(this).show();
+                    $('#modalPage').modal('show');
+                    latestButton.button('reset');
+                });
+            })(jQuery);
+
+
+            $(document).on('click', '.bmd-modalButton', function() {
+                $(this).button('loading');
+                latestButton = $(this);
+            });
+
+            jQuery(document).ready(function(){
+                jQuery("#modalPage").bmdIframe();
+            });
+
+
             $(function() {
                 $('#furniture_fill,#district_fill').change(function() {
                 }).multipleSelect({
@@ -900,7 +1040,7 @@
                 } );
                     var fouces_input=$('th input');
                     $.each($(fouces_input), function( index, value ) {
-                        console.log(value.value);
+                        // console.log(value.value);
                         if(value.value!="") {
                             $(value).focus();
                         }
@@ -932,7 +1072,7 @@
 
                 $('table input').on('keyup change focus', function (va) {
                     type=va.target.name;
-                    console.log(va);
+                    // console.log(va);
                     jQuery.ajax({
                         type: "post",
                         url:'<?=admin_url()."newview/save_input"?>',
@@ -977,11 +1117,11 @@
                     $('input[name="filter"]').val(name);
                     $('input[name="filter"]').focus();
                      _object='/<?=$menu->id?>/<?=$object?>';
-                    console.log(_object);
+                    // console.log(_object);
                     btn_delete=$('._delete');
                     $.each($(btn_delete),function( index, value ){
                         data_id=$(value).attr('data_id');
-                        console.log(data_id);
+                        // console.log(data_id);
                         $(value).prop('href','<?=admin_url()?>newview/delete_project/'+data_id+_object);
                     })
 //                    $('._delete').prop('href','<?//=admin_url()?>//newview/delete_project/'+_object);
@@ -992,11 +1132,7 @@
                 $('#'+id).val(data);
                 $('#'+id).focus();
             }
-
-
-
         </script>
-<!--        <script src="https://cdn.datatables.net/fixedcolumns/3.2.2/js/dataTables.fixedColumns.min.js"></script>-->
         <script src="<?=base_url()?>assets/js/dataTables.fixedColumns.min.js"></script>
 
         <script>
@@ -1068,7 +1204,7 @@
                         });
                         }
                         $(_this).prop('readonly','readonly');
-                        console.log($(_this).prop('readonly'));
+                        // console.log($(_this).prop('readonly'));
                     }
 
                 });
@@ -1175,7 +1311,7 @@
                     data:  {id:_id,colum:_colum,menu_id:<?=$menu->id?>,not_id:_val_history,id_pro:_data_id},
                     cache: false,
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                         kiemtra=$(_this).find('option').length;
                         _option="";
                         $.each($(data), function( index, value ) {
@@ -1209,7 +1345,7 @@
                                     $(_this).find('option').remove();
                                     $(_this).append('<option value="'+_val+'">'+_op+'</option>');
                                     var _value=$(_this).val();
-                                    console.log(_value);
+                                    // console.log(_value);
                                     jQuery.ajax({
                                         type: "post",
                                         dataType: "json",
@@ -1237,7 +1373,7 @@
                                     var history=$(_this).find('option');
                                     _val_history=history[0].value;
                                     _op_history=history[0].text;
-                                    console.log(_op_history);
+                                    // console.log(_op_history);
                                     $(_this).find('option').remove();
                                     $(_this).append('<option value="'+_val_history+'">'+_op_history+'</option>');
                                     $(_this).off('blur');
@@ -1307,7 +1443,7 @@
                 data: datastring,
                 cache: false,
                 success: function (data) {
-                    console.log(data);
+                    // console.log(data);
                 }
             })
             window.location.reload();

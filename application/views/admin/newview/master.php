@@ -96,7 +96,7 @@
             );
             array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="master_bds"><label></label></div>');
 
-            render_datatable($table_data,'master_bds_company');
+            render_datatable($table_data,'master_bds_company', 'pageResize');
             ?>
         </div>
     </div>

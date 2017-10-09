@@ -468,6 +468,12 @@
 
     function delete_true(id,table)
     {
+        var r = confirm(confirm_action_prompt);
+        if(!r)
+        {
+            return false;
+        }
+
         $.ajax({
             type: "POST",
             dataType: "json",

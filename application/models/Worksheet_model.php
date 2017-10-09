@@ -2,13 +2,23 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Worksheet_model extends CRM_Model
 {
-    public function createWorksheet($idStaff, $data) {
-        
+    public function createWorksheet($idStaff, $data) {    
         if(is_numeric($idStaff)) {
             $this->db->where('staffid', $idStaff);
             if($this->db->get('tblstaff')->row()) {
                 $data['userid'] = $idStaff;
                 $this->db->insert('tblworksheet', $data);
+                return $this->db->insert_id();
+            }
+        }
+        return false;
+    }
+    public function createDayOff($idStaff, $data) {
+        if(is_numeric($idStaff)) {
+            $this->db->where('staffid', $idStaff);
+            if($this->db->get('tblstaff')->row()) {
+                $data['userid'] = $idStaff;
+                $this->db->insert('tblworksheet_dayoff', $data);
                 return $this->db->insert_id();
             }
         }
@@ -46,6 +56,14 @@ class Worksheet_model extends CRM_Model
             $this->db->where('userid', $row->staffid);
 
             $filterByUser[$row->staffid]->lastMonth = $this->db->get('tblworksheet')->row();
+        
+            // Dayoff
+
+            $this->db->where('dateWorkOff >=', $minDate);
+            $this->db->where('dateWorkOff <=', $maxDate);
+            $this->db->where('userid', $row->staffid);
+            
+            $filterByUser[$row->staffid]->dayOff = $this->db->get('tblworksheet_dayoff')->result();
         }
         return $filterByUser;
     }

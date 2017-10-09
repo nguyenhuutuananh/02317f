@@ -496,6 +496,7 @@
 </div>
 <?php init_tail(); ?>
 <?php include_once(APPPATH . 'views/admin/newview/model_project.php');?>
+<script src="//cdn.datatables.net/plug-ins/1.10.16/features/pageResize/dataTables.pageResize.min.js"></script>
 <script>
     init_editor('.content_email',{height:200});
     $(function() {
@@ -599,7 +600,7 @@
 
 
     initDataTable('.table-call-logs','<?=admin_url()?>newview/init_relation_logs/<?php echo $id_bds; ?>' , [0], [0]);
-    initDataTable('.table-master_bds_profile','<?=admin_url()?>newview/init_relation_master_bds/<?php echo $id_bds; ?>/0' , [0], [0]);
+    initDataTable('.table-master_bds_profile','<?=admin_url()?>newview/init_relation_master_bds/<?php echo $id_bds; ?>/0' , [0], [0],);
     initDataTable('.table-master_bds_company','<?=admin_url()?>newview/init_relation_master_bds/<?php echo $id_bds; ?>/1' , [0], [0]);
     initDataTable('.table-people-take','<?=admin_url()?>newview/init_relation_take/<?php echo $id_bds; ?>' , [3], [3]);
 </script>

@@ -14,8 +14,9 @@
                 <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-xs-offset-4 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
                     <form method="get" action="" class="form-inline">
                     <?php
-                        echo render_inline_select('selectChangeYear', array(), array(), 'Năm');
                         echo render_inline_select('selectChangeMonth', array(), array(), 'Tháng');
+                        echo render_inline_select('selectChangeYear', array(), array(), 'Năm');
+                        
                     ?>
                     <button class="btn btn-primary">Thay đổi</button>
                     </form>
@@ -50,7 +51,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btn-submit-virtual" class="btn btn-info"><?php echo _l('submit'); ?></button>
+                <button type="button" id="" class="btn btn-info btn-submit-virtual"><?php echo _l('submit'); ?></button>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
             </div>
         </div><!-- /.modal-content -->
@@ -72,7 +73,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btn-submit-virtual" class="btn btn-info"><?php echo _l('submit'); ?></button>
+                <button type="button" id="" class="btn btn-info btn-submit-virtual"><?php echo _l('submit'); ?></button>
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
             </div>
         </div><!-- /.modal-content -->
@@ -87,8 +88,14 @@
 <script>
     // 
     let sheetModal;
-    
-    
+    <?php
+    $edited_data_staff = array();
+    foreach($staffsWorksheet as $key=>$member) {
+        $edited_data_staff[$key] = new stdClass();
+        $edited_data_staff[$key]->dayOff = $member->dayOff;
+    }
+    ?>
+    let staff_data = <?=json_encode($edited_data_staff)?>;
 	$(function(){
         let currentSelectedYear = <?=$yearWorksheet?>;
         let currentSelectedMonth = <?=$monthWorksheet?>;
@@ -170,6 +177,7 @@
                         $dayofweek--;
                         if($dayofweek == -1 ) $dayofweek = 6;
                         if($temp[0][$dayofweek] == 1 || ( count($temp) > 1 && $temp[1][$dayofweek] == 1 ) ) {
+                            // foreach($member->)
                             echo "1";
                         }
                         else {
@@ -215,11 +223,27 @@
                 sheetData : sheetData
             },
             remarks : {
-                title : "Description",
-                default : "N/A"
+                title : "Ngày làm",
+                default : "0"
+            },
+            end : function(ev,selectedArea){
+                
             }
         });
         sheet.disable();
+        for(let a=0;a<sheetData.length;a++) {
+            sheet.setRemark(a, sheetData[a].filter(a => a == 1).length);
+        }
+        var staff_data_array = $.map(staff_data, function(value, index) {
+            return [value];
+        });
+        $.each(staff_data_array, function(key, value) {
+            if(value.dayOff.length!=0) {
+                $.each(value.dayOff, function(keyDayOff, valueDayOff) {
+
+                });
+            }
+        });
             <?php
         }
         ?>
@@ -265,8 +289,8 @@
             });
         };
         let updateWorkingDays = () => {
+            
             let rowArray = [];
-            // console.log(sheetDataModal);
             sheetDataModal.forEach((r, index) => {
                 rowArray.push(`[${sheetModal.getRowStates(index)}]`);
             });
@@ -407,8 +431,8 @@
             });
             return false;
         }
-        $('#btn-submit-virtual').click(function() {
-            $('#createWorksheet #form-create-worksheet').submit();
+        $('.btn-submit-virtual').click(function() {
+            $(this).parents('.modal-footer').prev().find('form').submit();
         });
     });
 </script>

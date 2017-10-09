@@ -101,7 +101,7 @@ class Worksheet extends Admin_Controller {
             
             $idStaff = $data_post['userid'];
             $result = new stdClass();
-            $result->success = $this->worksheet_model->createWorksheet($idStaff, $data_post);
+            $result->success = $this->worksheet_model->createDayOff($idStaff, $data_post);
             $result->message = "Tạo thất bại!";
             if($result->success) {
                 $result->message = "Tạo thành công!";
