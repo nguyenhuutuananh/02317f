@@ -121,6 +121,7 @@
 
                         </div>
                         <?php echo form_close(); ?>
+
                         <div class="col-md-12">
                             <form action="<?=admin_url()?>newview/upload_file_master" class="dropzone drop-master dz-clickable" id="upload_file_master" onchange="get_delete(this)" enctype="multipart/form-data" method="post" accept-charset="utf-8">
                                 <input type="file" name="file" multiple="">
@@ -129,6 +130,7 @@
                                 </div>
                             </form>
                         </div>
+                    
                     </div>
                 </div>
             </div>

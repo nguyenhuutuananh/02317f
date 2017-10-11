@@ -524,22 +524,66 @@ class Clients extends Admin_controller
                 'childs' => [],
             ),
         );
+
+        $this->clientColumns = array(
+            (object)array(
+                'title_th'   => 'KH từ',
+                'id'         => 'clientFrom',
+            ),
+            (object)array(
+                'title_th'   => 'Tên KH',
+                'id'         => 'company',
+            ),
+            (object)array(
+                'title_th'   => 'Nguồn',
+                'id'         => 'source',
+            ),
+            (object)array(
+                'title_th'   => 'Số đt',
+                'id'         => 'phonenumber',
+            ),
+            (object)array(
+                'title_th'   => 'Email',
+                'id'         => 'email',
+            ),
+            (object)array(
+                'title_th'   => 'Quốc tịch',
+                'id'         => 'country',
+            ),
+            (object)array(
+                'title_th'   => 'Tình trạng',
+                'id'         => 'type_client',
+            ),
+            (object)array(
+                'title_th'   => 'NV đăng ký KH',
+                'id'         => 'dkkh',
+            ),
+            (object)array(
+                'title_th'   => 'NV phụ trách KH',
+                'id'         => 'nvgd',
+            ),
+        );
     }
     /* List all clients */
     public function index()
     {
+        if($this->input->is_ajax_request()) {
+            $this->perfex_base->get_table_data('clients_summary');
+        }
         $data['clients_care'] = $this->clients_model->get_clients(1);
         $data['clients_buy']  = $this->clients_model->get_clients(2);
         $data['clients_fail'] = $this->clients_model->get_clients(3);
 
+        $data['table_clients'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=1')->value);
 
         $data['table_heads_clients_care'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=1')->value);
         $data['table_heads_clients_buy'] = json_decode($this->clients_model->get_table('tblorder_table_clients', 'id=2')->value);
         $data['table_heads_clients_fail'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=3')->value);
         // $data['table_heads'] = $this->clientTakeCareColumns;
 
-        $this->load->view('admin/clients/manage', $data);
+        
 
+        $this->load->view('admin/clients_new/manage', $data);
     }
     public function client($id)
     { 
@@ -671,6 +715,144 @@ class Clients extends Admin_controller
             $this->load->view('admin/clients/client', $data);
         }
     }
+    public function modal_client($id) {
+        $data['type_client']=$this->input->get('type_client');
+        if (!$this->input->get('group')) {
+            $group = 'profile';
+        } else {
+            $group = $this->input->get('group');
+        }
+        if($group == 'items' && $this->input->is_ajax_request()) {
+            $this->perfex_base->get_table_data('client_items', array(
+                'clientId' => $id,
+            ));
+        }
+
+        // Xử lý dữ liệu ajax
+        if($this->input->post()){
+            $data = $this->input->post();
+            // print_r($data);
+            // exit();
+            if(isset($data['time_bonus'])) {
+
+            }
+            // $data['time_bonus']=implode(',',$data['time_bonus']);
+            // $data['num_bonus']=implode(',',$data['num_bonus']);
+            $data['type_client']=$this->input->get('type_client');
+            if($id=="")
+            {
+                if($data['type_client'] >= 1)
+                {
+                    $data['datecreated']=date('Y-m-d');
+                    $id=$this->clients_model->add_client($data);
+                    $response = new stdClass();
+                    if($id)
+                    {
+                        $response->success = true;
+                        $response->message = 'thêm thành công';
+                    }
+                    else
+                    {
+                        $response->success = false;
+                        $response->message = 'thêm không thành công';
+                    }
+                    exit(json_encode($response));
+                    //redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
+                }
+            }
+            else
+            {
+                if(!is_null($this->input->get('type_client')) && !is_null($this->input->get('convert'))) {
+                    $data['type_client'] = $this->input->get('type_client')+1;
+                }
+                $result=$this->clients_model->update_client($id,$data);
+                
+                if($result)
+                {
+                    $response->success = true;
+                    $response->message = 'Cập nhật dữ liệu thành công';
+                }
+                else
+                {
+                    $response->success = false;
+                    $response->message = 'Cập nhật dữ liệu không thành công';
+                }
+                exit(json_encode($response));
+                
+                // redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
+            }
+        }
+
+
+        if($id!="")
+        {
+            $data['client'] = $this->clients_model->get_data_clients($id);
+            // print_r($data['client']);
+            // exit();
+            if($data['client']) {
+                if($group == 'profile') {
+                    if(!$data['type_client']) {
+                        $data['type_client'] = $data['client']->type_client;
+                    }
+                }
+
+                if($group == 'billingperiod') {
+                    $idItem = $this->input->get('id');
+                    if(!is_null($this->input->get('id'))) {
+                        $result = $this->clients_model->get_period($id, $this->input->get('id'));
+                        if($result) {
+                            $data['period'] = $result;
+                            $data['total_period'] = $this->clients_model->count_period($id, $idItem);
+                        }
+                        else
+                        {
+                            redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));    
+                        }
+                    }
+                    else {
+                        redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                    }
+                }
+                $data['total_item'] = $this->clients_model->count_items($id);
+                $data['total_value'] = $this->clients_model->sum_item_value($id, $idItem);
+                $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($id, $idItem);
+                $data['attachments']   = $this->clients_model->get_all_customer_attachments($id);
+                $data['staff']           = $this->staff_model->get('', 1);
+                // Get all active staff members (used to add reminder)
+                $this->load->model('staff_model');
+                $data['members'] = $this->staff_model->get('', 1);
+                // print_r($data['attachments']);
+                // exit();
+            }
+        }
+        else
+        {
+            $data['type_client']=$this->input->get('type_client');
+            if(!$data['type_client'])
+            {
+                set_alert('danger','Đường dẩn không tồn tại');
+                redirect(admin_url('clients'));
+            }
+        }
+
+        $data['group']  = $group;
+        $data['groups'] = $this->clients_model->get_groups();
+
+        
+        $data['title']='Khách hàng';
+        $data['countries']=$this->clients_model->get_table_array('tblcountries');
+        $data['exigency']=$this->clients_model->get_table_array('tblexigency');
+        $data['purpose']=$this->clients_model->get_table_array('tblpurpose');
+        $data['source']=$this->clients_model->get_table_array('tblleadssources');
+        $data['menu_project']=$this->clients_model->get_table_array('tblmenubds');
+        $data['province']=$this->clients_model->get_table_array('province');
+        $data['staff']=$this->clients_model->get_table_array_where('tblstaff','_delete!=1');
+        $data['status']=$this->clients_model->get_table_array('tblstatus');
+        $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner','_delete!=1');
+        $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
+
+        exit($this->load->view('admin/clients_new/modals/client', $data, true));
+    }
     public function get_project($id)
     {
         $result=$this->clients_model->get_project($id);
@@ -702,13 +884,7 @@ class Clients extends Admin_controller
                 // var_dump($data['table_heads']);
                 // exit();
                 if($type == 1)
-                    $data['origin_table_heads'] = $this->clientTakeCareColumns;
-                else if($type == 2) {
-                    $data['origin_table_heads'] = $this->clientBuyColumns;
-                }
-                else if($type == 3) {
-                    $data['origin_table_heads'] = $this->clientFailColumns;
-                }
+                    $data['origin_table_heads'] = $this->clientColumns;
                 
             }
             $this->load->view('admin/clients/setup_table_clients',$data);
@@ -727,35 +903,13 @@ class Clients extends Admin_controller
 
         $new_column = array();
         if($type==1) {
-            foreach($this->clientTakeCareColumns as $key=>$item) {
-                $this->clientTakeCareColumns[$key] = (array)$this->clientTakeCareColumns[$key];
+            foreach($this->clientColumns as $key=>$item) {
+                $this->clientColumns[$key] = (array)$this->clientColumns[$key];
             }
             foreach($active as $active_menu) {
-                $key = array_search($active_menu['id'], array_column($this->clientTakeCareColumns, 'id'));
+                $key = array_search($active_menu['id'], array_column($this->clientColumns, 'id'));
                 if($key !== false) {
-                    $new_column[] = $this->clientTakeCareColumns[$key];
-                }
-            }
-        }
-        else if($type==2) {
-            foreach($this->clientBuyColumns as $key=>$item) {
-                $this->clientBuyColumns[$key] = (array)$this->clientBuyColumns[$key];
-            }
-            foreach($active as $active_menu) {
-                $key = array_search($active_menu['id'], array_column($this->clientBuyColumns, 'id'));
-                if($key !== false) {
-                    $new_column[] = $this->clientBuyColumns[$key];
-                }
-            }
-        }
-        else if($type==3) {
-            foreach($this->clientFailColumns as $key=>$item) {
-                $this->clientFailColumns[$key] = (array)$this->clientFailColumns[$key];
-            }
-            foreach($active as $active_menu) {
-                $key = array_search($active_menu['id'], array_column($this->clientFailColumns, 'id'));
-                if($key !== false) {
-                    $new_column[] = $this->clientFailColumns[$key];
+                    $new_column[] = $this->clientColumns[$key];
                 }
             }
         }

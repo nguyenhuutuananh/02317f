@@ -7,12 +7,12 @@ if(!is_null($convert_to)) {
     }
 }
 ?>
-<a  href="<?= admin_url() ?>clients">
+<!-- <a  href="<?= admin_url() ?>clients">
     <button type="button" class="btn btn-default  pull-right">
         Trở lại
     </button>
-</a>
-<h4 class="bold no-margin"><?php echo _l('Thông tin Khách hàng '); ?></h4>
+</a> -->
+<!-- <h4 class="bold no-margin"><?php echo _l('Thông tin Khách hàng '); ?></h4> -->
 
 <div class="clearfix">
     <br />
@@ -45,8 +45,23 @@ if(!is_null($convert_to)) {
     <div class="col-md-12">
         <ul class="nav nav-tabs profile-tabs" role="tablist">
             <li role="presentation" class="active">
-                <a href="#view_client" aria-controls="view_project" role="tab" data-toggle="tab">
+                <a href="#view_project" aria-controls="view_project" role="tab" data-toggle="tab">
                     <?php echo _l('Chi tiết'); ?>
+                </a>
+            </li>
+            <li role="presentation" class="">
+                <a href="#task" aria-controls="task" role="tab" data-toggle="tab">
+                    <?php echo _l('Lịch sử chăm sóc KH'); ?>
+                </a>
+            </li>
+            <li role="presentation" class="">
+                <a href="#attachments" aria-controls="attachments" role="tab" data-toggle="tab">
+                    <?php echo _l('File đính kèm'); ?>
+                </a>
+            </li>
+            <li role="presentation" class="">
+                <a href="#reminders" aria-controls="reminders" role="tab" data-toggle="tab">
+                    <?php echo _l('Nhắc nhở'); ?>
                 </a>
             </li>
         </ul>
@@ -415,7 +430,16 @@ if(!is_null($convert_to)) {
 
                     </div>
                 <div>
-                    <button class="btn btn-info mtop20 only-save customer-form-submiter">
+                <div role="tabpanel" class="tab-pane" id="task">
+                                abc
+                </div>
+                <div role="tabpanel" class="tab-pane" id="attachments">
+                                abc
+                </div>
+                <div role="tabpanel" class="tab-pane" id="reminders">
+                                abc
+                </div>
+                    <button type="button" class="btn btn-info mtop20 only-save customer-form-submiter">
                         <?php echo _l('submit'); ?>
                     </button>
                 </div>

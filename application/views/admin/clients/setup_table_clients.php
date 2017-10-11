@@ -19,6 +19,10 @@ if($type >= 1 && $type <= 3)
                 <div class="panel_s">
                     <div class="panel-body _buttons">
                         <a href="#" onclick="save_menu();return false;" class="btn btn-info">Lưu bảng </a>
+                        <div class="pull-right">
+                            <a href="<?=admin_url('clients')?>" class="btn btn-default">Trở lại </a>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

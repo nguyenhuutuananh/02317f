@@ -745,7 +745,10 @@
                                                                                         {
                                                                                             $type_project="";
                                                                                         }
-                                                                                        echo '<td class="code" title="'.$rom['code'].'"><a data-toggle="tooltip" data-original-title="'.$tag_val.'" href="'.admin_url().'newview/project/'.$rom['id_menu'].'/'.$rom['id_project'].$type_project.'">'.$rom['code'].'</a></td>';
+                                                                                        echo '<td class="code" title="'.$rom['code'].'">';
+                                                                                        echo '<button data-toggle="tooltip" data-original-title="'.$tag_val.'" data-loading-text="'.$rom['code'].' <i class=\'fa fa-spinner fa-spin \'></i>" data-view="modalEdit" data-bmdSrc="'.admin_url().'newview/project/'.$rom['id_menu'].'/'.$rom['id_project'].$type_project.'" class="btn btn-primary btn-icon bmd-modalButton" type="button">
+                                                                                        '.$rom['code'].' <i class="glyphicon glyphicon-option-vertical"></i>
+                                                                                    </button></td>';
 
                                                                                     }
                                                                                     else if($v->id=='staff_id'){
@@ -753,7 +756,7 @@
                                                                                                 '<a data-toggle="tooltip" data-title="'.get_staff_full_name($rom['staff_id']).'" href="'.admin_url('profile/'.$rom['staff_id']).'">'.staff_profile_image($rom['staff_id'], array(
                                                                                             'staff-profile-image-small'
                                                                                         )) .' '.get_staff_full_name($rom['staff_id']).'</a>'.'</td>';
-
+                                                                                        
                                                                                     }
                                                                                      else if($v->id=='cost'){
                                                                                         echo ' <td class="cost" title="'.$rom['cost'].'">'.number_format($rom['cost'],0,".",".").'</td>';
@@ -915,7 +918,7 @@
 }
 </style>
 <div class="modal fade" id="modalPage">
-    <div class="modal-dialog" style="width: 90%;">
+    <div class="modal-dialog" style="width: 90%;top: -50px;">
         <div class="modal-content bmd-modalContent">
 
             <div class="modal-body">
@@ -923,7 +926,7 @@
         <div class="close-button">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
-        <div class="embed-responsive" style="padding-bottom: 47.25%;">
+        <div class="embed-responsive" style="padding-bottom: 52%;">
                             <iframe class="embed-responsive-item" frameborder="0"></iframe>
         </div>
             </div>
@@ -974,21 +977,29 @@
 
                 $('#modalPage iframe').on('load', function() {
                     if(!$(this).attr('src')) return;
+                    console.log(latestButton.attr('data-bmdSrc'));
+                    console.log($(this).attr('src'));
+                    console.log(latestButton.attr('data-bmdSrc') !==  $(this).attr('src'));
+                    
                     let iframeContent = $(this).contents();
-
+                    
                     // Remove header
-                    iframeContent.find('div#header').hide();
                     iframeContent.find('body').addClass('hide-sidebar');
-                                        
-                    // Tabs auto click
-                    iframeContent.find('a[href="#review_host"]').tab('show');
-                    iframeContent.find('.profile-tabs').next().find('.tab-pane.active').removeClass('active');
-                    iframeContent.find('#review_host').addClass('active');
-                    iframeContent.find('#profile').addClass('active');
+                    iframeContent.find('div#header').hide();
+                    iframeContent.find('div#setup-menu-wrapper').removeClass('display-block');
 
-                    // Remove button
-                    iframeContent.find('.tab-content > a,h4,hr').remove();
-                    iframeContent.find('ul.profile-tabs').hide();
+                    if(latestButton.data('view') !== 'modalEdit') {
+                        // Tabs auto click
+                        iframeContent.find('a[href="#review_host"]').tab('show');
+                        iframeContent.find('.profile-tabs').next().find('.tab-pane.active').removeClass('active');
+                        iframeContent.find('#review_host').addClass('active');
+                        iframeContent.find('#profile').addClass('active');
+
+                        // Remove button
+                        iframeContent.find('.tab-content > h4').text('Chủ sở hữu');
+                        iframeContent.find('ul.profile-tabs').hide();
+                    }
+                    iframeContent.find('.tab-content > a').remove();
 
                     // Remove footer
                     iframeContent.find('div#wrapper').css('min-height', '');

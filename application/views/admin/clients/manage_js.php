@@ -74,8 +74,8 @@
                 alert_float(response.alert_type, response.message);
                 if(response.alert_type != 'danger') {
                     setTimeout(() => {
-                        location.reload();
-                    }, 2000);
+                        thisButton.parents('table').DataTable().ajax.reload();
+                    }, 1000);
                 }
                 
             }, 'json');

@@ -147,6 +147,7 @@ class Clients_model extends CRM_Model
             $data['type_bds'] = $items[0]['menuBdsId'];
             $data['bds']      = $items[0]['projectBdsId'];
         }
+        $data['dkkh'] = get_staff_user_id();
         $this->db->insert('tblclients',$data);
         $return_id=$this->db->insert_id();
         if($return_id)

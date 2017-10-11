@@ -178,6 +178,7 @@
         $('#update-master .view_file').html('');
         if(id!=0)
         {
+            $('#upload_file_master').hide();
             $('#div_isset_master').hide();
             $('#phonenumber').tagit('removeAll');
             $('.title-master').html('Cập nhật chủ sở hữu');
@@ -188,6 +189,11 @@
                 dataType: "json",
                 cache: false,
                 success: function (data) {
+                    console.log(data);
+                    if(data.type_master >= 2) {
+                        $('#upload_file_master').show();
+                    }
+                    
                     $('#update-master').prop('action','<?=admin_url('newview/update_master/')?>'+id);
                     $('#upload_file_master').prop('action','<?=admin_url('newview/upload_file_master/')?>'+id);
                     var phone=data.phonenumber.split(",");
@@ -236,6 +242,7 @@
         }
         else
         {
+            $('#upload_file_master').hide();
             $('.title-master').html('Thêm chủ sở hữu cá nhân');
 //            $('#div_isset_master').show();
             $('#upload_file_master').prop('action','<?=admin_url('newview/upload_file_master')?>');
