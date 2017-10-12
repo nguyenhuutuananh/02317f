@@ -787,13 +787,15 @@ class Clients extends Admin_controller
         if($id!="")
         {
             $data['client'] = $this->clients_model->get_data_clients($id);
+            if(!$data['type_client']) {
+                $data['type_client'] = $data['client']->type_client;
+            }
             // print_r($data['client']);
             // exit();
+            
             if($data['client']) {
                 if($group == 'profile') {
-                    if(!$data['type_client']) {
-                        $data['type_client'] = $data['client']->type_client;
-                    }
+                    
                 }
 
                 if($group == 'billingperiod') {
@@ -830,8 +832,7 @@ class Clients extends Admin_controller
             $data['type_client']=$this->input->get('type_client');
             if(!$data['type_client'])
             {
-                set_alert('danger','Đường dẩn không tồn tại');
-                redirect(admin_url('clients'));
+                exit('Đường dẩn không tồn tại');
             }
         }
 
@@ -852,6 +853,11 @@ class Clients extends Admin_controller
         $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
 
         exit($this->load->view('admin/clients_new/modals/client', $data, true));
+    }
+    public function clientItems($id) {
+        $this->perfex_base->get_table_data('client_items', array(
+            'clientId' => $id,
+        ));
     }
     public function get_project($id)
     {

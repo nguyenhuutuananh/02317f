@@ -56,6 +56,8 @@ foreach ( $rResult as $aRow )
             $_data = '<a href="tel:' . $_data . '">' . $_data . '</a>';
         } else if ($aColumns[$i] == 'email') {
             $_data = '<a href="mailto:' . $_data . '">' . $_data . '</a>';
+        } else if ($aColumns[$i] == 'company') {
+            $_data = '<span class="clientName">' . $_data . '</span>';
         }
         else if ($aColumns[$i] == 'type_client') {
             switch($_data) {

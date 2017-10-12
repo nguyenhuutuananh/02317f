@@ -227,41 +227,50 @@
 
 <?php include_once(APPPATH . 'views/admin/clients/manage_js.php');?>
 <script>
-
-initDataTable('.table-clients', window.location.href, [], [], [], [0, 'DESC']);
+var view_init_department,new_product = function() {};
+//format currency
+function formatNumber(nStr, decSeperate=".", groupSeperate=",") {
+    nStr += '';
+    x = nStr.split(decSeperate);
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + groupSeperate + '$2');
+    }
+    return x1 + x2;
+}
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+const clientTable =  initDataTable('.table-clients', window.location.href, [], [], [], [0, 'DESC']);
 $(document).on('click', '.btn-edit-client', function(e) {
+    $('#modalClient .modal-body').empty();
     let buttonEdit = $(this).button('loading');
     $.get(admin_url + '/clients/modal_client/' + $(this).attr('data-userid'), function(data) {
         $('#modalClient').attr('data-userid', buttonEdit.attr('data-userid'));
+        
         $('#modalClient .modal-body').html(data);
         buttonEdit.button('reset');
         init_selectpicker();
         init_datepicker();
         $('#modalClient').modal('show');
+        $('td:has(".clientName")').removeAttr('style');
     });
     e.preventDefault();
 });
 
-$(function() {
-    $(document).on('click', '#modalClient .modal-body .customer-form-submiter', function() {
-        const data = $('#modalClient form').serialize();
-        $.ajax({
-            url: admin_url + 'clients/modal_client/' + $('#modalClient').attr('data-userid'),
-            method: 'post',
-            data,
-            dataType: 'json',
-        }).done(function(data) {
-            if(data.success) {
-                $('.table-clients').DataTable().ajax.reload();
-                alert_float('success', data.message);
-            }
-            else {
-                alert_float('danger', data.message);
-            }
-        });
-    });
+$(document).on('click', '.btn-close-single-modal', function(e) {
+    $(this).parents('div.modal:first').modal('hide');
 });
 
+$(function() {
+    $(document).on('click', 'td:has(".clientName")', function() {
+        $('.clientName').removeAttr('style');
+        $(this).attr('style', 'font-weight: bold');
+        $(this).parents('tr').find('td:last-child a.btn-edit-client').trigger('click');
+    });
+});
 
 $(document).ready(function(){
     setInterval(function(){
