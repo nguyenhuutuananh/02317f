@@ -178,13 +178,13 @@
                         </div>
                         <div class="panel_s">
                             <div class="panel-body">
-                                <a href="<?=admin_url()?>clients/client/?type_client=1" class="btn btn-info mbot20 mright5">
+                                <a href="<?=admin_url()?>clients/modal_client/?type_client=1" class="btn btn-info mbot20 mright5 btn-new-client">
                                     Tạo mới khách hàng đang quan tâm
                                 </a>
-                                <a href="<?=admin_url()?>clients/client/?type_client=2" class="btn btn-info mbot20 mright5">
+                                <a href="<?=admin_url()?>clients/modal_client/?type_client=2" class="btn btn-info mbot20 mright5 btn-new-client">
                                     Tạo mới khách hàng đã mua/thuê
                                 </a>
-                                <a href="<?=admin_url()?>clients/client/?type_client=3" class="btn btn-info mbot20 mright5">
+                                <a href="<?=admin_url()?>clients/modal_client/?type_client=3" class="btn btn-info mbot20 mright5 btn-new-client">
                                     Tạo mới khách hàng đã fail
                                 </a>
                                 <a href="<?=admin_url()?>clients/settup_table_clients?type_client=1" class="btn btn-default mbot20 btn-icon">
@@ -207,7 +207,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalClient">
+<div class="modal fade" id="modalClient" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog" style="width: 70%;">
         <div class="modal-content">
             <div class="modal-header">
@@ -221,13 +221,21 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div id="contact_data"></div>
+
 
 <?php init_tail(); ?>
 <script src="<?=base_url()?>assets/js/dataTables.fixedColumns.min.js"></script>
 
 <?php include_once(APPPATH . 'views/admin/clients/manage_js.php');?>
 <script>
-var view_init_department,new_product = function() {};
+var view_init_department, new_product, get_district_client, remove_field, append_colum, get_project = function() {};
+// init for newpayment
+var new_payment,view_payment = function() {};
+// init for period
+var new_period,send_data_period_form = function() {};
+// init for contacts
+var contact = function(){};
 //format currency
 function formatNumber(nStr, decSeperate=".", groupSeperate=",") {
     nStr += '';
@@ -259,12 +267,37 @@ $(document).on('click', '.btn-edit-client', function(e) {
     });
     e.preventDefault();
 });
+$(document).on('click', '.btn-new-client', function(e) {
+    $('#modalClient .modal-body').empty();
+    let buttonNew = $(this).button('loading');
+    $.get(buttonNew.attr('href'), function(data) {
+        $('#modalClient .modal-body').html(data);
+        
+        init_selectpicker();
+        init_datepicker();
 
+        $('#modalClient').modal('show');
+        $('#modalClient').removeAttr('data-userid');
+        buttonNew.button('reset');
+    });
+
+    e.preventDefault();
+});
 $(document).on('click', '.btn-close-single-modal', function(e) {
+    // console.log($(this).parents('div.modal'));
+    // console.log($(this).parents('div.modal:first'));
+    
+    // Bug ?!
     $(this).parents('div.modal:first').modal('hide');
+    $(this).parents('div.modal:first').removeClass('in');
+    $(this).parents('div.modal:first').css('display', 'none');
+    $(document).find('.modal-backdrop.fade.in:last').remove();
 });
 
 $(function() {
+    // $(document).on('click', '.modal-backdrop.fade.in', function() {
+    //     $(this).remove();
+    // });
     $(document).on('click', 'td:has(".clientName")', function() {
         $('.clientName').removeAttr('style');
         $(this).attr('style', 'font-weight: bold');

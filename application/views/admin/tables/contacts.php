@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-$aColumns = array('firstname', 'lastname', 'email', 'title', 'phonenumber', 'active', 'last_login');
+$aColumns = array('firstname', 'lastname', 'email', 'title', 'phonenumber', 'active');
 $sIndexColumn = "id";
 $sTable = 'tblcontacts';
 $join = array();

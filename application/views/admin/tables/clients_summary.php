@@ -72,6 +72,16 @@ foreach ( $rResult as $aRow )
                     break;
             }
         }
+        else if ($aColumns[$i] == 'clientFrom') {
+            switch($_data) {
+                case 'honeycomb':
+                    $_data = "Honeycomb";
+                    break;
+                case 'moigioi':
+                    $_data = "Môi giới";
+                    break;
+            }
+        }
 
         $row[] = $_data;
     }

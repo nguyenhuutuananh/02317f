@@ -63,10 +63,8 @@ foreach ($rResult as $aRow) {
 
         // $_data.= icon_btn('kind_of_warehouse/delete/'. $aRow['id'] , 'remove', 'btn-danger delete-reminder');
         $_data = "";
-        $_data .= icon_btn('clients/client/'. $aRow['clientId'] . '?group=billingperiod&id='.$aRow['id'] , 'bars', 'btn-primary');
+        $_data .= icon_btn('#' , 'bars', 'btn-primary btn-billingperiod', array('data-idproduct' => $aRow['id'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"));
         $row[] = $_data;
-
-
     } else {
         $row[] = '';
     }

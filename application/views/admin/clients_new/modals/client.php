@@ -49,6 +49,9 @@ if(!is_null($convert_to)) {
                     <?php echo _l('Chi tiết'); ?>
                 </a>
             </li>
+            <?php
+                if(isset($client)) {
+            ?>
             <li role="presentation" class="">
                 <a href="#task" aria-controls="task" role="tab" data-toggle="tab">
                     <?php echo _l('Lịch sử chăm sóc KH'); ?>
@@ -74,6 +77,23 @@ if(!is_null($convert_to)) {
                     <?php echo _l('Nhắc nhở'); ?>
                 </a>
             </li>
+            <?php
+                if($client->clientType == 'congty') {
+                    ?>
+                    
+            <li role="presentation" class="">
+                <a href="#contacts" aria-controls="contacts" role="tab" data-toggle="tab">
+                    <?php echo _l('Thư ký/Trợ lý'); ?>
+                </a>
+            </li>
+
+                    <?php
+                }
+            ?>
+            
+            <?php
+                }
+            ?>
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="view_project">
@@ -87,16 +107,44 @@ if(!is_null($convert_to)) {
                         <fieldset>
                             <legend>Khách hàng</legend>
                                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                    <?php
+                                    $options = array(
+                                        array(
+                                            'id' => 'honeycomb',
+                                            'value' => 'Honeycomb',
+                                        ),
+                                        array(
+                                            'id' => 'moigioi',
+                                            'value' => 'Môi giới',
+                                        ),
+                                    );
+                                    $clientFrom = (isset($client) ? $client->clientFrom : '');
+                                    echo render_inline_select('clientFrom', $options, array('id', 'value'), 'KH từ', $clientFrom);
+                                    ?>
                                     <?php $value = (isset($client) ? $client->company : ''); ?>
                                     <?php echo render_inline_input('company', 'Tên Khách hàng', $value); ?>
                                     <?php $value = (isset($client) ? $client->email : ''); ?>
                                     <?php echo render_inline_input('email', 'Email', $value); ?>
-                                    <?php $selected = (isset($client) ? $client->exigency : ''); ?>
-                                    <?php echo render_inline_select('exigency', $exigency, array('id', 'name'), 'Nhu cầu', $selected, array()); ?>
+                                    <?php
+                                    $options = array(
+                                        array(
+                                            'id' => 'canhan',
+                                            'value' => 'Cá nhân',
+                                        ),
+                                        array(
+                                            'id' => 'congty',
+                                            'value' => 'Công ty',
+                                        ),
+                                    );
+                                    $clientType = (isset($client) ? $client->clientType : '');
+                                    echo render_inline_select('clientType', $options, array('id', 'value'), 'Loại KH', $clientType, array(), array(), '', '', false);
+                                    ?>
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                     <?php $selected = (isset($client) ? $client->purpose : ''); ?>
                                     <?php echo render_inline_select('purpose', $purpose, array('id', 'name'), 'Mục đích', $selected, array()); ?>
+                                    <?php $selected = (isset($client) ? $client->exigency : ''); ?>
+                                    <?php echo render_inline_select('exigency', $exigency, array('id', 'name'), 'Nhu cầu', $selected, array()); ?>
                                     <?php $value = (isset($client) ? $client->phonenumber : ''); ?>
                                     <?php echo render_inline_input('phonenumber', 'Số điện thoại', $value); ?>
                                 </div>
@@ -111,7 +159,7 @@ if(!is_null($convert_to)) {
 
                                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                     <?php $selected = (isset($client) ? $client->class_type : ''); ?>
-                                    <?php echo render_inline_select('class_type', $class_client, array('id', 'name'), 'Loại khách hàng', $selected, array()); ?>
+                                    <?php echo render_inline_select('class_type', $class_client, array('id', 'name'), 'Level', $selected, array()); ?>
                                     
                                 </div>
                         </fieldset>
@@ -442,6 +490,7 @@ if(!is_null($convert_to)) {
                 </button>
                 <?php echo form_close(); ?>
             </div>
+
             <div role="tabpanel" class="tab-pane" id="task">
                 <h4 class="no-mtop bold"><?php echo _l('tasks'); ?></h4>
                 <hr />
@@ -479,11 +528,11 @@ if(!is_null($convert_to)) {
                     render_datatable($table_data,'client-items');
                 ?>
 
-                <div class="modal fade lead-modal" id="newProduct" tabindex="-1" role="dialog"  >
+                <div class="modal fade lead-modal" id="newProduct" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <button type="button" class="close btn-close-single-modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h4 class="modal-title">
                                     <span class="edit-title">Khách hàng mua/thuê</span>
                                 </h4>
@@ -592,11 +641,11 @@ if(!is_null($convert_to)) {
                     </div><!-- /.modal-dialog -->
 
                 </div><!-- /.modal -->
-                <div class="modal fade lead-modal" id="viewProduct" tabindex="-1" role="dialog"  >
+                <div class="modal fade lead-modal" id="viewProduct" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <button type="button" class="close" class="btn-close-single-modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <button type="button" class="close btn-close-single-modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h4 class="modal-title">
                                     <span class="edit-title">Khách hàng mua/thuê</span>
                                 </h4>
@@ -703,6 +752,24 @@ if(!is_null($convert_to)) {
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div><!-- /.modal -->
+                <div class="modal fade lead-modal" id="viewBillingPeriod" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+                    <div class="modal-dialog" style="width: 100%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close btn-close-single-modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">
+                                    <span class="edit-title">Đợt thanh toán</span>
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default btn-close-single-modal"><?php echo _l('close'); ?></button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
             </div>
             
             <div role="tabpanel" class="tab-pane" id="paymenthistory">
@@ -724,11 +791,11 @@ if(!is_null($convert_to)) {
             </div>
 
             <div role="tabpanel" class="tab-pane" id="attachments">
-                <div class="modal fade" id="customer_file_share_file_with" data-total-contacts="<?php echo count($contacts); ?>" tabindex="-1" role="dialog">
+                <div class="modal fade" id="customer_file_share_file_with" data-total-contacts="<?php echo count($contacts); ?>" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
                     <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <button type="button" class="close" class="btn-close-single-modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="btn-close-single-modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title"><?php echo _l('share_file_with'); ?></h4>
                     </div>
                     <div class="modal-body">
@@ -889,6 +956,7 @@ if(!is_null($convert_to)) {
                     include_once(APPPATH . 'views/admin/clients/modals/send_file_modal.php');
                     } ?>
             </div>
+
             <div role="tabpanel" class="tab-pane" id="reminders">
                 <h4 class="no-mtop bold"><?php echo _l('client_reminders_tab'); ?></h4>
                 <hr />
@@ -900,9 +968,31 @@ if(!is_null($convert_to)) {
                 $this->load->view('admin/includes/modals/reminder',array('id'=>$client->userid,'name'=>'customer','members'=>$members,'reminder_title'=>_l('set_reminder')));
                 } ?>
             </div>
+            <div role="tabpanel" class="tab-pane" id="contacts">
+                <?php if(has_permission('customers','','create') || is_customer_admin($client->userid)){
+                        $disable_new_contacts = false;
+                        if(is_empty_customer_company($client->userid) && total_rows('tblcontacts',array('userid'=>$client->userid)) == 1){
+                        $disable_new_contacts = true;
+                    }
+                    ?>
+                    <div class="inline-block"<?php if($disable_new_contacts){ ?> data-toggle="tooltip" data-title="<?php echo _l('customer_contact_person_only_one_allowed'); ?>"<?php } ?>>
+                        <a href="#" onclick="contact(<?php echo $client->userid; ?>); return false;" class="btn btn-info mbot25<?php if($disable_new_contacts){echo ' disabled';} ?>"><?php echo _l('new_contact'); ?></a>
+                    </div>
+                    <?php } ?>
+                    <?php
+                    $table_data = array(_l('client_firstname'),_l('client_lastname'),_l('client_email'),_l('contact_position'),_l('client_phonenumber'),_l('contact_active'));
+                    $custom_fields = get_custom_fields('contacts',array('show_on_table'=>1));
+                    foreach($custom_fields as $field){
+                    array_push($table_data,$field['name']);
+                }
+                array_push($table_data,_l('options'));
+                echo render_datatable($table_data,'contacts'); ?>
+                
+            </div>
         </div>
     </div>
 </div>
+
 
 <script>
     $(function() {
@@ -913,7 +1003,7 @@ if(!is_null($convert_to)) {
         $(document).on('click', '.customer-form-submiter', function() {
             const data = $('.customer-form-submiter').parents('form').serialize();
             $.ajax({
-                url: admin_url + 'clients/modal_client/' + $('#modalClient').attr('data-userid'),
+                url: $(this).parents('form').attr('action'),
                 method: 'post',
                 data,
                 dataType: 'json',
@@ -921,6 +1011,9 @@ if(!is_null($convert_to)) {
                 if(data.success) {
                     $('.table-clients').DataTable().ajax.reload();
                     alert_float('success', data.message);
+                    if(!$('#modalClient').attr('data-userid')) {
+                        $('#modalClient').modal('hide');
+                    }
                 }
                 else {
                     alert_float('danger', data.message);
@@ -961,7 +1054,7 @@ if(!is_null($convert_to)) {
         initDataTable('.table-reminders', admin_url + 'misc/get_reminders/' + customer_id + '/' + 'customer', [4], [4]);
 
         // Warning
-        function get_project(id)
+        get_project = function(id)
         {
             jQuery.ajax({
                 type: "post",
@@ -979,7 +1072,7 @@ if(!is_null($convert_to)) {
                 }
             });
         }
-        function append_colum(buttonElement)
+        append_colum = function(buttonElement)
         {
             var time=$('.class_time').html();
             var re_num=$('input[name="num_bonus[]"]').length+1;
@@ -1008,7 +1101,7 @@ if(!is_null($convert_to)) {
             init_datepicker();
 
         }
-        function remove_field(key)
+        remove_field = function(key)
         {
 
             $('.review_bonus_'+key).parent().remove();
@@ -1017,7 +1110,6 @@ if(!is_null($convert_to)) {
             var field=$('.fieldset');
             var lable_time=$('.label-time');
             var lable_num=$('.label-num');
-    //        var time_num=$('control-label').attr('for',)
             console.log(legend);
             for(var i=0;i<re_num;i++)
             {
@@ -1027,7 +1119,7 @@ if(!is_null($convert_to)) {
                 $(lable_num[i]).html('Đợt: '+(i+1));
             }
         }
-        function get_district_client(id)
+        get_district_client = function(id)
         {
             jQuery.ajax({
                 type: "post",
@@ -1067,7 +1159,6 @@ if(!is_null($convert_to)) {
                     if(data.success)
                     {
                         let item = data.data;
-                        console.log($('#viewProduct'));
                         $('#viewProduct').modal('show');
                         $('#viewProduct .modal-body .col-sm-8').each((i, v) => {
                             switch(i) {
@@ -1109,21 +1200,128 @@ if(!is_null($convert_to)) {
             $('#newProduct').modal('show');
             jQuery('#id_type').prop('action', admin_url + 'clients/addProduct/<?= (isset($client) ? $client->userid : "") ?>');
         }
+        // Billing period
+        $(document).on('click', '#modalClient .btn-billingperiod', function() {
+            const buttonDetail = $(this);
+            buttonDetail.button('loading');
+            
+            $.get(admin_url + 'clients/modal_billingperiod/' + customer_id + '/' + $(this).attr('data-idproduct'), function(data) {
+                $('#modalClient #viewBillingPeriod .modal-body').html('');
+                $('#modalClient #viewBillingPeriod .modal-body').html(data);
 
+                // init event
+                const tableBill = initDataTable('.table-billing-period', `${admin_url}clients/getBillingPeriod/${customer_id}/${buttonDetail.attr('data-idproduct')}` , [0], [3], {}, [1, 'ASC']);
+                init_selectpicker();
+                init_datepicker();
+                
+                _validate_form('#modalClient #formAddPeriod', {
+                    'datePay': 'required',
+                    'value': 'required',
+                }, send_data_period_form);
+                
+                _validate_form('#modalClient #formAddPay', {
+                    'datePay': 'required',
+                    'realValue': 'required',
+                    'idPaymentMethod': 'required',
+                }, send_data_period_form);
+                $('#modalClient #viewBillingPeriod').attr('data-idproduct', buttonDetail.attr('data-idproduct'));
+                // Show
+                $('#modalClient #viewBillingPeriod').modal('show');
+                buttonDetail.button('reset');
+            }).fail(() => {
+                buttonDetail.button('reset');
+            });
+
+        });
+
+        new_period = function() {
+            if(typeof $('#modalClient #formAddPeriod').validate != 'undefined') {
+                $('#modalClient #formAddPeriod').validate().resetForm();
+            }
+            $('#modalClient #addPeriod').modal('show');
+            jQuery('#modalClient #formAddPeriod').prop('action', admin_url + 'clients/addPeriod/<?= (isset($client) ? $client->userid : "") ?>/<?= $this->input->get('id') ?>');
+        }
+        send_data_period_form = function(form) {
+            var data = $(form).serialize();
+            var url = form.action;
+            
+            let buttonSubmit = $(form).find('button[type="submit"]').button('loading');
+
+            $.post(url, data).done(function(response) {
+                response = JSON.parse(response);
+                if(response.success == true){
+                    alert_float('success',response.message);
+                    $('#modalClient #addPeriod').modal('hide');
+                    $('#modalClient #addPayment').modal('hide');
+                    $('#modalClient .table-billing-period').DataTable().ajax.reload();
+
+                    $(form)[0].reset();
+                    
+                    $(form).find('input').val('');
+                    $(form).find('select').val('');
+                    $(form).find('select').selectpicker('refresh');
+                }
+                else {
+                    alert_float('danger',response.message);
+                }
+                buttonSubmit.button('reset');
+            }).fail(function() {
+                alert_float('danger', 'Lỗi nhận dữ liệu!');
+                buttonSubmit.button('reset');
+            });
+            return false;
+        }
         // Items
+        $(function() {
+            _validate_form($('#modalClient .form-item'),{
+                'items[0][city]': 'required',
+                'items[0][district]': 'required',
+                'items[0][menuBdsId]': 'required',
+                'items[0][projectBdsId]': 'required',
+                'items[0][type]': 'required',
+                'items[0][price]': 'required',
+                'items[0][dateStart]': 'required',
+            },send_data_form);
+        });
+
+        function send_data_form(form) {
+            var data = $(form).serialize();
+            var url = form.action;
+            $.post(url, data).done(function(response) {
+                response = JSON.parse(response);
+                if(response.success == true){
+                    alert_float('success',response.message);
+                }
+                else {
+                    alert_float('danger',response.message);
+                }
+                $(form)[0].reset();
+                
+                $('.selectpicker').val('');
+                $('.selectpicker').change();
+                $('.selectpicker').selectpicker('refresh');
+
+                $(form).find('.datepicker').val('<?= date('Y-m-d') ?>');
+                $('.table-client-items').DataTable().ajax.reload();
+                $('#newProduct').modal('hide');
+            });
+            return false;
+        }
         initDataTable('.table-client-items', admin_url + 'clients/clientItems/' + customer_id, [0], [0]);
 
         // Payment
-        function new_payment(stt, paymentId){
+        new_payment = function(stt, paymentId){
             if(typeof $('#formAddPay').validate != 'undefined') {
                 $('#formAddPay').validate().resetForm();
+                $('#formAddPay #datePay').val('<?=date('Y-m-d')?>');
+                let buttonSubmit = $('#formAddPay').find('button[type="submit"]').button('reset');
             }
 
             $('#addPayment').modal('show');
             $('#addPayment').find('.edit-title').html('Thanh toán đợt '+stt);
-            jQuery('#formAddPay').prop('action', admin_url + 'clients/addPayment/<?= (isset($client) ? $client->userid : "") ?>/<?= $this->input->get('id') ?>/'+paymentId);
+            jQuery('#formAddPay').prop('action', admin_url + `clients/addPayment/${customer_id}/${$('#modalClient #viewBillingPeriod').attr('data-idproduct')}/`+paymentId);
         }
-        function view_payment(stt, paymentId) {
+        view_payment = function(stt, paymentId) {
             const htmlTableDetail = `
             <?php
             $table_data = array(
@@ -1139,9 +1337,185 @@ if(!is_null($convert_to)) {
             $('#viewPaymentList').find('.edit-title').html('Danh sách thanh toán đợt '+stt);
             $('#viewPaymentList').find('.modal-body').html(htmlTableDetail);
             $('#viewPaymentList').modal('show');
-            initDataTable('.table-billing-payment','<?= admin_url() ?>clients/getPayment/<?= $this->input->get('id') ?>/' + paymentId , [0], [3], {}, [1, 'DESC']);
+            initDataTable('.table-billing-payment', admin_url + `clients/getPayment/${$('#modalClient #viewBillingPeriod').attr('data-idproduct')}/` + paymentId , [0], [3], {}, [1, 'DESC']);
         }
-        $('body').on('click', '.delete-reminder-client', function() {
+
+        // paymenthistory
+        initDataTable('.table-payment-history', admin_url + `clients/paymentHistory/${customer_id}` , [0], [3], {}, [2, 'DESC']);
+        
+        // contacts
+        /* Custome profile contacts table */
+        var not_sortable_contacts = $('.table-contacts').find('th').length -1;
+        initDataTable('.table-contacts', admin_url + 'clients/contacts/' + customer_id, [not_sortable_contacts], [not_sortable_contacts]);
+        function delete_contact_profile_image(contact_id){
+            $.get(admin_url+'clients/delete_contact_profile_image/'+contact_id,function(){
+            $('body').find('#contact-profile-image').removeClass('hide');
+            $('body').find('#contact-remove-img').addClass('hide');
+            $('body').find('#contact-img').attr('src','<?php echo base_url('assets/images/user-placeholder.jpg'); ?>');
+            });
+            }
+            function validate_contact_form() {
+            _validate_form('#contact-form', {
+            firstname: 'required',
+            lastname: 'required',
+            password: {
+                required: {
+                depends: function(element) {
+                    var sent_set_password = $('input[name="send_set_password_email"]');
+                    if ($('#contact input[name="contactid"]').val() == '' && sent_set_password.prop('checked') == false) {
+                    return true;
+                    }
+                }
+                }
+            },
+            email: {
+                required: true,
+                email: true,
+                remote: {
+                url: admin_url + "misc/contact_email_exists",
+                type: 'post',
+                data: {
+                    email: function() {
+                    return $('#contact input[name="email"]').val();
+                    },
+                    userid: function() {
+                    return $('body').find('input[name="contactid"]').val();
+                    }
+                }
+                }
+            }
+            }, contactFormHandler);
+        }
+
+        function contactFormHandler(form) {
+            $('#contact input[name="is_primary"]').prop('disabled', false);
+            var formURL = $(form).attr("action");
+            var formData = $(form)[0];
+            var formData = new FormData(formData);
+            $.ajax({
+                type: 'POST',
+                data: formData,
+                mimeType: "multipart/form-data",
+                contentType: false,
+                cache: false,
+                processData: false,
+                url: formURL,
+                success: function(response) {
+                    response = JSON.parse(response);
+                    if (response.success) {
+                        alert_float('success', response.message);
+                    }
+                    if ($.fn.DataTable.isDataTable('.table-contacts')) {
+                        $('.table-contacts').DataTable().ajax.reload();
+                    }
+                    if (response.proposal_warning && response.proposal_warning != false) {
+                        $('body').find('#contact_proposal_warning').removeClass('hide');
+                        $('body').find('#contact_update_proposals_emails').attr('data-original-email', response.original_email);
+                        $('#contact').animate({ scrollTop: 0 }, 800);
+                    } else {
+                        $('#contact').modal('hide');
+                    }
+                },
+                fail: function(data) {
+                    response = JSON.parse(error.responseText);
+                    alert_float('danger', response.message);
+                }
+            });
+            return false;
+        }
+
+        contact = function(client_id, contact_id) {
+            if (typeof(contact_id) == 'undefined') {
+                contact_id = '';
+            }
+            $.post(admin_url + 'clients/contact/' + client_id + '/' + contact_id).done(function(response) {
+                $('#contact_data').html(response);
+                $('#contact').modal({show:true,backdrop:'static'});
+                $('body').on('shown.bs.modal', '#contact', function() {
+                    var contactid = $(this).find('input[name="contactid"]').val();
+                    if (contact_id == '') {
+                    $('#contact').find('input[name="firstname"]').focus();
+                    }
+                });
+                init_selectpicker();
+                init_datepicker();
+                custom_fields_hyperlink();
+                validate_contact_form();
+            }).fail(function(error) {
+                var response = JSON.parse(error.responseText);
+                alert_float('danger', response.message);
+            });
+        }
+        function update_all_proposal_emails_linked_to_contact(contact_id) {
+            var data = {};
+            data.update = true;
+            data.original_email = $('body').find('#contact_update_proposals_emails').data('original-email');
+            $.post(admin_url + 'clients/update_all_proposal_emails_linked_to_customer/' + contact_id, data).done(function(response) {
+                response = JSON.parse(response);
+                if (response.success) {
+                    alert_float('success', response.message);
+                }
+                $('#contact').modal('hide');
+            });
+        }
+        function do_share_file_contacts(edit_contacts,file_id) {
+            var contacts_shared_ids = $('select[name="share_contacts_id[]"]');
+            if(typeof(edit_contacts) == 'undefined' && typeof(file_id) == 'undefined'){
+                var contacts_shared_ids_selected = $('select[name="share_contacts_id[]"]').val();
+            } else {
+                var _temp = edit_contacts.toString().split(',');
+                for(var cshare_id in _temp){
+                contacts_shared_ids.find('option[value="'+_temp[cshare_id]+'"]').attr('selected',true);
+                }
+                contacts_shared_ids.selectpicker('refresh');
+                $('input[name="file_id"]').val(file_id);
+                $('#customer_file_share_file_with').modal('show');
+                return;
+            }
+            var file_id = $('input[name="file_id"]').val();
+            $.post(admin_url+'clients/update_file_share_visibility',{
+                file_id:file_id,
+                share_contacts_id:contacts_shared_ids_selected,
+                customer_id:$('input[name="userid"]').val()
+            }).done(function(){
+            window.location.reload();
+            });
+        }
+        function fetch_lat_long_from_google_cprofile(){
+            var data = {};
+            data.address = $('input[name="address"]').val();
+            data.city = $('input[name="city"]').val();
+            data.country = $('select[name="country"] option:selected').text();
+            $('#gmaps-search-icon').removeClass('fa-google').addClass('fa-spinner fa-spin');
+            $.post(admin_url+'misc/fetch_address_info_gmaps',data).done(function(data){
+                data = JSON.parse(data);
+                $('#gmaps-search-icon').removeClass('fa-spinner fa-spin').addClass('fa-google');
+                if(data.response.status == 'OK'){
+                $('input[name="latitude"]').val(data.lat);
+                $('input[name="longitude"]').val(data.lng);
+                } else {
+                if(data.response.status == 'ZERO_RESULTS'){
+                    alert_float('warning',"<?php echo _l('g_search_address_not_found'); ?>")
+                } else {
+                    alert_float('danger',data.response.status);
+                }
+                }
+            });
+        }
+
+        // change client type
+        $(document).on('change', '#clientType', function() {
+            let currentValue = $(this).val();
+            
+            if(currentValue == "canhan") {
+                $('a[href="#contacts"]').parent().hide();
+            }
+            else if(currentValue == "congty") {
+                $('a[href="#contacts"]').parent().show();
+            }
+        });
+        // delete event
+        $('body').on('click', '.delete-reminder-client-payment', function() {
             var r = confirm(confirm_action_prompt);
             const thisButton = $(this);
             if (r == false) {
@@ -1157,10 +1531,6 @@ if(!is_null($convert_to)) {
             }
             return false;
         });
-
-        // paymenthistory
-        initDataTable('.table-payment-history','<?= admin_url() ?>clients/paymentHistory/<?= $client->userid ?>' , [0], [3], {}, [2, 'DESC']);
-        
 
     });
 </script>

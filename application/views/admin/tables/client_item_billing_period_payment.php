@@ -71,7 +71,7 @@ foreach ($rResult as $aRow) {
         $_data = "";
         if($aRow['(select tblclient_bds_payment.status from tblclient_bds_payment where tblclient_bds_payment.id = tblclient_bds_payment_details.idClientBdsPayment)'] != 1)
         {
-            $_data .= icon_btn('clients/deletePayment/' . $idClientBds . '/' . $idPayment . '/' . $aRow['id'] , 'times', 'btn-danger delete-reminder-client');
+            $_data .= icon_btn('clients/deletePayment/' . $idClientBds . '/' . $idPayment . '/' . $aRow['id'] , 'times', 'btn-danger delete-reminder-client-payment');
         }
         
         $row[] = $_data;

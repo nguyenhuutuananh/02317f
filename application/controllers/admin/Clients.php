@@ -744,6 +744,7 @@ class Clients extends Admin_controller
                 if($data['type_client'] >= 1)
                 {
                     $data['datecreated']=date('Y-m-d');
+                    
                     $id=$this->clients_model->add_client($data);
                     $response = new stdClass();
                     if($id)
@@ -759,6 +760,7 @@ class Clients extends Admin_controller
                     exit(json_encode($response));
                     //redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
                 }
+                
             }
             else
             {
@@ -829,7 +831,7 @@ class Clients extends Admin_controller
         }
         else
         {
-            $data['type_client']=$this->input->get('type_client');
+            $data['type_client'] = $this->input->get('type_client');
             if(!$data['type_client'])
             {
                 exit('Đường dẩn không tồn tại');
@@ -853,6 +855,25 @@ class Clients extends Admin_controller
         $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
 
         exit($this->load->view('admin/clients_new/modals/client', $data, true));
+    }
+    public function modal_billingperiod($idClient, $idProduct) {
+        $data['client'] = $this->clients_model->get_data_clients($idClient);
+        
+        
+        $result = $this->clients_model->get_period($idClient, $idProduct);
+        if($result) {
+            $data['period'] = $result;
+            $data['total_period'] = $this->clients_model->count_period($idClient, $idProduct);
+
+            $data['total_item'] = $this->clients_model->count_items($idClient);
+            $data['total_value'] = $this->clients_model->sum_item_value($idClient, $idProduct);
+            $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($idClient, $idProduct);
+        }
+        else
+        {
+            exit('Trang không tồn tại');
+        }
+        exit($this->load->view('admin/clients_new/modals/billingperiod', $data, true));
     }
     public function clientItems($id) {
         $this->perfex_base->get_table_data('client_items', array(
@@ -1083,4 +1104,218 @@ class Clients extends Admin_controller
         }
         redirect($_SERVER['HTTP_REFERER']);
     }
+    // Contacts
+    public function contact($customer_id, $contact_id = '')
+    {
+        if (!has_permission('customers', '', 'view')) {
+            if (!is_customer_admin($customer_id)) {
+                echo _l('access_denied');
+                die;
+            }
+        }
+        $data['customer_id'] = $customer_id;
+        $data['contactid']   = $contact_id;
+        if ($this->input->post()) {
+            $data = $this->input->post();
+            unset($data['contactid']);
+            if ($contact_id == '') {
+                if (!has_permission('customers', '', 'create')) {
+                    if (!is_customer_admin($customer_id)) {
+                        header('HTTP/1.0 400 Bad error');
+                        echo json_encode(array(
+                            'success' => false,
+                            'message' => _l('access_denied')
+                        ));
+                        die;
+                    }
+                }
+                $id      = $this->clients_model->add_contact($data, $customer_id);
+                $message = '';
+                $success = false;
+                if ($id) {
+                    handle_contact_profile_image_upload($id);
+                    $success = true;
+                    $message = _l('added_successfuly', _l('contact'));
+                }
+                echo json_encode(array(
+                    'success' => $success,
+                    'message' => $message
+                ));
+                die;
+            } else {
+                if (!has_permission('customers', '', 'edit')) {
+                    if (!is_customer_admin($customer_id)) {
+                        header('HTTP/1.0 400 Bad error');
+                        echo json_encode(array(
+                            'success' => false,
+                            'message' => _l('access_denied')
+                        ));
+                        die;
+                    }
+                }
+                $original_contact = $this->clients_model->get_contact($contact_id);
+                $success          = $this->clients_model->update_contact($data, $contact_id);
+                $message          = '';
+                $proposal_warning = false;
+                $original_email   = '';
+                $updated          = false;
+                if (is_array($success)) {
+                    if (isset($success['set_password_email_sent'])) {
+                        $message = _l('set_password_email_sent_to_client');
+                    } else if (isset($success['set_password_email_sent_and_profile_updated'])) {
+                        $updated = true;
+                        $message = _l('set_password_email_sent_to_client_and_profile_updated');
+                    }
+                } else {
+                    if ($success == true) {
+                        $updated = true;
+                        $message = _l('updated_successfuly', _l('contact'));
+                    }
+                }
+                if (handle_contact_profile_image_upload($contact_id) && !$updated) {
+                    $message = _l('updated_successfuly', _l('contact'));
+                    $success = true;
+                }
+                if ($updated == true) {
+                    $contact = $this->clients_model->get_contact($contact_id);
+                    if (total_rows('tblproposals', array(
+                        'rel_type' => 'customer',
+                        'rel_id' => $contact->userid,
+                        'email' => $original_contact->email
+                    )) > 0 && ($original_contact->email != $contact->email)) {
+                        $proposal_warning = true;
+                        $original_email   = $original_contact->email;
+                    }
+                }
+                echo json_encode(array(
+                    'success' => $success,
+                    'proposal_warning' => $proposal_warning,
+                    'message' => $message,
+                    'original_email' => $original_email
+                ));
+                die;
+            }
+        }
+        if ($contact_id == '') {
+            $title = _l('add_new', _l('contact_lowercase'));
+        } else {
+            $data['contact'] = $this->clients_model->get_contact($contact_id);
+
+            if (!$data['contact']) {
+                header('HTTP/1.0 400 Bad error');
+                echo json_encode(array(
+                    'success' => false,
+                    'message' => 'Contact Not Found'
+                ));
+                die;
+            }
+            $title = $data['contact']->firstname . ' ' . $data['contact']->lastname;
+        }
+
+        $data['customer_permissions'] = $this->perfex_base->get_contact_permissions();
+        $data['title']                = $title;
+        $this->load->view('admin/clients/modals/contact', $data);
+    }
+    public function update_file_share_visibility()
+    {
+        if ($this->input->post()) {
+
+            $file_id           = $this->input->post('file_id');
+            $share_contacts_id = array();
+
+            if ($this->input->post('share_contacts_id')) {
+                $share_contacts_id = $this->input->post('share_contacts_id');
+            }
+
+            $this->db->where('file_id', $file_id);
+            $this->db->delete('tblcustomerfiles_shares');
+
+            foreach ($share_contacts_id as $share_contact_id) {
+                $this->db->insert('tblcustomerfiles_shares', array(
+                    'file_id' => $file_id,
+                    'contact_id' => $share_contact_id
+                ));
+            }
+
+        }
+    }
+    public function delete_contact_profile_image($contact_id)
+    {
+        do_action('before_remove_contact_profile_image');
+        if (file_exists(get_upload_path_by_type('contact_profile_images') . $contact_id)) {
+            delete_dir(get_upload_path_by_type('contact_profile_images') . $contact_id);
+        }
+        $this->db->where('id', $contact_id);
+        $this->db->update('tblcontacts', array(
+            'profile_image' => NULL
+        ));
+    }
+    public function mark_as_active($id)
+    {
+        $this->db->where('userid', $id);
+        $this->db->update('tblclients', array(
+            'active' => 1
+        ));
+        redirect(admin_url('clients/client/' . $id));
+    }
+    public function update_all_proposal_emails_linked_to_customer($contact_id)
+    {
+
+        $success = false;
+        $email   = '';
+        if ($this->input->post('update')) {
+            $this->load->model('proposals_model');
+
+            $this->db->select('email,userid');
+            $this->db->where('id', $contact_id);
+            $contact = $this->db->get('tblcontacts')->row();
+
+            $proposals     = $this->proposals_model->get('', array(
+                'rel_type' => 'customer',
+                'rel_id' => $contact->userid,
+                'email' => $this->input->post('original_email')
+            ));
+            $affected_rows = 0;
+
+            foreach ($proposals as $proposal) {
+                $this->db->where('id', $proposal['id']);
+                $this->db->update('tblproposals', array(
+                    'email' => $contact->email
+                ));
+                if ($this->db->affected_rows() > 0) {
+                    $affected_rows++;
+                }
+            }
+
+            if ($affected_rows > 0) {
+                $success = true;
+            }
+
+        }
+        echo json_encode(array(
+            'success' => $success,
+            'message' => _l('proposals_emails_updated', array(
+                _l('contact_lowercase'),
+                $contact->email
+            ))
+        ));
+    }
+    public function delete_contact($customer_id, $id)
+    {
+        if (!has_permission('customers', '', 'delete')) {
+            if (!is_customer_admin($customer_id)) {
+                access_denied('customers');
+            }
+        }
+
+        $this->clients_model->delete_contact($id);
+        redirect(admin_url('clients/client/' . $customer_id . '?tab=contacts'));
+    }
+    public function contacts($client_id)
+    {
+        $this->perfex_base->get_table_data('contacts', array(
+            'client_id' => $client_id
+        ));
+    }
+
 }

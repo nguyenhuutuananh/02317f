@@ -129,7 +129,7 @@ class Clients_model extends CRM_Model
     {
         $items = $data['items'];
         unset($data['items']);
-
+        
         $time_bonus = $data['time_bonus'];
         $num_bonus = $data['num_bonus'];
 
