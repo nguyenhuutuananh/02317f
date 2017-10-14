@@ -64,5 +64,111 @@
         </script>
         <?php do_action('app_admin_head'); ?>
     </head>
-    <body <?php if(is_rtl()){ echo 'dir="rtl"';} ?> class="<?php echo 'page'.($this->uri->segment(2) ? '-'.$this->uri->segment(2) : '') . '-'.$this->uri->segment(1); ?> admin <?php if(isset($bodyclass)){echo $bodyclass . ' '; } ?><?php if($this->session->has_userdata('is_mobile') && $this->session->userdata('is_mobile') == true){echo 'hide-sidebar ';} ?><?php if(is_rtl()){echo 'rtl';} ?>">
+    <body <?php if(is_rtl()){ echo 'dir="rtl"';} ?> class="<?php echo 'page'.($this->uri->segment(2) ? '-'.$this->uri->segment(2) : '') . '-'.$this->uri->segment(1); ?> admin <?php if(isset($bodyclass)){echo $bodyclass . ' '; } ?><?php if($this->session->has_userdata('is_mobile') && $this->session->userdata('is_mobile') == true){echo 'hide-sidebar ';} ?><?php if(is_rtl()){echo 'rtl';} ?> hide-sidebar">
+        <?php do_action('after_body_start'); ?>
+
+        <style>
+        body.hide-sidebar #menu {
+               margin-left: 0px;
+        }
+        body.hide-sidebar #wrapper {
+            margin-left: 40px;
+        }
+         body.hide-sidebar #wrapper #side-menu li:hover {
+            margin-left: 40px;
+        }
+
+
+         body.hide-sidebar>#side-menu.nav>li>a:focus,  body.hide-sidebar#side-menu.nav>li>a:hover {
+            background-color: white;
+            border-bottom: 0!important;
+            color: #fff;
+            transition: ease-in-out .2s;
+            -webkit-transition: ease-in-out .2s;
+            -moz-transition: ease-in-out .2s;
+            -o-transition: ease-in-out .2s;
+        }
+        body.hide-sidebar #side-menu li a:hover {
+            color: #fff;
+            text-transform: uppercase;
+            padding: 12px 20px 12px 16px;
+            font-size: 13px;
+             z-index: 5!important;
+            background-color: black;
+        }
+
+        body.hide-sidebar #side-menu li.active a:hover {
+            color: #fff;
+            text-transform: uppercase;
+            / padding:0px; /
+            font-size: 13px;
+             z-index: 5!important;
+            background-color: #25252b;
+        }
+        body.hide-sidebar #side-menu li.active a+ul.nav.nav-second-level.collapse.in a {
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 13px;
+            z-index: 20!important;
+            background-color: black;
+            padding: 7px 10px 7px 45px;
+        }
+        body.hide-sidebar #side-menu li.active a+ul.nav.nav-second-level.collapse.in a:hover {
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 13px;
+            z-index: 20!important;
+            background-color: #25252b;
+            padding: 7px 10px 7px 45px;
+        }
+        body.hide-sidebar #side-menu li.active>a{
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 13px;
+            z-index: 20!important;
+            background-color: black;
+        }
+        body.hide-sidebar #side-menu li.active a:hover+ul.nav.nav-second-level.collapse.in a {
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 13px;
+            z-index: 20!important;
+            background-color: black;
+        }
+        body.hide-sidebar #side-menu li .nav-second-level li.active a
+        {
+                border-radius: 0px;
+                display: inherit;
+                margin: 0px;
+                background-color:#25252b;
+        }
+        li a i.menu-icon{
+            margin-left: -5px;
+        }
+
+</style>
+    <?php $isRTL = (is_rtl() ? 'true' : 'false'); ?>
+    <?php render_custom_styles(array('general','tabs','buttons','admin','modals','tags')); ?>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <?php render_admin_js_variables(); ?>
+        <script>
+            var dt_lang = <?php echo json_encode(get_datatables_language_array()); ?>;
+            var proposal_templates = <?php echo json_encode(get_proposal_templates()); ?>;
+            var availableTags = <?php echo json_encode(get_tags_clean()); ?>;
+            var availableTagsIds = <?php echo json_encode(get_tags_ids()); ?>;
+            var bs_fields = ['billing_street','billing_city','billing_state','billing_zip','billing_country','shipping_street','shipping_city','shipping_state','shipping_zip','shipping_country'];
+            var locale = '<?php echo $locale; ?>';
+            var isRTL = '<?php echo $isRTL; ?>';
+            var tinymce_lang = '<?php echo $tinymce_lang; ?>';
+            var months_json = '<?php echo json_encode(array(_l('January'),_l('February'),_l('March'),_l('April'),_l('May'),_l('June'),_l('July'),_l('August'),_l('September'),_l('October'),_l('November'),_l('December'))); ?>';
+            var _table_api,taskid,task_tracking_stats_data,taskAttachmentDropzone,leadAttachmentsDropzone,newsFeedDropzone,autocheck_notifications_timer_id = 0,task_track_chart,cfh_popover_templates = {};
+        </script>
+        <?php do_action('app_admin_head'); ?>
+    </head>
+    <body <?php if(is_rtl()){ echo 'dir="rtl"';} ?> class="<?php echo 'page'.($this->uri->segment(2) ? '-'.$this->uri->segment(2) : '') . '-'.$this->uri->segment(1); ?> admin <?php if(isset($bodyclass)){echo $bodyclass . ' '; } ?><?php if($this->session->has_userdata('is_mobile') && $this->session->userdata('is_mobile') == true){echo 'hide-sidebar ';} ?><?php if(is_rtl()){echo 'rtl';} ?> hide-sidebar">
         <?php do_action('after_body_start'); ?>

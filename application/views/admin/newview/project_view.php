@@ -977,9 +977,9 @@
 
                 $('#modalPage iframe').on('load', function() {
                     if(!$(this).attr('src')) return;
-                    console.log(latestButton.attr('data-bmdSrc'));
-                    console.log($(this).attr('src'));
-                    console.log(latestButton.attr('data-bmdSrc') !==  $(this).attr('src'));
+                    // console.log(latestButton.attr('data-bmdSrc'));
+                    // console.log($(this).attr('src'));
+                    // console.log(latestButton.attr('data-bmdSrc') !==  $(this).attr('src'));
                     
                     let iframeContent = $(this).contents();
                     
@@ -987,7 +987,9 @@
                     iframeContent.find('body').addClass('hide-sidebar');
                     iframeContent.find('div#header').hide();
                     iframeContent.find('div#setup-menu-wrapper').removeClass('display-block');
-
+                    iframeContent.find('div#wrapper').css('margin-left', '0px');
+                    iframeContent.find('div#menu').hide();
+                    
                     if(latestButton.data('view') !== 'modalEdit') {
                         // Tabs auto click
                         iframeContent.find('a[href="#review_host"]').tab('show');

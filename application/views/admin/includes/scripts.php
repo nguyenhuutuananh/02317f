@@ -87,4 +87,12 @@ if($alertclass != ''){
     </script>
     <?php } ?>
 
+     <script>
+    $(function() {
+        $('body.hide-sidebar').find('ul').removeClass('in');
+        $('.hide-sidebar #side-menu').find('li').removeClass('active');
+    })
+</script>
+
+
 

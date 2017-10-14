@@ -283,7 +283,15 @@
     }
     
     $(() => {
-        
+        _validate_form($('.form-item'),{
+            'items[0][city]': 'required',
+            'items[0][district]': 'required',
+            'items[0][menuBdsId]': 'required',
+            'items[0][projectBdsId]': 'required',
+            'items[0][type]': 'required',
+            'items[0][price]': 'required',
+            'items[0][dateStart]': 'required',
+        },send_data_form);
     });
     function send_data_form(form) {
         var data = $(form).serialize();
