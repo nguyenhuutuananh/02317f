@@ -1,0 +1,10 @@
+<a href="" class="emoticon-icon" data-symbol=":‑)" title="<?php _lm('messaging_happy')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/happy.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":‑c" title="<?php _lm('messaging_angry')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/angry.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol="%‑)" title="<?php _lm('messaging_confused')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/confused.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":-‑(" title="<?php _lm('messaging_crying')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/crying.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":*" title="<?php _lm('messaging_in_love')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/in-love.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":-*" title="<?php _lm('messaging_kissing')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/kissing.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":‑(" title="<?php _lm('messaging_sad')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/sad.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":‑O" title="<?php _lm('messaging_surprised')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/surprised.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":‑P" title="<?php _lm('messaging_tongue_out')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/tongue-out.png')?>"/></a>
+<a href="" class="emoticon-icon" data-symbol=":-‑)" title="<?php _lm('messaging_unhappy')?>"><img src="<?php echo base_url('plugins/messaging/emoticons/unhappy.png')?>"/></a>

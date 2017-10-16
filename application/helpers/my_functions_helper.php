@@ -1,7 +1,7 @@
 <?php
     add_action('after_render_single_aside_menu','my_custom_menu_items');
     add_action('after_render_single_aside_menu','my_custom_menu_items1');
-
+include('plugins/messaging/init.php');
 function my_custom_menu_items1($order){
     if($order == 3){
         echo '<li><a href="'.admin_url('newview').'"><i class="fa fa-balance-scale menu-icon" aria-hidden="true"></i>Danh sách loại BĐS</a></li>';

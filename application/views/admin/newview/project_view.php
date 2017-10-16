@@ -988,7 +988,7 @@
                     iframeContent.find('div#header').hide();
                     iframeContent.find('div#setup-menu-wrapper').removeClass('display-block');
                     iframeContent.find('div#wrapper').css('margin-left', '0px');
-                    iframeContent.find('div#menu').hide();
+                    iframeContent.find('aside#menu').hide();
                     
                     if(latestButton.data('view') !== 'modalEdit') {
                         // Tabs auto click
