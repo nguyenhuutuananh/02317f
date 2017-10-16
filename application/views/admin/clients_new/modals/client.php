@@ -52,6 +52,12 @@ if(!is_null($convert_to)) {
             <?php
                 if(isset($client)) {
             ?>
+            <li role="presentation" class="" <?= ($client->clientType != 'congty' ? 'style="display: none;"' : "") ?>>
+                <a href="#contacts" aria-controls="contacts" role="tab" data-toggle="tab">
+                    <?php echo _l('Thư ký/Trợ lý'); ?>
+                </a>
+            </li>
+
             <li role="presentation" class="">
                 <a href="#task" aria-controls="task" role="tab" data-toggle="tab">
                     <?php echo _l('Lịch sử chăm sóc KH'); ?>
@@ -77,19 +83,8 @@ if(!is_null($convert_to)) {
                     <?php echo _l('Nhắc nhở'); ?>
                 </a>
             </li>
-            <?php
-                if($client->clientType == 'congty') {
-                    ?>
-                    
-            <li role="presentation" class="">
-                <a href="#contacts" aria-controls="contacts" role="tab" data-toggle="tab">
-                    <?php echo _l('Thư ký/Trợ lý'); ?>
-                </a>
-            </li>
 
-                    <?php
-                }
-            ?>
+            
             
             <?php
                 }
@@ -139,6 +134,28 @@ if(!is_null($convert_to)) {
                                     $clientType = (isset($client) ? $client->clientType : '');
                                     echo render_inline_select('clientType', $options, array('id', 'value'), 'Loại KH', $clientType, array(), array(), '', '', false);
                                     ?>
+
+
+                                    <?php
+                                        $company = array();
+                                        if($client->clientType != 'congty') {
+                                            $company = array('disabled' => 'disabled');
+                                        }
+                                    ?>
+                                    <?php
+                                        $value = (isset($client) ? $client->companyName : '');
+                                        echo render_inline_input('companyName', 'Tên công ty', $value, 'text', $company);
+                                    ?>
+                                    <?php
+                                        $value = (isset($client) ? $client->companyBusinessLines : '');
+                                        echo render_inline_input('companyBusinessLines', 'Lĩnh vực KD', $value, 'text', $company);
+                                    ?>
+
+                                    <?php
+                                        $selected = (isset($client) ? $client->idAgency : '');
+                                        echo render_inline_select('idAgency', $agencies, array('id', 'agencyName'), 'Môi giới', $selected);
+                                    ?>
+                                    
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                     <?php $selected = (isset($client) ? $client->purpose : ''); ?>
@@ -147,6 +164,38 @@ if(!is_null($convert_to)) {
                                     <?php echo render_inline_select('exigency', $exigency, array('id', 'name'), 'Nhu cầu', $selected, array()); ?>
                                     <?php $value = (isset($client) ? $client->phonenumber : ''); ?>
                                     <?php echo render_inline_input('phonenumber', 'Số điện thoại', $value); ?>
+                                    
+
+                                    
+                                    <?php
+                                        $value = (isset($client) ? $client->companyPaymentAddress : '');
+                                        echo render_inline_input('companyPaymentAddress', 'Địa chỉ viết HĐ', $value, 'text', $company);
+                                    ?>
+                                    <?php
+                                        $value = (isset($client) ? $client->companyPhoneNumber : '');
+                                        echo render_inline_input('companyPhoneNumber', 'Số đt bàn', $value, 'text', $company);
+                                    ?>
+                                    
+                                    <?php
+                                        $value = (isset($client) ? $client->companyWebiste : '');
+                                        echo render_inline_input('companyWebiste', 'Website', $value, 'text', $company);
+                                    ?>
+
+                                    <?php
+                                        $options = array(
+                                            array(
+                                                'id' => 'cokhachhang',
+                                                'name' => 'Khách Hàng',
+                                            ),
+                                            array(
+                                                'id' => 'cochunha',
+                                                'name' => 'Chủ nhà',
+                                            ),
+                                        );
+                                        $selected = (isset($client) ? $client->WhatsAgencyHave : '');
+                                        echo render_inline_select('WhatsAgencyHave', $options, array('id', 'name'), 'Môi giới có', $selected);
+                                    ?>
+                                    
                                 </div>
                                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                     <?php $selected = (isset($client) ? $client->country : ''); ?>
@@ -155,12 +204,21 @@ if(!is_null($convert_to)) {
                                     <!--                                                        --><?php //echo render_inline_select( 'type_client', array(array('id'=>1,'name'=>'Khách hàng đang quan tâm'),array('id'=>2,'name'=>'Khách hàng mua/thuê'),array('id'=>3,'name'=>'Khách hàng fail')),array('id','name'),'Loại khách hàng',$selected,array()); ?>
                                     <?php $selected = (isset($client) ? $client->source : ''); ?>
                                     <?php echo render_inline_select('source', $source, array('id', 'name'), 'Nguồn', $selected, array()); ?>
-                                </div>
-
-                                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                
                                     <?php $selected = (isset($client) ? $client->class_type : ''); ?>
                                     <?php echo render_inline_select('class_type', $class_client, array('id', 'name'), 'Level', $selected, array()); ?>
-                                    
+                                    <?php
+                                        $value = (isset($client) ? $client->companyOfficeAddress : '');
+                                        echo render_inline_input('companyOfficeAddress', 'Địa chỉ VP', $value, 'text', $company);
+                                    ?>
+                                    <?php
+                                        $value = (isset($client) ? $client->companyTaxCode : '');
+                                        echo render_inline_input('companyTaxCode', 'Mã số thuế', $value, 'text', $company);
+                                    ?>
+                                    <?php
+                                        $value = (isset($client) ? $client->companyNote : '');
+                                        echo render_inline_textarea('companyNote', 'Ghi chú', $value, $company);
+                                    ?>
                                 </div>
                         </fieldset>
                     </div>
@@ -1001,6 +1059,7 @@ if(!is_null($convert_to)) {
         
         // Profile
         $(document).on('click', '.customer-form-submiter', function() {
+            let buttonSubmit = $(this).button('loading');
             const data = $('.customer-form-submiter').parents('form').serialize();
             $.ajax({
                 url: $(this).parents('form').attr('action'),
@@ -1018,6 +1077,9 @@ if(!is_null($convert_to)) {
                 else {
                     alert_float('danger', data.message);
                 }
+                buttonSubmit.button('reset');
+            }).fail(() => {
+                buttonSubmit.button('reset');
             });
         });
 
@@ -1502,16 +1564,20 @@ if(!is_null($convert_to)) {
                 }
             });
         }
-
         // change client type
         $(document).on('change', '#clientType', function() {
             let currentValue = $(this).val();
+            let companyElements = $(`#companyName,#companyOfficeAddress,#companyPaymentAddress,
+            #companyPhoneNumber,#companyTaxCode,#companyWebiste,#companyBusinessLines,#companyNote`);
             
             if(currentValue == "canhan") {
                 $('a[href="#contacts"]').parent().hide();
+                companyElements.val('');
+                companyElements.attr('disabled', 'disabled');
             }
             else if(currentValue == "congty") {
                 $('a[href="#contacts"]').parent().show();
+                companyElements.removeAttr('disabled');
             }
         });
         // delete event

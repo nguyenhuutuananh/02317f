@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Clients extends Admin_controller
+class Clients_simple extends Admin_controller
 {
     // init orgin table heads
     private $clientTakeCareColumns, $clientBuyColumns, $clientFailColumns;
@@ -10,7 +10,7 @@ class Clients extends Admin_controller
     function __construct()
     {
         parent::__construct();
-        $this->load->model('clients_model');
+        $this->load->model('clients_simple_model');
         $this->clientTakeCareColumns = array(
             (object)array(
                 'title_th'   => 'Ngày liên hệ',
@@ -564,26 +564,41 @@ class Clients extends Admin_controller
             ),
         );
     }
+    public function convert($id) {
+        $response = new stdClass();
+        $response->success = false;
+        $response->message = 'Chuyển thất bại!';
+        if(is_numeric($id))
+        {
+            $result = $this->clients_simple_model->convert($id);
+            if($result) {
+                $response->success = true;
+                $response->message = 'Chuyển thành công';
+            }
+            
+        }
+        exit(json_encode($response));
+    }
     /* List all clients */
     public function index()
     {
         if($this->input->is_ajax_request()) {
-            $this->perfex_base->get_table_data('clients_summary');
+            $this->perfex_base->get_table_data('clients_summary_simple');
         }
-        $data['clients_care'] = $this->clients_model->get_clients(1);
-        $data['clients_buy']  = $this->clients_model->get_clients(2);
-        $data['clients_fail'] = $this->clients_model->get_clients(3);
+        $data['clients_care'] = $this->clients_simple_model->get_clients(1);
+        $data['clients_buy']  = $this->clients_simple_model->get_clients(2);
+        $data['clients_fail'] = $this->clients_simple_model->get_clients(3);
 
-        $data['table_clients'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=1')->value);
+        $data['table_clients'] = json_decode($this->clients_simple_model->get_table('tblorder_table_clients','id=1')->value);
 
-        $data['table_heads_clients_care'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=1')->value);
-        $data['table_heads_clients_buy'] = json_decode($this->clients_model->get_table('tblorder_table_clients', 'id=2')->value);
-        $data['table_heads_clients_fail'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=3')->value);
+        $data['table_heads_clients_care'] = json_decode($this->clients_simple_model->get_table('tblorder_table_clients','id=1')->value);
+        $data['table_heads_clients_buy'] = json_decode($this->clients_simple_model->get_table('tblorder_table_clients', 'id=2')->value);
+        $data['table_heads_clients_fail'] = json_decode($this->clients_simple_model->get_table('tblorder_table_clients','id=3')->value);
         // $data['table_heads'] = $this->clientTakeCareColumns;
 
-        
-        $data['title'] = "Khách hàng";
-        $this->load->view('admin/clients_new/manage', $data);
+        $data['title'] = 'Database KH';
+
+        $this->load->view('admin/clients_new_simple/manage', $data);
     }
     public function client($id)
     { 
@@ -616,7 +631,7 @@ class Clients extends Admin_controller
                 if($data['type_client'] >= 1)
                 {
                     $data['datecreated']=date('Y-m-d');
-                    $id=$this->clients_model->add_client($data);
+                    $id=$this->clients_simple_model->add_client($data);
                     if($id)
                     {
                         set_alert('success','thêm thành công');
@@ -626,7 +641,7 @@ class Clients extends Admin_controller
                         set_alert('danger','Thêm không thành công');
                     }
                     
-                    redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
+                    redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['type_client']));
                 }
             }
             else
@@ -634,49 +649,49 @@ class Clients extends Admin_controller
                 if(!is_null($this->input->get('type_client')) && !is_null($this->input->get('convert'))) {
                     $data['type_client'] = $this->input->get('type_client')+1;
                 }
-                $result=$this->clients_model->update_client($id,$data);
+                $result=$this->clients_simple_model->update_client($id,$data);
                 if($result)
                 {
                     set_alert('success','Cập nhật dữ liệu thành công');
                 }
-                redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['type_client']));
+                redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['type_client']));
             }
         }
         else
         {
             if($id!="")
             {
-                $data['client'] = $this->clients_model->get_data_clients($id);
+                $data['client'] = $this->clients_simple_model->get_data_clients($id);
                 // print_r($data['client']);
                 // exit();
                 if($data['client']) {
                     if($group == 'profile') {
                         if(!$data['type_client']) {
-                            redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                            redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['client']->type_client));
                         }
                     }
 
                     if($group == 'billingperiod') {
                         $idItem = $this->input->get('id');
                         if(!is_null($this->input->get('id'))) {
-                            $result = $this->clients_model->get_period($id, $this->input->get('id'));
+                            $result = $this->clients_simple_model->get_period($id, $this->input->get('id'));
                             if($result) {
                                 $data['period'] = $result;
-                                $data['total_period'] = $this->clients_model->count_period($id, $idItem);
+                                $data['total_period'] = $this->clients_simple_model->count_period($id, $idItem);
                             }
                             else
                             {
-                                redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));    
+                                redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['client']->type_client));    
                             }
                         }
                         else {
-                            redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                            redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['client']->type_client));
                         }
                     }
-                    $data['total_item'] = $this->clients_model->count_items($id);
-                    $data['total_value'] = $this->clients_model->sum_item_value($id, $idItem);
-                    $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($id, $idItem);
-                    $data['attachments']   = $this->clients_model->get_all_customer_attachments($id);
+                    $data['total_item'] = $this->clients_simple_model->count_items($id);
+                    $data['total_value'] = $this->clients_simple_model->sum_item_value($id, $idItem);
+                    $data['total_value_paid'] = $this->clients_simple_model->sum_item_paid_value($id, $idItem);
+                    $data['attachments']   = $this->clients_simple_model->get_all_customer_attachments($id);
                     $data['staff']           = $this->staff_model->get('', 1);
                     // Get all active staff members (used to add reminder)
                     $this->load->model('staff_model');
@@ -691,26 +706,26 @@ class Clients extends Admin_controller
                 if(!$data['type_client'])
                 {
                     set_alert('danger','Đường dẩn không tồn tại');
-                    redirect(admin_url('clients'));
+                    redirect(admin_url('clients_simple'));
                 }
             }
             
             
             $data['group']  = $group;
-            $data['groups'] = $this->clients_model->get_groups();
+            $data['groups'] = $this->clients_simple_model->get_groups();
 
             
             $data['title']='Khách hàng';
-            $data['countries']=$this->clients_model->get_table_array('tblcountries');
-            $data['exigency']=$this->clients_model->get_table_array('tblexigency');
-            $data['purpose']=$this->clients_model->get_table_array('tblpurpose');
-            $data['source']=$this->clients_model->get_table_array('tblleadssources');
-            $data['menu_project']=$this->clients_model->get_table_array('tblmenubds');
-            $data['province']=$this->clients_model->get_table_array('province');
-            $data['staff']=$this->clients_model->get_table_array_where('tblstaff','_delete!=1');
-            $data['status']=$this->clients_model->get_table_array('tblstatus');
-            $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
-            $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
+            $data['countries']=$this->clients_simple_model->get_table_array('tblcountries');
+            $data['exigency']=$this->clients_simple_model->get_table_array('tblexigency');
+            $data['purpose']=$this->clients_simple_model->get_table_array('tblpurpose');
+            $data['source']=$this->clients_simple_model->get_table_array('tblleadssources');
+            $data['menu_project']=$this->clients_simple_model->get_table_array('tblmenubds');
+            $data['province']=$this->clients_simple_model->get_table_array('province');
+            $data['staff']=$this->clients_simple_model->get_table_array_where('tblstaff','_delete!=1');
+            $data['status']=$this->clients_simple_model->get_table_array('tblstatus');
+            $data['id_partner']=$this->clients_simple_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
+            $data['class_client']=$this->clients_simple_model->get_table_array('tblclass_client');
             
             $this->load->view('admin/clients/client', $data);
         }
@@ -744,7 +759,7 @@ class Clients extends Admin_controller
                 {
                     $data['datecreated']=date('Y-m-d');
                     
-                    $id=$this->clients_model->add_client($data);
+                    $id=$this->clients_simple_model->add_client($data);
                     $response = new stdClass();
                     if($id)
                     {
@@ -771,7 +786,7 @@ class Clients extends Admin_controller
                     $data['type_client'] = $this->input->get('type_client')+1;
                 }
                 
-                $result=$this->clients_model->update_client($id,$data);
+                $result=$this->clients_simple_model->update_client($id,$data);
                 
                 if($result)
                 {
@@ -792,7 +807,7 @@ class Clients extends Admin_controller
 
         if($id!="")
         {
-            $data['client'] = $this->clients_model->get_data_clients($id);
+            $data['client'] = $this->clients_simple_model->get_data_clients($id);
             if(!$data['type_client']) {
                 $data['type_client'] = $data['client']->type_client;
             }
@@ -807,24 +822,24 @@ class Clients extends Admin_controller
                 if($group == 'billingperiod') {
                     $idItem = $this->input->get('id');
                     if(!is_null($this->input->get('id'))) {
-                        $result = $this->clients_model->get_period($id, $this->input->get('id'));
+                        $result = $this->clients_simple_model->get_period($id, $this->input->get('id'));
                         if($result) {
                             $data['period'] = $result;
-                            $data['total_period'] = $this->clients_model->count_period($id, $idItem);
+                            $data['total_period'] = $this->clients_simple_model->count_period($id, $idItem);
                         }
                         else
                         {
-                            redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));    
+                            redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['client']->type_client));    
                         }
                     }
                     else {
-                        redirect(admin_url('clients/client/' . $id . '?type_client=' . $data['client']->type_client));
+                        redirect(admin_url('clients_simple/client/' . $id . '?type_client=' . $data['client']->type_client));
                     }
                 }
-                $data['total_item'] = $this->clients_model->count_items($id);
-                $data['total_value'] = $this->clients_model->sum_item_value($id, $idItem);
-                $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($id, $idItem);
-                $data['attachments']   = $this->clients_model->get_all_customer_attachments($id);
+                $data['total_item'] = $this->clients_simple_model->count_items($id);
+                $data['total_value'] = $this->clients_simple_model->sum_item_value($id, $idItem);
+                $data['total_value_paid'] = $this->clients_simple_model->sum_item_paid_value($id, $idItem);
+                $data['attachments']   = $this->clients_simple_model->get_all_customer_attachments($id);
                 $data['staff']           = $this->staff_model->get('', 1);
                 // Get all active staff members (used to add reminder)
                 $this->load->model('staff_model');
@@ -843,42 +858,42 @@ class Clients extends Admin_controller
         }
 
         $data['group']  = $group;
-        $data['groups'] = $this->clients_model->get_groups();
+        $data['groups'] = $this->clients_simple_model->get_groups();
 
         
         $data['title']='Khách hàng';
-        $data['countries']=$this->clients_model->get_table_array('tblcountries');
-        $data['exigency']=$this->clients_model->get_table_array('tblexigency');
-        $data['purpose']=$this->clients_model->get_table_array('tblpurpose');
-        $data['source']=$this->clients_model->get_table_array('tblleadssources');
-        $data['menu_project']=$this->clients_model->get_table_array('tblmenubds');
-        $data['province']=$this->clients_model->get_table_array('province');
-        $data['staff']=$this->clients_model->get_table_array_where('tblstaff','_delete!=1');
-        $data['status']=$this->clients_model->get_table_array('tblstatus');
-        $data['agencies']=$this->clients_model->get_table_array('tblagencies');
-        $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
-        $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
+        $data['countries']=$this->clients_simple_model->get_table_array('tblcountries');
+        $data['exigency']=$this->clients_simple_model->get_table_array('tblexigency');
+        $data['purpose']=$this->clients_simple_model->get_table_array('tblpurpose');
+        $data['source']=$this->clients_simple_model->get_table_array('tblleadssources');
+        $data['menu_project']=$this->clients_simple_model->get_table_array('tblmenubds');
+        $data['province']=$this->clients_simple_model->get_table_array('province');
+        $data['staff']=$this->clients_simple_model->get_table_array_where('tblstaff','_delete!=1');
+        $data['status']=$this->clients_simple_model->get_table_array('tblstatus');
+        $data['agencies']=$this->clients_simple_model->get_table_array('tblagencies');
+        $data['id_partner']=$this->clients_simple_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
+        $data['class_client']=$this->clients_simple_model->get_table_array('tblclass_client');
 
-        exit($this->load->view('admin/clients_new/modals/client', $data, true));
+        exit($this->load->view('admin/clients_new_simple/modals/client', $data, true));
     }
     public function modal_billingperiod($idClient, $idProduct) {
-        $data['client'] = $this->clients_model->get_data_clients($idClient);
+        $data['client'] = $this->clients_simple_model->get_data_clients($idClient);
         
         
-        $result = $this->clients_model->get_period($idClient, $idProduct);
+        $result = $this->clients_simple_model->get_period($idClient, $idProduct);
         if($result) {
             $data['period'] = $result;
-            $data['total_period'] = $this->clients_model->count_period($idClient, $idProduct);
+            $data['total_period'] = $this->clients_simple_model->count_period($idClient, $idProduct);
 
-            $data['total_item'] = $this->clients_model->count_items($idClient);
-            $data['total_value'] = $this->clients_model->sum_item_value($idClient, $idProduct);
-            $data['total_value_paid'] = $this->clients_model->sum_item_paid_value($idClient, $idProduct);
+            $data['total_item'] = $this->clients_simple_model->count_items($idClient);
+            $data['total_value'] = $this->clients_simple_model->sum_item_value($idClient, $idProduct);
+            $data['total_value_paid'] = $this->clients_simple_model->sum_item_paid_value($idClient, $idProduct);
         }
         else
         {
             exit('Trang không tồn tại');
         }
-        exit($this->load->view('admin/clients_new/modals/billingperiod', $data, true));
+        exit($this->load->view('admin/clients_new_simple/modals/billingperiod', $data, true));
     }
     public function clientItems($id) {
         $this->perfex_base->get_table_data('client_items', array(
@@ -887,13 +902,13 @@ class Clients extends Admin_controller
     }
     public function get_project($id)
     {
-        $result=$this->clients_model->get_project($id);
+        $result=$this->clients_simple_model->get_project($id);
 
         echo json_encode($result);
     }
     public function get_district($id)
     {
-        $result=$this->clients_model->get_district($id);
+        $result=$this->clients_simple_model->get_district($id);
 
         echo json_encode($result);
     }
@@ -923,7 +938,7 @@ class Clients extends Admin_controller
         }
         else
         {
-            redirect(admin_url('clients/client'));
+            redirect(admin_url('clients_simple/client'));
         }
     }
     public function update_order_table()
@@ -964,7 +979,7 @@ class Clients extends Admin_controller
         $result->success = false;
         $result->data = '';
         
-        $item =  $this->clients_model->get_item($idClient, $id);
+        $item =  $this->clients_simple_model->get_item($idClient, $id);
         if($item) {
             $result->success = true;
             $result->data = $item;
@@ -972,13 +987,13 @@ class Clients extends Admin_controller
         exit(json_encode($result));
     }
     public function addProduct($idClient) {
-        $client = $this->clients_model->get_data_clients($idClient);
+        $client = $this->clients_simple_model->get_data_clients($idClient);
         $success = false;
         $message = "Thêm thất bại!";
         $data = $this->input->post();
         if($client && $data) {
             $data['items'][0]['price'] = preg_replace('/\D/', '', $data['items'][0]['price']);
-            $result = $this->clients_model->add_item($idClient, $data['items'][0]);
+            $result = $this->clients_simple_model->add_item($idClient, $data['items'][0]);
             if($result) {
                 $success = true;
                 $message = "Thêm thành công!";
@@ -998,7 +1013,7 @@ class Clients extends Admin_controller
         $response = new stdClass();
         $response->alert_type = 'danger';
         $response->message = "Xóa thất bại";
-        if($this->clients_model->delete($idClient)) {
+        if($this->clients_simple_model->delete($idClient)) {
             $response->alert_type = 'success';
             $response->message = "Xóa thành công";
         }
@@ -1013,7 +1028,7 @@ class Clients extends Admin_controller
         if($data) {
             $data['status'] = 0;
             $data['value'] = preg_replace('/\D/', '', $data['value']);
-            $result = $this->clients_model->add_period($idClient, $idProduct, $data);
+            $result = $this->clients_simple_model->add_period($idClient, $idProduct, $data);
             if($result) {
                 $success = true;
                 $message = "Thêm thành công!";
@@ -1039,7 +1054,7 @@ class Clients extends Admin_controller
         if($data) {
             $data['realValue'] = preg_replace('/\D/', '', $data['realValue']);
             
-            $result = $this->clients_model->add_payment($idClient, $idProduct, $idClientBdsPayment, $data);
+            $result = $this->clients_simple_model->add_payment($idClient, $idProduct, $idClientBdsPayment, $data);
             if($result) {
                 $success = true;
                 $message = "Thêm thành công!";
@@ -1069,7 +1084,7 @@ class Clients extends Admin_controller
         $response->message = "Xóa thất bại";
 
         
-        if($this->clients_model->deletePayment($idClientBds, $idPayment, $idPaymentDetail)) {
+        if($this->clients_simple_model->deletePayment($idClientBds, $idPayment, $idPaymentDetail)) {
             $response->alert_type = 'success';
             $response->message = "Xóa thành công";
         }
@@ -1105,7 +1120,7 @@ class Clients extends Admin_controller
     public function delete_attachment($customer_id, $id)
     {
         if (has_permission('customers', '', 'delete') || is_customer_admin($customer_id)) {
-            $this->clients_model->delete_attachment($id);
+            $this->clients_simple_model->delete_attachment($id);
         }
         redirect($_SERVER['HTTP_REFERER']);
     }
@@ -1134,7 +1149,7 @@ class Clients extends Admin_controller
                         die;
                     }
                 }
-                $id      = $this->clients_model->add_contact($data, $customer_id);
+                $id      = $this->clients_simple_model->add_contact($data, $customer_id);
                 $message = '';
                 $success = false;
                 if ($id) {
@@ -1158,8 +1173,8 @@ class Clients extends Admin_controller
                         die;
                     }
                 }
-                $original_contact = $this->clients_model->get_contact($contact_id);
-                $success          = $this->clients_model->update_contact($data, $contact_id);
+                $original_contact = $this->clients_simple_model->get_contact($contact_id);
+                $success          = $this->clients_simple_model->update_contact($data, $contact_id);
                 $message          = '';
                 $proposal_warning = false;
                 $original_email   = '';
@@ -1182,7 +1197,7 @@ class Clients extends Admin_controller
                     $success = true;
                 }
                 if ($updated == true) {
-                    $contact = $this->clients_model->get_contact($contact_id);
+                    $contact = $this->clients_simple_model->get_contact($contact_id);
                     if (total_rows('tblproposals', array(
                         'rel_type' => 'customer',
                         'rel_id' => $contact->userid,
@@ -1204,7 +1219,7 @@ class Clients extends Admin_controller
         if ($contact_id == '') {
             $title = _l('add_new', _l('contact_lowercase'));
         } else {
-            $data['contact'] = $this->clients_model->get_contact($contact_id);
+            $data['contact'] = $this->clients_simple_model->get_contact($contact_id);
 
             if (!$data['contact']) {
                 header('HTTP/1.0 400 Bad error');
@@ -1258,10 +1273,10 @@ class Clients extends Admin_controller
     public function mark_as_active($id)
     {
         $this->db->where('userid', $id);
-        $this->db->update('tblclients', array(
+        $this->db->update('tblclients_simple', array(
             'active' => 1
         ));
-        redirect(admin_url('clients/client/' . $id));
+        redirect(admin_url('clients_simple/client/' . $id));
     }
     public function update_all_proposal_emails_linked_to_customer($contact_id)
     {
@@ -1313,8 +1328,8 @@ class Clients extends Admin_controller
             }
         }
 
-        $this->clients_model->delete_contact($id);
-        redirect(admin_url('clients/client/' . $customer_id . '?tab=contacts'));
+        $this->clients_simple_model->delete_contact($id);
+        redirect(admin_url('clients/client_simple/' . $customer_id . '?tab=contacts'));
     }
     public function contacts($client_id)
     {

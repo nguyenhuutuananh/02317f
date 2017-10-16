@@ -31,6 +31,11 @@
                                             <?php echo _l('Không Hợp Tác'); ?>
                                         </a>
                                     </li>
+                                    <li role="presentation">
+                                        <a href="#success" onclick="initDataTable('.table-partner_success','<?=admin_url()?>partner/init_relation_partner_project/3' , [4], [4]);" aria-controls="review_host" role="tab" data-toggle="tab">
+                                            <?php echo _l('Không Hợp Tác'); ?>
+                                        </a>
+                                    </li>
                                 </ul>
                                 <div class="tab-content">
                                     <div role="tabpanel" class="tab-pane active" id="partner">
@@ -67,6 +72,24 @@
                                             array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="partner_not_project"><label></label></div>');
 
                                             render_datatable($table_data,'partner_not_project');
+                                            ?>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane" id="success">
+                                        <a class="btn btn-danger mright5 test pull-left display-block" style="margin-bottom: 10px;" onclick="_delete_all(0,'partner_success')" >Xóa số lượng lớn</a>
+                                        <div class="clearfix"></div>
+                                            <?php
+                                            $table_data = array(
+                                                _l( 'Tên'),
+                                                _l( 'Số điện thoại'),
+                                                _l( 'Email'),
+                                                _l( 'Công ty'),
+                                                _l( 'Tags'),
+                                                _l( 'Nhân viên tạo'),
+                                                _l( 'options'),
+                                            );
+                                            array_unshift($table_data,'<span class="hide"> - </span><div class="checkbox mass_select_all_wrap"><input type="checkbox" id="mass_select_all" data-to-table="partner_success"><label></label></div>');
+
+                                            render_datatable($table_data,'partner_success');
                                             ?>
                                     </div>
                                 </div>
@@ -146,7 +169,7 @@
                     <?php echo render_input('phone_partner','Số điện thoại','','text'); ?>
                     <?php echo render_input('email_partner','Email','','text'); ?>
                     <?php echo render_input('company_partner','Công ty','','text'); ?>
-                    <?php echo render_select('status',array(array('id'=>1,'name'=>'Chuyên dự án'),array('id'=>'2','name'=>'Không hợp tác')),array('id','name'),'Loại đối tác',''); ?>
+                    <?php echo render_select('status',array(array('id'=>1,'name'=>'Chuyên dự án'),array('id'=>'2','name'=>'Không hợp tác'), array('id'=>'3', 'name'=>'Giao dịch thành công')),array('id','name'),'Loại đối tác',''); ?>
                     <div class="form-group">
                         <label for="tag_partner" class="control-label"><i class="fa fa-tag" aria-hidden="true"></i>Thẻ Phân loại ĐT</label>
                         <input type="text" class="tagspartner" id="tag_partner" name="tag_partner" value="" data-role="tagsinput">

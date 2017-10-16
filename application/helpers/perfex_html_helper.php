@@ -773,6 +773,61 @@ function render_textarea($name, $label = '', $value = '', $textarea_attrs = arra
     return $textarea;
 }
 /**
+ * Render textarea for admin area
+ * @param  [type] $name             textarea name
+ * @param  string $label            textarea label
+ * @param  string $value            default value
+ * @param  array  $textarea_attrs      textarea attributes
+ * @param  array  $form_group_attr  <div class="form-group"> div wrapper html attributes
+ * @param  string $form_group_class form group div wrapper additional class
+ * @param  string $textarea_class      <textarea> additional class
+ * @return string
+ */
+function render_inline_textarea($name, $label = '', $value = '', $textarea_attrs = array(), $form_group_attr = array(), $form_group_class = '', $textarea_class = '')
+{
+
+    $textarea         = '';
+    $_form_group_attr = '';
+    $_textarea_attrs  = '';
+    if (!isset($textarea_attrs['rows'])) {
+        $textarea_attrs['rows'] = 4;
+    }
+
+    foreach ($textarea_attrs as $key => $val) {
+        // tooltips
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_textarea_attrs .= $key . '=' . '"' . $val . '"';
+    }
+    foreach ($form_group_attr as $key => $val) {
+        if ($key == 'title') {
+            $val = _l($val);
+        }
+        $_form_group_attr .= $key . '=' . '"' . $val . '"';
+    }
+    if (!empty($textarea_class)) {
+        $textarea_class = ' ' . $textarea_class;
+    }
+    if (!empty($form_group_class)) {
+        $form_group_class = ' ' . $form_group_class;
+    }
+    $textarea .= '<div class="form-group' . $form_group_class . '" ' . $_form_group_attr . '>';
+    if ($label != '') {
+        $textarea .= '<label for="' . $name . '" class="col-sm-4 control-label">' . _l($label,'',false) . '</label>';
+    }
+
+    $v = clear_textarea_breaks($value);
+    if (strpos($textarea_class, 'tinymce') !== false) {
+        $v = $value;
+    }
+    $textarea .= '<div class="col-sm-8">';
+    $textarea .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control' . $textarea_class . '" ' . $_textarea_attrs . '>' . set_value($name, $v) . '</textarea>';
+    $textarea .= '</div>';
+    $textarea .= '</div>';
+    return $textarea;
+}
+/**
  * Render <select> field optimized for admin area and bootstrap-select plugin
  * @param  string  $name             select name
  * @param  array  $options          option to include

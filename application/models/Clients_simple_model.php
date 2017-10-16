@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Clients_model extends CRM_Model
+class Clients_simple_model extends CRM_Model
 {
     private $contact_data = array('firstname', 'lastname', 'email', 'phonenumber', 'title', 'password', 'send_set_password_email', 'donotsendwelcomeemail', 'permissions', 'direction');
     function __construct()
@@ -35,26 +35,46 @@ class Clients_model extends CRM_Model
      * @return mixed
      * Get client object based on passed clientid if not passed clientid return array of all clients
      */
-    public function get($id = '', $where = array('tblclients.active' => 1), $single_result_type = 'row')
+    public function convert($id) {
+        if(is_numeric($id)) {
+            $this->db->where('userid', $id);
+            $client = $this->db->get('tblclients_simple')->row();
+            
+            if($client) {
+                $data = (array)$client;
+                unset($data['userid']);
+                $this->db->insert('tblclients', $data);
+                if($this->db->affected_rows() > 0) {
+                    $this->db->where('userid', $id);
+                    $this->db->delete('tblclients_simple');
+                    if($this->db->affected_rows() > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public function get($id = '', $where = array('tblclients_simple.active' => 1), $single_result_type = 'row')
     {
-        $this->db->select(implode(',', prefixed_table_fields_array('tblclients')) . ',CASE company WHEN "" THEN (SELECT CONCAT(firstname, " ", lastname) FROM tblcontacts WHERE userid = tblclients.userid and is_primary = 1) ELSE company END as company');
+        $this->db->select(implode(',', prefixed_table_fields_array('tblclients_simple')) . ',CASE company WHEN "" THEN (SELECT CONCAT(firstname, " ", lastname) FROM tblcontacts WHERE userid = tblclients_simple.userid and is_primary = 1) ELSE company END as company');
 
-        $this->db->join('tblcountries', 'tblcountries.country_id = tblclients.country', 'left');
-        $this->db->join('tblcontacts', 'tblcontacts.userid = tblclients.userid AND is_primary = 1', 'left');
+        $this->db->join('tblcountries', 'tblcountries.country_id = tblclients_simple.country', 'left');
+        $this->db->join('tblcontacts', 'tblcontacts.userid = tblclients_simple.userid AND is_primary = 1', 'left');
         if (is_numeric($id)) {
-            $this->db->where('tblclients.userid', $id);
-            $client = $this->db->get('tblclients')->$single_result_type();
+            $this->db->where('tblclients_simple.userid', $id);
+            $client = $this->db->get('tblclients_simple')->$single_result_type();
             return $client;
         }
         
         $this->db->where($where);
         $this->db->order_by('company', 'asc');
-        return $this->db->get('tblclients')->result_array();
+        return $this->db->get('tblclients_simple')->result_array();
 
     }
     public function get_clients($type)
     {
-        $this->db->select('tblclients.*,
+        $this->db->select('tblclients_simple.*,
                             province.name as province_name,
                             district.name as district_name,
                             tblprojectmenu.project_name as name_bds,
@@ -69,25 +89,25 @@ class Clients_model extends CRM_Model
                             tblstatus.name as name_status,
                             tblpurpose.name as name_purpose,
                             tblclass_client.name as class_client_name,
-                            (select tblfieldvalue_bds.value from tblfieldvalue_bds where colum_id=tblclients.id_project_bds and tblfieldvalue_bds.field_id=5) as home_number,
-                            (select tblfieldvalue_bds.value from tblfieldvalue_bds where colum_id=tblclients.id_project_bds and tblfieldvalue_bds.field_id=6) as home_street,
-                            (select tblmaster_bds.name from tblmaster_bds where tblmaster_bds.idproject = tblclients.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_name,
-                            (select tblmaster_bds.phonenumber from tblmaster_bds where tblmaster_bds.idproject = tblclients.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_phonenumber,
-                            (select tblmaster_bds.email_master from tblmaster_bds where tblmaster_bds.idproject = tblclients.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_email,
+                            (select tblfieldvalue_bds.value from tblfieldvalue_bds where colum_id=tblclients_simple.id_project_bds and tblfieldvalue_bds.field_id=5) as home_number,
+                            (select tblfieldvalue_bds.value from tblfieldvalue_bds where colum_id=tblclients_simple.id_project_bds and tblfieldvalue_bds.field_id=6) as home_street,
+                            (select tblmaster_bds.name from tblmaster_bds where tblmaster_bds.idproject = tblclients_simple.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_name,
+                            (select tblmaster_bds.phonenumber from tblmaster_bds where tblmaster_bds.idproject = tblclients_simple.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_phonenumber,
+                            (select tblmaster_bds.email_master from tblmaster_bds where tblmaster_bds.idproject = tblclients_simple.id_project_bds and tblmaster_bds.type_master >= 2 limit 1) as master_email,
                             ');
-        $this->db->join('province','province.provinceid=tblclients.province','left')
-            ->join('district','district.districtid=tblclients.district','left')
-            ->join('tblprojectmenu','tblprojectmenu.id=tblclients.id_project_bds','left')
-            ->join('tblmenubds','tblmenubds.id=tblclients.bds','left')
-            ->join('tblpartner','tblpartner.id_partner=tblclients.id_partner','left')
-            ->join('tblcountries','tblcountries.country_id=tblclients.country','left')
-            ->join('tblleadssources','tblleadssources.id=tblclients.source','left')
-            ->join('tblexigency','tblexigency.id=tblclients.exigency','left')
-            ->join('tblstatus','tblstatus.id=tblclients.status','left')
-            ->join('tblpurpose','tblpurpose.id=tblclients.purpose','left')
-            ->join('tblclass_client','tblclass_client.id=tblclients.class_type','left');
-        $this->db->where('tblclients.type_client',$type);
-        $clients = $this->db->get('tblclients')->result_array();
+        $this->db->join('province','province.provinceid=tblclients_simple.province','left')
+            ->join('district','district.districtid=tblclients_simple.district','left')
+            ->join('tblprojectmenu','tblprojectmenu.id=tblclients_simple.id_project_bds','left')
+            ->join('tblmenubds','tblmenubds.id=tblclients_simple.bds','left')
+            ->join('tblpartner','tblpartner.id_partner=tblclients_simple.id_partner','left')
+            ->join('tblcountries','tblcountries.country_id=tblclients_simple.country','left')
+            ->join('tblleadssources','tblleadssources.id=tblclients_simple.source','left')
+            ->join('tblexigency','tblexigency.id=tblclients_simple.exigency','left')
+            ->join('tblstatus','tblstatus.id=tblclients_simple.status','left')
+            ->join('tblpurpose','tblpurpose.id=tblclients_simple.purpose','left')
+            ->join('tblclass_client','tblclass_client.id=tblclients_simple.class_type','left');
+        $this->db->where('tblclients_simple.type_client',$type);
+        $clients = $this->db->get('tblclients_simple')->result_array();
         foreach($clients as $key=>$client) {
             $this->db->where('clientId', $client['id']);
             $clients[$key]['bds'] = $this->db->get('tblclient_bds')->result_array();
@@ -120,7 +140,7 @@ class Clients_model extends CRM_Model
     public function get_data_clients($id)
     {
         $this->db->where('userid',$id);
-        $client = $this->db->get('tblclients')->row();
+        $client = $this->db->get('tblclients_simple')->row();
         $this->db->where('clientId', $id);
         $client->bds_list = $this->db->get('tblclient_bds')->result();
         return $client;
@@ -148,7 +168,7 @@ class Clients_model extends CRM_Model
             $data['bds']      = $items[0]['projectBdsId'];
         }
         $data['dkkh'] = get_staff_user_id();
-        $this->db->insert('tblclients',$data);
+        $this->db->insert('tblclients_simple',$data);
         $return_id=$this->db->insert_id();
         if($return_id)
         {
@@ -164,7 +184,7 @@ class Clients_model extends CRM_Model
     }
     public function add_item($id_client, $data, $period = array()) {
         $this->db->where('userid',$id_client);
-        $client = $this->db->get('tblclients',$data)->row();
+        $client = $this->db->get('tblclients_simple',$data)->row();
         $data['clientId'] = $id_client;
         $data['price'] = preg_replace('/\D/', '', $data['price']);
         $this->db->insert('tblclient_bds', $data);
@@ -213,7 +233,7 @@ class Clients_model extends CRM_Model
     // Billing period
     public function get_period($idClient, $idItem) {
         $this->db->where('userid',$idClient);
-        $client = $this->db->get('tblclients',$data)->row();
+        $client = $this->db->get('tblclients_simple',$data)->row();
         
         $this->db->where('tblclient_bds.id',$idItem);
         $this->db->join('tblprojectmenu', 'tblprojectmenu.id=tblclient_bds.projectBdsId');
@@ -225,7 +245,7 @@ class Clients_model extends CRM_Model
     }
     public function add_period($idClient, $idItem, $data) {
         $this->db->where('userid',$idClient);
-        $client = $this->db->get('tblclients',$data)->row();
+        $client = $this->db->get('tblclients_simple',$data)->row();
         
         $this->db->where('id',$idItem);
         $item = $this->db->get('tblclient_bds',$data)->row();
@@ -282,7 +302,7 @@ class Clients_model extends CRM_Model
     public function add_payment($idClient, $idItem, $idClientBdsPayment, $data) {
         
         $this->db->where('userid',$idClient);
-        $client = $this->db->get('tblclients')->row();
+        $client = $this->db->get('tblclients_simple')->row();
         
         $this->db->where('id',$idItem);
         $item = $this->db->get('tblclient_bds')->row();
@@ -406,7 +426,7 @@ class Clients_model extends CRM_Model
         }
         $this->db->where('userid',$id);
 
-        $result_update = $this->db->update('tblclients',$data);
+        $result_update = $this->db->update('tblclients_simple',$data);
         if ($this->db->affected_rows() > 0 || is_array($items)) {
             do_action('after_contract_updated', $id);
             logActivity('Cập nhật khách hàng [' . $id . ']');
@@ -831,7 +851,7 @@ class Clients_model extends CRM_Model
         }
         $data['datecreated'] = date('Y-m-d H:i:s');
         $data                = do_action('before_client_added', $data);
-        $this->db->insert('tblclients', $data);
+        $this->db->insert('tblclients_simple', $data);
         $userid = $this->db->insert_id();
         if ($userid) {
             if (isset($custom_fields)) {
@@ -927,7 +947,7 @@ class Clients_model extends CRM_Model
         ));
         $data  = $_data['data'];
         $this->db->where('userid', $id);
-        $this->db->update('tblclients', $data);
+        $this->db->update('tblclients_simple', $data);
 
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
@@ -1093,7 +1113,7 @@ class Clients_model extends CRM_Model
             $data['shipping_country'] = 0;
         }
         $this->db->where('userid', $id);
-        $this->db->update('tblclients', $data);
+        $this->db->update('tblclients_simple', $data);
         if ($this->db->affected_rows() > 0) {
             logActivity('Customer Info Updated From Clients Area [' . $data['company'] . ']');
             return true;
@@ -1119,7 +1139,7 @@ class Clients_model extends CRM_Model
         do_action('before_client_deleted', $id);
 
         $this->db->where('userid', $id);
-        $this->db->delete('tblclients');
+        $this->db->delete('tblclients_simple');
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
             // Delete all table tblclient_bds's records
@@ -1261,7 +1281,7 @@ class Clients_model extends CRM_Model
     public function get_customer_default_currency($id)
     {
         $this->db->where('userid', $id);
-        $result = $this->db->get('tblclients')->row();
+        $result = $this->db->get('tblclients_simple')->row();
         if ($result) {
             return $result->default_currency;
         }
@@ -1276,7 +1296,7 @@ class Clients_model extends CRM_Model
     public function get_customer_billing_and_shipping_details($id)
     {
         $this->db->select('billing_street,billing_city,billing_state,billing_zip,billing_country,shipping_street,shipping_city,shipping_state,shipping_zip,shipping_country');
-        $this->db->from('tblclients');
+        $this->db->from('tblclients_simple');
         $this->db->where('userid', $id);
         return $this->db->get()->result_array();
     }
@@ -1572,7 +1592,7 @@ class Clients_model extends CRM_Model
     public function change_client_status($id, $status)
     {
         $this->db->where('userid', $id);
-        $this->db->update('tblclients', array(
+        $this->db->update('tblclients_simple', array(
             'active' => $status
         ));
 

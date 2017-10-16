@@ -3505,3 +3505,5 @@ $lang['task_no_supporters'] = 'Không có người hỗ trợ công việc này'
 $lang['task_time_taken']    = 'Thời gian làm';
 
 $lang['worksheet'] = 'Chấm công';
+$lang['als_agency'] = 'Môi giới';
+$lang['als_client_simple'] = 'Kho Database KH';
