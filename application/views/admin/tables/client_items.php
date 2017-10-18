@@ -9,6 +9,9 @@ $aColumns     = array(
     'price',
     'rentalPeriod',
     'dateStart',
+    'contractCode',
+    'contractStartDate',
+    'contractExpiryDate',
 );
 $sIndexColumn = "id";
 $sTable       = 'tblclient_bds';
@@ -33,7 +36,15 @@ foreach ($rResult as $aRow) {
         
         switch($aColumns[$i]) {
             case 'dateStart':
-                $_data = date('Y-m-d', strtotime($aRow['dateStart']));
+            case 'contractStartDate':
+            case 'contractExpiryDate':
+                if($_data != "0000-00-00 00:00:00") {
+                    $_data = _d($_data);
+                }
+                else {
+                    $_data = "";
+                }
+                
                 break;
             case 'rentalPeriod':
                 if(is_numeric($_data))

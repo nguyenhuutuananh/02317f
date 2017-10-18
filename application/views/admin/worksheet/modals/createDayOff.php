@@ -4,7 +4,7 @@
             echo render_select('userid', $staff_members, array('staffid', 'firstname', 'lastname'), 'Nhân viên');
         ?>
         <?php
-            echo render_date_input('dateWorkOff', 'Ngày xin nghỉ', date('Y-m-d'));
+            echo render_date_input('dateWorkOff', 'Ngày xin nghỉ', strftime(get_current_date_format()));
         ?>
 
         <?php
@@ -48,7 +48,7 @@
         <?php echo form_close(); ?>
 </div>
 <script type="text/javascript">
-    var staff_data = <?=json_encode($staff_members)?>;
+    // var staff_data = <?/*=json_encode($staff_members)*/?>;
     var Modal = $('#contentModalCreateDayOff');
     _validate_form(Modal.find('form'), {
         'userid': 'required',

@@ -35,6 +35,7 @@ $where = array(
 
 $additionalSelect = array(
     'userid',
+    'type_client',
 );
 
 $result = data_tables_init($aColumns,$sIndexColumn,$sTable, $join, $where, $additionalSelect);
@@ -85,7 +86,20 @@ foreach ( $rResult as $aRow )
 
         $row[] = $_data;
     }
-    $options = icon_btn('clients/client/'.$aRow['userid'], 'pencil-square-o', 'btn-default btn-edit-client', array('data-userid' => $aRow['userid'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"));
+    $options = "";
+    if($aRow['type_client'] == 1) {
+        $options .= icon_btn('#', 'exchange', 'btn-info bmd-modalButton', array('data-userid' => $aRow['userid'], 'data-typeclient' => $aRow['type_client'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Mua');
+        $options .= '<br /><br />';
+        $options .= icon_btn('#', 'exchange', 'btn-warning bmd-modalButton', array('data-userid' => $aRow['userid'], 'data-typeclient' => ($aRow['type_client']+1), 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Fail');
+        $options .= '<br /><br />';
+    }
+    if($aRow['type_client'] == 2) {
+        $options .= icon_btn('#', 'exchange', 'btn-warning bmd-modalButton', array('data-userid' => $aRow['userid'], 'data-typeclient' => $aRow['type_client'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Fail');
+        $options .= '<br /><br />';
+    }
+    
+
+    $options .= icon_btn('clients/client/'.$aRow['userid'], 'pencil-square-o', 'btn-default btn-edit-client', array('data-userid' => $aRow['userid'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"));
     $row[]  = $options .= icon_btn('clients/delete/'.$aRow['userid'],'remove','btn-danger delete-reminder-client');
 
     $output['aaData'][] = $row;

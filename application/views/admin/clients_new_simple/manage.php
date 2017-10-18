@@ -178,14 +178,15 @@
                         </div>
                         <div class="panel_s">
                             <div class="panel-body">
+                                <h3><?=$title?></h3>
                                 <a href="<?=admin_url()?>clients_simple/modal_client/?type_client=1" class="btn btn-info mbot20 mright5 btn-new-client">
-                                    Tạo mới khách hàng đang quan tâm
+                                    Thêm đang quan tâm
                                 </a>
-                                <a href="<?=admin_url()?>clients_simple/modal_client/?type_client=2" class="btn btn-info mbot20 mright5 btn-new-client">
-                                    Tạo mới khách hàng đã mua/thuê
+                                <a href="<?=admin_url()?>clients_simple/modal_client/?type_client=2" class="btn btn-success mbot20 mright5 btn-new-client">
+                                    Thêm đã mua/thuê
                                 </a>
-                                <a href="<?=admin_url()?>clients_simple/modal_client/?type_client=3" class="btn btn-info mbot20 mright5 btn-new-client">
-                                    Tạo mới khách hàng đã fail
+                                <a href="<?=admin_url()?>clients_simple/modal_client/?type_client=3" class="btn btn-danger mbot20 mright5 btn-new-client">
+                                    Thêm đã fail
                                 </a>
                                 <a href="<?=admin_url()?>clients_simple/settup_table_clients?type_client=1" class="btn btn-default mbot20 btn-icon">
                                     <i class="fa fa-cogs menu-icon"></i>

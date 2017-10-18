@@ -33,7 +33,7 @@
                                     </li>
                                     <li role="presentation">
                                         <a href="#success" onclick="initDataTable('.table-partner_success','<?=admin_url()?>partner/init_relation_partner_project/3' , [4], [4]);" aria-controls="review_host" role="tab" data-toggle="tab">
-                                            <?php echo _l('Không Hợp Tác'); ?>
+                                            <?php echo _l('Giao dịch thường xuyên'); ?>
                                         </a>
                                     </li>
                                 </ul>

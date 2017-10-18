@@ -15,7 +15,7 @@ class Partner extends Admin_controller
 //                'status' => 1,
 //            ));
 //        }
-        $data['title']    = _l('leads');
+        $data['title']    = _l('Danh sách đối tác');
         $this->load->view('admin/partner/managa', $data);
     }
     public function init_relation_partner_project($status="")

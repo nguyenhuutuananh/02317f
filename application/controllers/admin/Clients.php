@@ -565,7 +565,7 @@ class Clients extends Admin_controller
         );
     }
     /* List all clients */
-    public function index()
+    public function index($id="")
     {
         if($this->input->is_ajax_request()) {
             $this->perfex_base->get_table_data('clients_summary');
@@ -581,6 +581,7 @@ class Clients extends Admin_controller
         $data['table_heads_clients_fail'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=3')->value);
         // $data['table_heads'] = $this->clientTakeCareColumns;
 
+        $data['autoOpenId'] = $id;
         
         $data['title'] = "Khách hàng";
         $this->load->view('admin/clients_new/manage', $data);
@@ -858,8 +859,31 @@ class Clients extends Admin_controller
         $data['agencies']=$this->clients_model->get_table_array('tblagencies');
         $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
         $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
-
-        exit($this->load->view('admin/clients_new/modals/client', $data, true));
+        if(is_null($this->input->get('convert'))) {
+            exit($this->load->view('admin/clients_new/modals/client', $data, true));
+        }
+        else {
+            exit($this->load->view('admin/clients_new/modals/convert', $data, true));
+        }
+    }
+    public function updateConvert($id) {
+        $response = new stdClass();
+        $response->success = false;
+        $response->message = 'Chuyển thất bại';
+        $data = $this->input->post();
+        if($data) {
+            $client = $this->clients_model->get_data_clients($id);
+            if($client) {
+                $this->db->where('userid', $client->userid);
+                $data['type_client'] = $this->input->get('type_client')+1;
+                $this->db->update('tblclients', $data);
+                if($this->db->affected_rows() > 0) {
+                    $response->success = true;
+                    $response->message = 'Chuyển thanh';
+                }
+            }
+        }
+        exit(json_encode($response));
     }
     public function modal_billingperiod($idClient, $idProduct) {
         $data['client'] = $this->clients_model->get_data_clients($idClient);

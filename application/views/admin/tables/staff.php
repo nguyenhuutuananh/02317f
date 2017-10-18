@@ -41,15 +41,16 @@ $where = do_action('staff_table_sql_where',
 if(isset($_SESSION['rule'])&& ($_SESSION['rule']!=1)) {
 //    array_push($where, 'AND role=' . $_SESSION['role'] . ' and (rule >' . $_SESSION['rule'] . ' or rule=' . $_SESSION['rule'].')');
 }
-
+// print_r($where);
+// exit();
 $result  = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, array(
     'profile_image',
     'lastname',
     'staffid',
     'role',
     'rule',
-    'admin',
-    '(select tblworksheet.id from tblworksheet where tblworksheet.userid = tblstaff.staffid)'
+    '1',
+    '(select tblworksheet.id from tblworksheet where tblworksheet.userid = tblstaff.staffid order by id desc limit 0,1)'
     ));
 
 $output  = $result['output'];

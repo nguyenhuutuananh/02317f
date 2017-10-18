@@ -34,7 +34,7 @@
                 <input type="hidden" name="workingHours" id="workingHours">
             </div>
             <?php
-                echo render_date_input('dateStartWork', 'Ngày bắt đầu làm việc', date('Y-m-d'));
+                echo render_date_input('dateStartWork', 'Ngày bắt đầu làm việc', strftime(get_current_date_format()));
             ?>
             <?php
                 echo render_textarea('note', 'Ghi chú');

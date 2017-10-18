@@ -1243,7 +1243,7 @@ function staff_profile_image($id = false, $classes = array('staff-profile-image'
  * @param  array  $attributes additional attributes
  * @return string
  */
-function icon_btn($url = '', $type = '', $class = 'btn-default', $attributes = array())
+function icon_btn($url = '', $type = '', $class = 'btn-default', $attributes = array(), $text='')
 {
     $_attributes = '';
     foreach ($attributes as $key => $val) {
@@ -1255,7 +1255,7 @@ function icon_btn($url = '', $type = '', $class = 'btn-default', $attributes = a
     } else if ($url !== '#') {
         $_url = admin_url($url);
     }
-    return '<a href="' . $_url . '" class="btn ' . $class . ' btn-icon" ' . $_attributes . '><i class="fa fa-' . $type . '"></i></a>';
+    return '<a href="' . $_url . '" class="btn ' . $class . ' btn-icon" ' . $_attributes . '><i class="fa fa-' . $type . '"></i> '.$text.'</a>';
 }
 /**
  * Render admin tickets table

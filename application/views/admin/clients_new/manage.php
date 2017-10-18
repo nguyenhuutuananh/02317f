@@ -178,14 +178,15 @@
                         </div>
                         <div class="panel_s">
                             <div class="panel-body">
+                            <h3><?=$title?></h3>
                                 <a href="<?=admin_url()?>clients/modal_client/?type_client=1" class="btn btn-info mbot20 mright5 btn-new-client">
-                                    Tạo mới khách hàng đang quan tâm
+                                    Thêm đang quan tâm
                                 </a>
-                                <a href="<?=admin_url()?>clients/modal_client/?type_client=2" class="btn btn-info mbot20 mright5 btn-new-client">
-                                    Tạo mới khách hàng đã mua/thuê
+                                <a href="<?=admin_url()?>clients/modal_client/?type_client=2" class="btn btn-success mbot20 mright5 btn-new-client">
+                                    Thêm đã mua/thuê
                                 </a>
-                                <a href="<?=admin_url()?>clients/modal_client/?type_client=3" class="btn btn-info mbot20 mright5 btn-new-client">
-                                    Tạo mới khách hàng đã fail
+                                <a href="<?=admin_url()?>clients/modal_client/?type_client=3" class="btn btn-danger mbot20 mright5 btn-new-client">
+                                    Thêm đã fail
                                 </a>
                                 <a href="<?=admin_url()?>clients/settup_table_clients?type_client=1" class="btn btn-default mbot20 btn-icon">
                                     <i class="fa fa-cogs menu-icon"></i>
@@ -257,7 +258,7 @@ $(document).on('click', '.btn-edit-client', function(e) {
     let buttonEdit = $(this).button('loading');
     $.get(admin_url + '/clients/modal_client/' + $(this).attr('data-userid'), function(data) {
         $('#modalClient').attr('data-userid', buttonEdit.attr('data-userid'));
-        
+        $('#modalClient').removeAttr('data-typeclient');
         $('#modalClient .modal-body').html(data);
         buttonEdit.button('reset');
         init_selectpicker();
@@ -266,6 +267,15 @@ $(document).on('click', '.btn-edit-client', function(e) {
         $('td:has(".clientName")').removeAttr('style');
     });
     e.preventDefault();
+});
+$(function() {
+    <?php
+    if($autoOpenId!="") {
+    ?>
+    $('a[href$="clients/client/<?=$autoOpenId?>"]').trigger('click');
+    <?php
+    }
+    ?>
 });
 $(document).on('click', '.btn-new-client', function(e) {
     $('#modalClient .modal-body').empty();
@@ -310,7 +320,21 @@ $(document).ready(function(){
         $("#screen").load('banners.php')
     }, 2000);
 });
-
+$(document).on('click', '.bmd-modalButton', function(e) {
+    e.preventDefault();
+    $('#modalClient .modal-body').empty();
+    let buttonEdit = $(this).button('loading');
+    $.get(admin_url + 'clients/modal_client/' + $(this).attr('data-userid') + '?type_client='+$(this).attr('data-typeclient')+'&convert=true', function(data) {
+        $('#modalClient').attr('data-userid', buttonEdit.attr('data-userid'));
+        $('#modalClient').attr('data-typeclient', buttonEdit.attr('data-typeclient'));
+        $('#modalClient .modal-body').html(data);
+        buttonEdit.button('reset');
+        init_selectpicker();
+        init_datepicker();
+        $('#modalClient').modal('show');
+        $('td:has(".clientName")').removeAttr('style');
+    });
+});
 
 </script>
 </body>

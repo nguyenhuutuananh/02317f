@@ -246,7 +246,7 @@ if(!is_null($convert_to)) {
                                 <?php $selected = (isset($client) ? $client->status : ''); ?>
                                 <?php echo render_inline_select('status', $status, array('id', 'name'), 'Trạng thái', $selected, array()); ?>
                                 <?php $selected = (isset($client) ? $client->nvgd : ''); ?>
-                                <?php echo render_inline_select('nvgd', $staff, array('staffid', 'lastname'), 'Nhân viên phụ trách', $selected, array()); ?>
+                                <?php echo render_inline_select('nvgd', $staff, array('staffid', 'lastname'), 'Nhân viên đăng ký', $selected, array()); ?>
                                 <?php $value = (isset($client) ? $client->requirements : ''); ?>
                                 <?php echo render_inline_input('requirements', 'Yêu cầu khác', $value); ?>
                             </div>
@@ -581,6 +581,9 @@ if(!is_null($convert_to)) {
                     _l('Giá'),
                     _l('Thời hạn thuê'),
                     _l('Ngày mua/thuê'),
+                    _l('client_contract_code'),
+                    _l('client_contract_startdate'),
+                    _l('client_contract_expirydate'),
                     _l('actions'),
                     );
                     render_datatable($table_data,'client-items');
@@ -599,6 +602,18 @@ if(!is_null($convert_to)) {
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <?php
+                                        echo render_inline_input('items[0][contractCode]', _l('client_contract_code'));
+                                        ?>
+
+                                        <?php
+                                        echo render_inline_date_input('items[0][contractStartDate]', _l('client_contract_startdate'));
+                                        ?>
+
+                                        <?php
+                                        echo render_inline_date_input('items[0][contractExpiryDate]', _l('client_contract_expirydate'));
+                                        ?>
+
                                         <?php
                                         echo render_inline_select('items[0][city]', $province, array('provinceid', 'name', 'type'), 'Tỉnh/Thành phố', '', array('onchange' => 'get_district_client(this)')); 
                                         ?>
@@ -712,6 +727,19 @@ if(!is_null($convert_to)) {
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    
+                                    <?php
+                                        echo render_inline_input('items[0][contractCode]', _l('client_contract_code'));
+                                        ?>
+
+                                        <?php
+                                        echo render_inline_date_input('items[0][contractStartDate]', _l('client_contract_startdate'));
+                                        ?>
+
+                                        <?php
+                                        echo render_inline_date_input('items[0][contractExpiryDate]', _l('client_contract_expirydate'));
+                                        ?>
+
                                     <?php
                                     echo render_inline_select('items[0][city]', $province, array('provinceid', 'name', 'type'), 'Tỉnh/Thành phố', '', array('onchange' => 'get_district_client(this)'));
                                     ?>
@@ -1225,27 +1253,36 @@ if(!is_null($convert_to)) {
                         $('#viewProduct .modal-body .col-sm-8').each((i, v) => {
                             switch(i) {
                                 case 0:
-                                    $(v).html("<p class='form-control-static'>"+item.cityName+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.contractCode+"</p>");
                                     break;
                                 case 1:
-                                    $(v).html("<p class='form-control-static'>"+item.districtName+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.contractStartDate+"</p>");
                                     break;
                                 case 2:
-                                    $(v).html("<p class='form-control-static'>"+item.menuBdsName+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.contractExpiryDate+"</p>");
                                     break;
                                 case 3:
-                                    $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.cityName+"</p>");
                                     break;
                                 case 4:
-                                    $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Mua" : "Thuê")+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.districtName+"</p>");
                                     break;
                                 case 5:
-                                    $(v).html("<p class='form-control-static'>"+formatNumber(item.price)+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.menuBdsName+"</p>");
                                     break;
                                 case 6:
-                                    $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Không" : (item.rentalPeriod + ' tháng'))+"</p>");
+                                    $(v).html("<p class='form-control-static'>"+item.project_name+"</p>");
                                     break;
                                 case 7:
+                                    $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Mua" : "Thuê")+"</p>");
+                                    break;
+                                case 8:
+                                    $(v).html("<p class='form-control-static'>"+formatNumber(item.price)+"</p>");
+                                    break;
+                                case 9:
+                                    $(v).html("<p class='form-control-static'>"+(item.type == 1 ? "Không" : (item.rentalPeriod + ' tháng'))+"</p>");
+                                    break;
+                                case 10:
                                     const d = new Date(item.dateStart);
                                     $(v).html("<p class='form-control-static'>"+d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+"</p>");
                                     break;
@@ -1336,6 +1373,9 @@ if(!is_null($convert_to)) {
         // Items
         $(function() {
             _validate_form($('#modalClient .form-item'),{
+                'items[0][contractCode]': 'required',
+                'items[0][contractStartDate]': 'required',
+                'items[0][contractExpiryDate]': 'required',
                 'items[0][city]': 'required',
                 'items[0][district]': 'required',
                 'items[0][menuBdsId]': 'required',

@@ -3507,3 +3507,10 @@ $lang['task_time_taken']    = 'Thời gian làm';
 $lang['worksheet'] = 'Chấm công';
 $lang['als_agency'] = 'Môi giới';
 $lang['als_client_simple'] = 'Kho Database KH';
+
+$lang['client_contract_code'] = "Mã hợp đồng";
+$lang['client_contract_startdate'] = "Ngày bắt đầu hợp đồng";
+$lang['client_contract_expirydate'] = "Ngày hết hạn hợp đồng";
+
+$lang['client_contract_list'] = "Kho hợp đồng";
+$lang['price'] = "Giá trị";

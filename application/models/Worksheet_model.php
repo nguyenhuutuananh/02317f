@@ -7,6 +7,8 @@ class Worksheet_model extends CRM_Model
             $this->db->where('staffid', $idStaff);
             if($this->db->get('tblstaff')->row()) {
                 $data['userid'] = $idStaff;
+                $data['dateStartWork'] = to_sql_date($data['dateStartWork']);
+
                 $this->db->insert('tblworksheet', $data);
                 return $this->db->insert_id();
             }
@@ -18,6 +20,9 @@ class Worksheet_model extends CRM_Model
             $this->db->where('staffid', $idStaff);
             if($this->db->get('tblstaff')->row()) {
                 $data['userid'] = $idStaff;
+                $data['dateWorkOff'] = to_sql_date($data['dateWorkOff']);
+
+                
                 $this->db->insert('tblworksheet_dayoff', $data);
                 return $this->db->insert_id();
             }
@@ -33,6 +38,7 @@ class Worksheet_model extends CRM_Model
         if($idStaff) {
             $this->db->where('staffid', $idStaff);
         }
+        $this->db->order_by('firstname', 'desc');
         $result = $this->db->get('tblstaff')->result();
    
 

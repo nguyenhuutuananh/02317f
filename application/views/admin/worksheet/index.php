@@ -101,6 +101,10 @@
         let currentSelectedMonth = <?=$monthWorksheet?>;
         let currentYear = new Date().getFullYear();
         let currentMonth = new Date().getMonth();
+
+        // Create worksheet validator
+        var worksheetValidator;
+
         $('#selectChangeYear').find('option').remove();
         $('#selectChangeMonth').find('option').remove();
         $('#selectChangeYear').append('<option'+(currentSelectedYear == currentYear ? ' selected="selected"' : '')+' value="'+currentYear+'">'+currentYear+'</option>');
@@ -231,19 +235,39 @@
             }
         });
         sheet.disable();
-        for(let a=0;a<sheetData.length;a++) {
-            sheet.setRemark(a, sheetData[a].filter(a => a == 1).length);
-        }
+        
         var staff_data_array = $.map(staff_data, function(value, index) {
             return [value];
         });
-        $.each(staff_data_array, function(key, value) {
-            if(value.dayOff.length!=0) {
-                $.each(value.dayOff, function(keyDayOff, valueDayOff) {
+        $(function() {
+            $.each(staff_data_array, function(key, value) {
+                if(value.dayOff.length!=0) {
+                    $.each(value.dayOff, function(keyDayOff, valueDayOff) {
+                        let fullNgayNghi = new Date(valueDayOff.dateWorkOff);
+                        let  ngayNghi = fullNgayNghi.getDate();
 
-                });
+                        sheetData[key][ngayNghi-1] = 0;
+                        $(`td[data-row="${key}"][data-col="${ngayNghi-1}"]`)
+                        .removeClass('TimeSheet-cell-selected')
+                        .attr('style', 'text-align: center;')
+                        .html(`<span><i class="glyphicon glyphicon-remove" style="color: red;"></i> Nghỉ &nbsp;</span>`);
+                        // i element
+                        $(`td[data-row="${key}"][data-col="${ngayNghi-1}"] span`)
+                        .attr('data-toggle', 'tooltip')
+                        .attr('title', `Lý do: ${valueDayOff.note || "Không"}`)
+                        .tooltip();
+
+                    });
+                }
+            });
+            for(let a=0;a<sheetData.length;a++) {
+            sheet.setRemark(a, sheetData[a].filter(a => a == 1).length);
             }
+            $('td.TimeSheet-cell-selected')
+            .attr('style', 'text-align: center;')
+            .html(`<i class="glyphicon glyphicon-ok" style="color: green;text-align: center;"></i>`);
         });
+        
             <?php
         }
         ?>
@@ -388,7 +412,23 @@
             });
         });
 
-        
+        $(document).on('click', '.TimeSheet-cell-selected', function() {
+            let cellElement = $(this);
+            $.get(admin_url + 'worksheet/modal_create_dayoff', function(data) {
+                $('#modalCreateDayOff .modal-body').html(data);
+                
+                // Init data
+                init_selectpicker();
+                init_datepicker();
+                console.log();
+                $('#modalCreateDayOff .modal-body #userid').selectpicker('val', cellElement.attr('data-row'));
+
+                $('#modalCreateDayOff').modal('show');
+            })
+            .fail((data) => {
+
+            });
+        });
 
         // ALL
         $('#btnCreateWorkSheet').click(function() {
@@ -402,7 +442,7 @@
                 init_datepicker();
                 sheetModal = initSheet(sheetDataModal);
                 
-                _validate_form($('#createWorksheet #form-create-worksheet'),{
+                worksheetValidator = _validate_form_edited($('#createWorksheet #form-create-worksheet'),{
                     'userid[]': 'required',
                     'workingDays': 'required',
                     'dateStartWork': 'required',
@@ -423,7 +463,10 @@
                 response = JSON.parse(response);
                 if(response.success){
                     alert_float('success',response.message);
-                    location.reload();
+                    $(form)[0].reset();
+                    worksheetValidator.resetForm();
+                    $('#createWorksheet .modal-body .row').html('');
+                    $('#createWorksheet').modal('hide');
                 }
                 else {
                     alert_float('danger',response.message);

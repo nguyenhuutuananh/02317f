@@ -198,6 +198,9 @@ class Clients_model extends CRM_Model
             province.name as cityName,
             district.name as districtName,
             tblmenubds.menu_name as menuBdsName,
+            tblclient_bds.contractCode,
+            tblclient_bds.contractStartDate,
+            tblclient_bds.contractExpiryDate,
         ');
 
         $this->db->join('province', 'province.provinceid = tblclient_bds.city', 'left');

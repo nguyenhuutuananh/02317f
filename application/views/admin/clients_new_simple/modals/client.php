@@ -61,7 +61,7 @@ if(!is_null($convert_to)) {
                                     $clientType = (isset($client) ? $client->clientType : '');
                                     echo render_inline_select('clientType', $options, array('id', 'value'), 'Loại KH', $clientType, array(), array(), '', '', false);
                                     ?>
-
+                                    
                                     <?php
                                         $company = array();
                                         if($client->clientType != 'congty') {

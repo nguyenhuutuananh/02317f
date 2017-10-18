@@ -87,11 +87,57 @@ if($alertclass != ''){
     </script>
     <?php } ?>
 
-     <script>
+<script>
     $(function() {
         $('body.hide-sidebar').find('ul').removeClass('in');
         $('.hide-sidebar #side-menu').find('li').removeClass('active');
-    })
+    });
+
+    // Custom form validation
+    function _validate_form_edited(form, form_rules, submithandler, messages = { email: { remote: email_exists,}, }) {
+        var f = $(form).validate({
+            rules: form_rules,
+            messages,
+            ignore: [],
+            submitHandler: function(form) {
+                if (typeof(submithandler) !== 'undefined') {
+                    submithandler(form);
+                } else {
+                    return true;
+                }
+            }
+        });
+
+        var custom_required_fields = $(form).find('[data-custom-field-required]');
+
+        if (custom_required_fields.length > 0) {
+            $.each(custom_required_fields, function() {
+                $(this).rules("add", {
+                    required: true
+                });
+                var name = $(this).attr('name');
+                var label = $(this).parents('.form-group').find('[for="' + name + '"]');
+                if (label.length > 0) {
+                    if (label.find('.req').length == 0) {
+                        label.prepend(' <small class="req text-danger">* </small>');
+                    }
+                }
+            });
+        }
+
+        $.each(form_rules, function(name, rule) {
+            if ((rule == 'required' && !jQuery.isPlainObject(rule)) || (jQuery.isPlainObject(rule) && rule.hasOwnProperty('required'))) {
+                var label = $(form).find('[for="' + name + '"]');
+                if (label.length > 0) {
+                    if (label.find('.req').length == 0) {
+                        label.prepend(' <small class="req text-danger">* </small>');
+                    }
+                }
+            }
+        });
+
+        return f;
+    }
 </script>
 
 
