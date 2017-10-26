@@ -92,6 +92,9 @@ $table_data = array(
                 <?php
                     echo render_inline_input('realValue', 'Số tiền', '', 'text');
                 ?>
+                 <?php
+                    echo render_inline_select('idStaff', $staff, array('staffid', 'lastname', 'firstname'), 'Nhân viên nhận');
+                ?>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-close-single-modal"><?php echo _l('close'); ?></button>
@@ -119,6 +122,7 @@ $table_data = array(
                 _l('Ngày thanh toán'),
                 _l('Số tiền'),
                 _l('Thanh toán bằng'),
+                _l('Nhân viên nhận'),
                 _l('actions'),
                 );
                 render_datatable($table_data,'billing-payment');

@@ -11,6 +11,7 @@ class Clients extends Admin_controller
     {
         parent::__construct();
         $this->load->model('clients_model');
+        $this->load->model('client_care_history_model');
         $this->clientTakeCareColumns = array(
             (object)array(
                 'title_th'   => 'Ngày liên hệ',
@@ -562,6 +563,10 @@ class Clients extends Admin_controller
                 'title_th'   => 'NV phụ trách KH',
                 'id'         => 'nvgd',
             ),
+            (object)array(
+                'title_th'   => 'Ngày đăng ký',
+                'id'         => 'datecreated',
+            ),
         );
     }
     /* List all clients */
@@ -616,7 +621,7 @@ class Clients extends Admin_controller
             {
                 if($data['type_client'] >= 1)
                 {
-                    $data['datecreated']=date('Y-m-d');
+                    // $data['datecreated']=date('Y-m-d');
                     $id=$this->clients_model->add_client($data);
                     if($id)
                     {
@@ -700,7 +705,6 @@ class Clients extends Admin_controller
             $data['group']  = $group;
             $data['groups'] = $this->clients_model->get_groups();
 
-            
             $data['title']='Khách hàng';
             $data['countries']=$this->clients_model->get_table_array('tblcountries');
             $data['exigency']=$this->clients_model->get_table_array('tblexigency');
@@ -711,10 +715,26 @@ class Clients extends Admin_controller
             $data['staff']=$this->clients_model->get_table_array_where('tblstaff','_delete!=1');
             $data['status']=$this->clients_model->get_table_array('tblstatus');
             $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
+            
             $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
             
             $this->load->view('admin/clients/client', $data);
         }
+    }
+    public function activityClient($id) {
+        if($this->input->post()) {
+            $result = new stdClass();
+            $result->success = false;
+            $result->message = 'Tạo thất bại!';
+            $data = $this->input->post();
+            
+            if($this->client_care_history_model->saveActivity($id, $data)) {
+                $result->success = true;
+                $result->message = 'Tạo thành công!';
+            }
+            exit(json_encode($result));
+        }
+        exit(json_encode($this->client_care_history_model->getActivities($id)));
     }
     public function modal_client($id) {
         $data['type_client']=$this->input->get('type_client');
@@ -743,7 +763,7 @@ class Clients extends Admin_controller
             {
                 if($data['type_client'] >= 1)
                 {
-                    $data['datecreated']=date('Y-m-d');
+                    // $data['datecreated']=date('Y-m-d');
                     
                     $id=$this->clients_model->add_client($data);
                     $response = new stdClass();
@@ -858,6 +878,7 @@ class Clients extends Admin_controller
         $data['status']=$this->clients_model->get_table_array('tblstatus');
         $data['agencies']=$this->clients_model->get_table_array('tblagencies');
         $data['id_partner']=$this->clients_model->get_table_array_where('tblpartner',array('_delete!=' => '1', 'status' => 3));
+        
         $data['class_client']=$this->clients_model->get_table_array('tblclass_client');
         if(is_null($this->input->get('convert'))) {
             exit($this->load->view('admin/clients_new/modals/client', $data, true));
@@ -866,11 +887,34 @@ class Clients extends Admin_controller
             exit($this->load->view('admin/clients_new/modals/convert', $data, true));
         }
     }
+    public function updateAvatar($idClient) {
+        $result = new stdClass();
+        $result->success = handle_client_avatar_image_upload($idClient);
+        exit(json_encode($result));
+    }
     public function updateConvert($id) {
         $response = new stdClass();
         $response->success = false;
         $response->message = 'Chuyển thất bại';
         $data = $this->input->post();
+        
+        $items = $data['items'];
+        unset($data['items']);
+
+        // Format date
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
+        if(isset($data['date_deal'])) {
+            $data['date_deal'] = to_sql_date($data['date_deal']);
+        }
+        if(isset($data['expire_contract'])) {
+            $data['expire_contract'] = to_sql_date($data['expire_contract']);
+        }
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
+
         if($data) {
             $client = $this->clients_model->get_data_clients($id);
             if($client) {
@@ -879,7 +923,8 @@ class Clients extends Admin_controller
                 $this->db->update('tblclients', $data);
                 if($this->db->affected_rows() > 0) {
                     $response->success = true;
-                    $response->message = 'Chuyển thanh';
+                    $response->message = 'Chuyển thành công';
+                    $this->clients_model->add_item($client->userid, $items[0]);
                 }
             }
         }
@@ -887,7 +932,7 @@ class Clients extends Admin_controller
     }
     public function modal_billingperiod($idClient, $idProduct) {
         $data['client'] = $this->clients_model->get_data_clients($idClient);
-        
+        $data['staff']=$this->clients_model->get_table_array_where('tblstaff','_delete!=1');
         
         $result = $this->clients_model->get_period($idClient, $idProduct);
         if($result) {
@@ -1002,6 +1047,8 @@ class Clients extends Admin_controller
         $data = $this->input->post();
         if($client && $data) {
             $data['items'][0]['price'] = preg_replace('/\D/', '', $data['items'][0]['price']);
+            $data['items'][0]['commissionPartner'] = preg_replace('/\D/', '', $data['items'][0]['commissionPartner']);
+            $data['items'][0]['realPrice'] = preg_replace('/\D/', '', $data['items'][0]['realPrice']);
             $result = $this->clients_model->add_item($idClient, $data['items'][0]);
             if($result) {
                 $success = true;

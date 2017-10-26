@@ -132,7 +132,7 @@ class Clients_model extends CRM_Model
         
         $time_bonus = $data['time_bonus'];
         $num_bonus = $data['num_bonus'];
-
+        
         $period = array(
             'time_bonus' => $time_bonus,
             'num_bonus' => $num_bonus,
@@ -140,6 +140,20 @@ class Clients_model extends CRM_Model
 
         unset($data['time_bonus']);
         unset($data['num_bonus']);
+
+        // Format date
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
+        if(isset($data['date_deal'])) {
+            $data['date_deal'] = to_sql_date($data['date_deal']);
+        }
+        if(isset($data['expire_contract'])) {
+            $data['expire_contract'] = to_sql_date($data['expire_contract']);
+        }
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
 
         if($data['type_client'] != 2) {
             $data['province'] = $items[0]['city'];
@@ -165,8 +179,22 @@ class Clients_model extends CRM_Model
     public function add_item($id_client, $data, $period = array()) {
         $this->db->where('userid',$id_client);
         $client = $this->db->get('tblclients',$data)->row();
+        
         $data['clientId'] = $id_client;
         $data['price'] = preg_replace('/\D/', '', $data['price']);
+        $data['commissionPartner'] = preg_replace('/\D/', '', $data['commissionPartner']);
+        $data['realPrice'] = preg_replace('/\D/', '', $data['realPrice']);
+        // Format date
+        if(isset($data['dateStart'])) {
+            $data['dateStart'] = to_sql_date($data['dateStart']);
+        }
+        if(isset($data['contractStartDate'])) {
+            $data['contractStartDate'] = to_sql_date($data['contractStartDate']);
+        }
+        if(isset($data['contractExpiryDate'])) {
+            $data['contractExpiryDate'] = to_sql_date($data['contractExpiryDate']);
+        }
+        
         $this->db->insert('tblclient_bds', $data);
         $insert_id = $this->db->insert_id();
 
@@ -201,6 +229,10 @@ class Clients_model extends CRM_Model
             tblclient_bds.contractCode,
             tblclient_bds.contractStartDate,
             tblclient_bds.contractExpiryDate,
+            (select tblpartner.name_partner from tblpartner where tblpartner.id_partner=tblclient_bds.id_partner) as name_partner,
+            tblclient_bds.realPrice,
+            tblclient_bds.WhatsAgencyHave,
+            tblclient_bds.commissionPartner,
         ');
 
         $this->db->join('province', 'province.provinceid = tblclient_bds.city', 'left');
@@ -239,7 +271,9 @@ class Clients_model extends CRM_Model
         {
             return false;
         }
-
+        if(isset($data['datePay'])) {
+            $data['datePay'] = to_sql_date($data['datePay']);
+        }
         if($item && $client && $item->clientId == $client->userid) {
             $this->db->insert('tblclient_bds_payment', $data);
             if($this->db->affected_rows() > 0) {
@@ -300,7 +334,9 @@ class Clients_model extends CRM_Model
         {
             return false;
         }
-        
+        if(isset($data['datePay'])) {
+            $data['datePay'] = to_sql_date($data['datePay']);
+        }
         if($item && $client && $item->clientId == $client->userid && $payment->idClientBds == $item->id) {
             $this->db->insert('tblclient_bds_payment_details', $data);
             
@@ -391,12 +427,12 @@ class Clients_model extends CRM_Model
         unset($data['num_bonus']);
 
 
-        if($data['type_client'] != 2) {
-            $data['province'] = $items[0]['city'];
-            $data['district'] = $items[0]['district'];
-            $data['type_bds'] = $items[0]['menuBdsId'];
-            $data['bds']      = $items[0]['projectBdsId'];
-        }
+        // if($data['type_client'] != 2) {
+        //     $data['province'] = $items[0]['city'];
+        //     $data['district'] = $items[0]['district'];
+        //     $data['type_bds'] = $items[0]['menuBdsId'];
+        //     $data['bds']      = $items[0]['projectBdsId'];
+        // }
         if(isset($data['clientType']) && $data['clientType'] == 'canhan') {
             $data['companyName'] = "";
             $data['companyOfficeAddress'] = "";
@@ -832,7 +868,10 @@ class Clients_model extends CRM_Model
         if (isset($data['shipping_country']) && $data['shipping_country'] == '' || !isset($data['shipping_country'])) {
             $data['shipping_country'] = 0;
         }
-        $data['datecreated'] = date('Y-m-d H:i:s');
+        
+        // Trong csdl tự động lấy ngày hiện tại
+        // $data['datecreated'] = date('Y-m-d H:i:s');
+
         $data                = do_action('before_client_added', $data);
         $this->db->insert('tblclients', $data);
         $userid = $this->db->insert_id();

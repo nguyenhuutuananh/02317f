@@ -86,21 +86,30 @@ foreach ( $rResult as $aRow )
 
         $row[] = $_data;
     }
-    $options = "";
+    $options = '
+    <div class="btn-group">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    '._l('actions').' <span class="caret"></span></button>
+    <ul class="dropdown-menu" role="menu">';
+
+
+    
     if($aRow['type_client'] == 1) {
-        $options .= icon_btn('#', 'exchange', 'btn-info bmd-modalButton', array('data-userid' => $aRow['userid'], 'data-typeclient' => $aRow['type_client'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Mua');
-        $options .= '<br /><br />';
-        $options .= icon_btn('#', 'exchange', 'btn-warning bmd-modalButton', array('data-userid' => $aRow['userid'], 'data-typeclient' => ($aRow['type_client']+1), 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Fail');
-        $options .= '<br /><br />';
+        $options .= '<li>'.icon_btn('#', 'exchange', 'btn-info bmd-modalButton dropdown-item', array('data-userid' => $aRow['userid'], 'data-typeclient' => $aRow['type_client'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Mua').'</li>';
+        $options .= '<li>'.icon_btn('#', 'exchange', 'btn-warning bmd-modalButton dropdown-item', array('data-userid' => $aRow['userid'], 'data-typeclient' => ($aRow['type_client']+1), 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Fail').'</li>';
     }
     if($aRow['type_client'] == 2) {
-        $options .= icon_btn('#', 'exchange', 'btn-warning bmd-modalButton', array('data-userid' => $aRow['userid'], 'data-typeclient' => $aRow['type_client'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Fail');
-        $options .= '<br /><br />';
+        $options .= '<li>'.icon_btn('#', 'exchange', 'btn-warning bmd-modalButton dropdown-item', array('data-userid' => $aRow['userid'], 'data-typeclient' => $aRow['type_client'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), 'KH Fail').'</li>';
     }
     
 
-    $options .= icon_btn('clients/client/'.$aRow['userid'], 'pencil-square-o', 'btn-default btn-edit-client', array('data-userid' => $aRow['userid'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"));
-    $row[]  = $options .= icon_btn('clients/delete/'.$aRow['userid'],'remove','btn-danger delete-reminder-client');
+    $options .= '<li>'.icon_btn('clients/client/'.$aRow['userid'], 'pencil-square-o', 'btn-edit-client dropdown-item', array('data-userid' => $aRow['userid'], 'data-loading-text' => "<i class='fa fa-spinner fa-spin '></i>"), "Sửa").'</li>';
+    $options .= '<li>'.icon_btn('clients/delete/'.$aRow['userid'],'remove','btn-danger delete-reminder-client dropdown-item', array(), "Xóa").'</li>';
+
+    $options .= '    </ul>
+    </div>
+      ';
+    $row[]  = $options;
 
     $output['aaData'][] = $row;
 }

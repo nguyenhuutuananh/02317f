@@ -7,6 +7,7 @@ $aColumns     = array(
     'datePay',
     'realValue',
     '(select tblinvoicepaymentsmodes.name from tblinvoicepaymentsmodes where tblinvoicepaymentsmodes.id = tblclient_bds_payment_details.idPaymentMethod)',
+    'idStaff',
 );
 $sIndexColumn = "id";
 $sTable       = 'tblclient_bds_payment_details';
@@ -22,6 +23,8 @@ $order_by = 'order by tblclient_bds_payment_details.datePay asc';
 
 $result       = data_tables_init($aColumns, $sIndexColumn, $sTable,$join, $where, array(
     'tblclient_bds_payment_details.id',
+    '(select tblstaff.lastname from tblstaff where tblstaff.staffid = tblclient_bds_payment_details.idStaff)',
+    '(select tblstaff.firstname from tblstaff where tblstaff.staffid = tblclient_bds_payment_details.idStaff)',
     '(select tblclient_bds_payment.status from tblclient_bds_payment where tblclient_bds_payment.id = tblclient_bds_payment_details.idClientBdsPayment)'
 ), $order_by);
 $output       = $result['output'];
@@ -59,7 +62,12 @@ foreach ($rResult as $aRow) {
             case 'realValue':
                 $_data = number_format($_data); 
                 break;
-            
+            case 'idStaff':
+                $_data = '<a href="' . admin_url('staff/profile/' . $aRow['idStaff']) . '">' . staff_profile_image($aRow['idStaff'], array(
+                        'staff-profile-image-small'
+                    )) . '</a>';
+                $_data .= ' <a href="' . admin_url('staff/member/' . $aRow['idStaff']) . '">' . $aRow['(select tblstaff.firstname from tblstaff where tblstaff.staffid = tblclient_bds_payment_details.idStaff)'] . ' ' . $aRow['(select tblstaff.lastname from tblstaff where tblstaff.staffid = tblclient_bds_payment_details.idStaff)'] . '</a>';
+                break;
         }
 
         $row[] = $_data;

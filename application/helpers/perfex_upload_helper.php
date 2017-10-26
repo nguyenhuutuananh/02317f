@@ -755,6 +755,80 @@ function handle_project_discussion_comment_attachments($discussion_id,$post_data
 
 return $insert_data;
 }
+
+/**
+ * Handle upload client avatar
+ * @return boolean
+ */
+function handle_client_avatar_image_upload($item_id = '')
+{
+    if (isset($_FILES['avatar']['name']) && $_FILES['avatar']['name'] != '') {
+        //do_action('before_upload_avatar_image');
+        if($item_id == ''){
+            // $item_id = get_contact_user_id();
+            // echo "21312312";
+            return false;
+        }
+        $path        = get_upload_path_by_type('contact_profile_images') . $item_id . '/';
+
+        // Get the temp file path
+        $tmpFilePath = $_FILES['avatar']['tmp_name'];
+        // Make sure we have a filepath
+        if (!empty($tmpFilePath) && $tmpFilePath != '') {
+            // Getting file extension
+            $path_parts         = pathinfo($_FILES["avatar"]["name"]);
+            $extension          = $path_parts['extension'];
+            $extension = strtolower($extension);
+            $allowed_extensions = array(
+                'jpg',
+                'jpeg',
+                'png'
+            );
+            if (!in_array($extension, $allowed_extensions)) {
+                set_alert('warning', _l('file_php_extension_blocked'));
+                return false;
+            }
+            // Setup our new file path
+            if (!file_exists($path)) {
+                mkdir($path);
+                fopen($path . '/index.html', 'w');
+            }
+             $filename    = unique_filename($path, $_FILES["avatar"]["name"]);
+             $newFilePath = $path . $filename;
+            // Upload the file into the company uploads dir
+            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                $CI =& get_instance();
+                $config                   = array();
+                $config['image_library']  = 'gd2';
+                $config['source_image']   = $newFilePath;
+                $config['new_image']      = 'thumb_' . $filename;
+                $config['maintain_ratio'] = TRUE;
+                $config['width']          = 160;
+                $config['height']         = 160;
+                $CI->load->library('image_lib', $config);
+                $CI->image_lib->resize();
+                $CI->image_lib->clear();
+                $config['image_library']  = 'gd2';
+                $config['source_image']   = $newFilePath;
+                $config['new_image']      = 'small_' . $filename;
+                $config['maintain_ratio'] = TRUE;
+                $config['width']          = 32;
+                $config['height']         = 32;
+                $CI->image_lib->initialize($config);
+                $CI->image_lib->resize();
+
+                $CI->db->where('userid', $item_id);
+                $CI->db->update('tblclients', array(
+                    'avatar' => substr($path, strpos($path,'uploads')) . $filename,
+                ));
+                // Remove original image
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 /**
  * Function that return full path for upload based on passed type
  * @param  string $type

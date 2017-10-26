@@ -9,6 +9,18 @@
     .bootstrap-select {
         min-width: 160px!important;
     }
+
+    /* custome */
+    .dropdown-menu>li>a {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        border-radius: 0px;
+    }
+    .clientName {
+        font-weight: bold;
+        color: #0C508B;
+        cursor: pointer;
+    }
 </style>
 
 <style type="text/css"> 
@@ -256,17 +268,20 @@ const clientTable =  initDataTable('.table-clients', window.location.href, [], [
 $(document).on('click', '.btn-edit-client', function(e) {
     $('#modalClient .modal-body').empty();
     let buttonEdit = $(this).button('loading');
+    let parentButton = $(this).parents('ul').prev().button('loading');
     $.get(admin_url + '/clients/modal_client/' + $(this).attr('data-userid'), function(data) {
         $('#modalClient').attr('data-userid', buttonEdit.attr('data-userid'));
         $('#modalClient').removeAttr('data-typeclient');
         $('#modalClient .modal-body').html(data);
         buttonEdit.button('reset');
+        parentButton.button('reset');
         init_selectpicker();
         init_datepicker();
         $('#modalClient').modal('show');
         $('td:has(".clientName")').removeAttr('style');
     });
     e.preventDefault();
+    e.stopPropagation();
 });
 $(function() {
     <?php
@@ -305,9 +320,6 @@ $(document).on('click', '.btn-close-single-modal', function(e) {
 });
 
 $(function() {
-    // $(document).on('click', '.modal-backdrop.fade.in', function() {
-    //     $(this).remove();
-    // });
     $(document).on('click', 'td:has(".clientName")', function() {
         $('.clientName').removeAttr('style');
         $(this).attr('style', 'font-weight: bold');

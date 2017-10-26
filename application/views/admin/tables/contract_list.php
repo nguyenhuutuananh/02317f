@@ -4,13 +4,22 @@ $CI = &get_instance();
 
 $aColumns = array(
     'id',
-    'contractCode',
     'contractStartDate',
     'contractExpiryDate',
-    '(select tblclients.company from tblclients where tblclients.userid=tblclient_bds.clientId)',
-    '(select tblprojectmenu.project_name from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId)',
-    'price',
     'type',
+    'contractCode',
+    '1',
+    '(select tblprojectmenu.code from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId)',
+    '(select tblclients.company from tblclients where tblclients.userid=tblclient_bds.clientId)',
+    '(select tblclients.dkkh from tblclients where tblclients.userid=tblclient_bds.clientId)',
+    '(select tblclients.clientType from tblclients where tblclients.userid=tblclient_bds.clientId)',
+    'id_partner',
+    'price',
+    'commissionPartner',
+    'otherCosts',
+    'noteOtherCosts',
+    '2',
+    '1',
 );
 
 $sIndexColumn = "id";
@@ -66,9 +75,10 @@ foreach ( $rResult as $aRow )
                 } 
                 break;
             case 'price':
+            case 'commissionPartner':
                 $_data = number_format($_data); 
                 break;
-            case '(select tblprojectmenu.project_name from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId)':
+            case '(select tblprojectmenu.code from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId)':
                 $_data = '<a href="'.admin_url().'newview/project/'.$aRow['menuBdsId'].'/'.$aRow['projectBdsId'].'" target="_blank" onclick="">' . $_data . '</a>'; 
                 break;
         }

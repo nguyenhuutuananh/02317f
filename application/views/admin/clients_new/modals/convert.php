@@ -62,6 +62,18 @@ if(!is_null($convert_to)) {
                                 
                             </legend>
                             <?php
+                            echo render_inline_input('items[0][contractCode]', _l('client_contract_code'));
+                            ?>
+
+                            <?php
+                            echo render_inline_date_input('items[0][contractStartDate]', _l('client_contract_startdate'));
+                            ?>
+
+                            <?php
+                            echo render_inline_date_input('items[0][contractExpiryDate]', _l('client_contract_expirydate'));
+                            ?>
+
+                            <?php
                                 $province_selected = 0;
                                 if(isset($client) && $type_client != 2) {
                                     $province_selected = $client->province;
@@ -105,66 +117,21 @@ if(!is_null($convert_to)) {
                                 );
                                 echo render_inline_select('items[0][type]', $type_options, array('id', 'value'), 'Hình thức', '', array(), array(), '', '', false);
                             ?>
-
                             <?php
-                                echo render_inline_input('items[0][price]', 'Giá');
+                                echo render_inline_input('items[0][realPrice]', 'Giá trị dự án');
+                            ?>
+                            <?php
+                                echo render_inline_input('items[0][price]', 'Hoa hồng');
                             ?>
 
                             <?php
-                                $period_options = array(
-                                    array(
-                                        'id' => 1,
-                                        'value' => '1 tháng'
-                                    ),
-                                    array(
-                                        'id' => 2,
-                                        'value' => '2 tháng'
-                                    ),
-                                    array(
-                                        'id' => 3,
-                                        'value' => '3 tháng'
-                                    ),
-                                    array(
-                                        'id' => 4,
-                                        'value' => '4 tháng'
-                                    ),
-                                    array(
-                                        'id' => 5,
-                                        'value' => '5 tháng'
-                                    ),
-                                    array(
-                                        'id' => 6,
-                                        'value' => '6 tháng'
-                                    ),
-                                    array(
-                                        'id' => 7,
-                                        'value' => '7 tháng'
-                                    ),
-                                    array(
-                                        'id' => 8,
-                                        'value' => '8 tháng'
-                                    ),
-                                    array(
-                                        'id' => 9,
-                                        'value' => '9 tháng'
-                                    ),
-                                    array(
-                                        'id' => 10,
-                                        'value' => '10 tháng'
-                                    ),
-                                    array(
-                                        'id' => 11,
-                                        'value' => '11 tháng'
-                                    ),
-                                    array(
-                                        'id' => 12,
-                                        'value' => '12 tháng'
-                                    ),
-                                );
-                                echo render_inline_select('items[0][rentalPeriod]', $period_options, array('id', 'value'), 'Thời hạn thuê');
+                                $value = (isset($client) ? $client->date_tax : '');
+                                echo render_inline_input('items[0][rentalPeriod]', 'Thời hạn thuê', $value);
                             ?>
+                            
                             <?php
-                                echo render_inline_date_input('items[0][dateStart]', 'Ngày mua/thuê', date('Y-m-d'));
+                                $value = (isset($client) ? $client->date_movein : '');
+                                echo render_inline_date_input('items[0][dateStart]', 'Ngày mua/thuê', $value);
                             ?>
                             <?php
                             }
@@ -198,23 +165,7 @@ if(!is_null($convert_to)) {
                         <fieldset>
                             <legend>Các thông tin đặc trưng</legend>
                             <?php
-                            if(($type_client == 1 && $convert) || ($type_client == 2 && !$convert)) {
-                                $value = (isset($client) ? $client->id_contract : '');
-                                echo render_inline_input('id_contract', 'Mã hợp đồng', $value);
-                                
-                                $value = (isset($client) ? $client->date_deal : '');
-                                echo render_inline_date_input('date_deal', 'Ngày giao dịch', $value); 
-
-                                $value = (isset($client) ? $client->expire_contract : ''); 
-                                echo render_inline_date_input('expire_contract', 'Ngày HHĐ', $value); 
-
-                                $value = (isset($client) ? $client->bonus_period : '');
-                                echo render_inline_input('bonus_period', 'Hoa hồng gia hạn', $value);
-
-                                $value = (isset($client) ? $client->note : '');
-                                echo render_inline_input('note', 'Note', $value);
-                            }
-                            else if($type_client == 1) {
+                            if($type_client == 1) {
                                 $value = (isset($client) ? $client->date_contact : '');
                                 echo render_inline_date_input('date_contact', 'Ngày liên hệ', $value);
                             }
@@ -233,65 +184,8 @@ if(!is_null($convert_to)) {
                     </div>
                     
                     
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <?php if (($type_client == 1 && $convert)) { ?>
-                            <p class="text-dark text-uppercase" style="text-align: center;"></p>
-                            <hr class="no-mtop">
-                            <fieldset>
-                                <legend>Hoa hồng</legend>
-
-                                    <div class="col-md-6">
-                                        <?php $value = (isset($client) ? $client->status_bonus : ''); ?>
-                                        <?php echo render_inline_input('status_bonus', 'Trạng thái hoa hồng', $value); ?>
-                                        <button type="button" class="btn btn-success" onclick="append_colum(this)">
-                                            Thêm Đợt Thanh toán Hoa hồng
-                                        </button>
-                                    </div>
-                                    
-                                    <div class="clearfix">
-                                    
-                                    </div>
-                                    <hr />
-                                    
-                                    
-                                        <?php if (isset($client)) {
-                                            $time_bonus = explode(',', $client->time_bonus);
-                                            $num_bonus = explode(',', $client->num_bonus);
-                                            ?>
-                                            <?php foreach ($time_bonus as $num => $rom) { ?>
-                                            <div class="col-md-3 time_bonus">
-                                                <fieldset class="fieldset review_bonus_<?= $num + 1 ?>">
-                                                    <legend class="legend">Đợt:<?= $num + 1 ?><a href="javacript:void(0)" class="text-danger _delete" onclick="remove_field(<?= $num + 1 ?>)"><i class="fa fa fa-times"></i></a></legend>
-                                                    <div class="form-group">
-                                                        <label for="time_bonus" class="control-label label-time col-sm-4">Ngày thu đợt: <?= $num + 1 ?></label>
-                                                        <div class="col-sm-8">
-                                                            <div class="input-group date">
-                                                                <input type="text"  name="time_bonus[]" class="form-control datepicker" value="<?= $rom ?>">
-                                                                <div class="input-group-addon">
-                                                                    <i class="fa fa-calendar calendar-icon"></i>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="num_bonus" class="control-label label-num col-sm-4">Đợt: <?= $num + 1 ?></label>
-                                                        <div class="col-sm-8">
-                                                            <input type="text"  name="num_bonus[]" class="form-control" value="<?= $num_bonus[$num] ?>">
-                                                        </div>
-                                                    </div>
-                                                </fieldset>
-                                            </div>
-                                            <?php 
-                                        } ?>
-                                    
-                                <?php 
-                                } ?>
-                            </fieldset>
-                            <?php 
-                            } ?>
-                    </div>
                 </div>
-                <button type="button" class="btn btn-info mtop20 only-save customer-form-submiter">
+                <button type="submit" class="btn btn-info mtop20 only-save">
                     <?php echo _l('submit'); ?>
                 </button>
                 <?php echo form_close(); ?>
@@ -303,23 +197,54 @@ if(!is_null($convert_to)) {
 
 
 <script>
-    $(function() {
-       $(document).on('click', '.customer-form-submiter', function() {
-            var data = $('#modalClient .form-item').serialize();
-            console.log(data);           
-            $.post(admin_url + 'clients/updateConvert/' + $('#modalClient #userid').val() + '?type_client=' + $('#modalClient').attr('data-typeclient'), data).done(function(response) {
-                response = JSON.parse(response);
-                if(response.success == true){
-                    alert_float('success',response.message);
+var converting = false;
+var send_data_convert_form = function(form) {
+        if(converting) return;
+        converting = true;
+        var data = $(form).serialize();
+        
+        $.post(admin_url + 'clients/updateConvert/' + $('#modalClient #userid').val() + '?type_client=' + $('#modalClient').attr('data-typeclient'), data).done(function(response) {
+            response = JSON.parse(response);
+            if(response.success == true){
+                alert_float('success',response.message);
 
-                }
-                else {
-                    alert_float('danger',response.message);
-                }
-                
-                $('.table-clients').DataTable().ajax.reload();
-                $('#modalClient').modal('hide');
-            });
-       });
+            }
+            else {
+                alert_float('danger',response.message);
+            }
+            
+            $('.table-clients').DataTable().ajax.reload();
+            $('#modalClient').modal('hide');
+            converting = false;
+        }).fail(() => {
+            converting = false;
+        });
+
+        return false;
+    };
+    $(function() {
+        
+        _validate_form($('#modalClient .form-item'),{
+            'items[0][contractCode]': 'required',
+            'items[0][contractStartDate]': 'required',
+            'items[0][contractExpiryDate]': 'required',
+            'items[0][city]': 'required',
+            'items[0][district]': 'required',
+            'items[0][menuBdsId]': 'required',
+            'items[0][projectBdsId]': 'required',
+            'items[0][type]': 'required',
+            'items[0][price]': 'required',
+            'items[0][dateStart]': 'required',
+        },send_data_convert_form);
+        
+       $(document).on('keyup', '[name="items[0][realPrice]"], [name="items[0][price]"], #value, #realValue', (e) => {
+            const current = $(e.currentTarget);
+            var charCode = (e.which) ? e.which : event.keyCode
+            
+            // Remove grop seperate
+
+            current.val( current.val().replace(/\D/g, '') );
+            current.val(formatNumber(current.val()));
+        });
     });
 </script>

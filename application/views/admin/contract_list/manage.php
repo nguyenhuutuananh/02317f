@@ -14,14 +14,37 @@
                         <hr class="no-border"/>
                         <?php
                             $table_data = array(
-                                'ID',
-                                _l('client_contract_code'),
+                                'STT',
+
                                 _l('client_contract_startdate'),
+
                                 _l('client_contract_expirydate'),
-                                _l('Tên'),
-                                _l('als_projects'),
-                                _l('price'),
-                                _l('Hình thức'),
+
+                                _l('Loại(thuê/mua)'),
+
+                                _l('client_contract_code'),
+                                
+                                _l('Tên hđ'),
+
+                                _l('Mã căn hộ'),
+
+                                _l('Tên Khách hàng'),
+                                
+                                _l('NV phụ trách KH'),
+                                
+                                _l('Hợp tác môi giới hay trợ lý'),
+
+                                _l('Tên MG hay trợ lý'),
+
+                                _l('Hoa hồng(trên hợp đồng)'),
+
+                                _l('Hoa hồng cho MG hoặc trợ lý'),
+
+                                _l('Chi phí khác'),
+
+                                _l('Nội dung chi phí khác'),
+
+                                _l('Hoa hồng thực nhận'),
                                 // _l('actions'),
                             );
                             render_datatable($table_data,'contracts');
