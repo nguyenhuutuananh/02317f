@@ -34,7 +34,10 @@
                                 'fullname'=>'Tên Khách hàng','numberphone'=>'Số điện thoại','email'=>'Email','furniture_name'=>'Đồ nội thất',
                                 'convenient'=>'Tiện ích','characteristics'=>'Đặc điểm sản phẩm','date_update'=>'Ngày lọc',
                                 'exigency_name'=>'Nhu cầu','price'=>'Giá(VND)','cost'=>'Giá(USD)','status'=>'Tình trạng',
-                                'detail_price'=>'Giá Gồm','deadline'=>'Thời gian thuế','code_tax'=>'Mã thuế','staff_id'=>'Nhân viên tạo','bonus'=>'Bonus','note'=>'Ghi chú','tag'=>'Thẻ');
+                                'detail_price'=>'Giá Gồm','deadline'=>'Thời gian thuế','code_tax'=>'Mã thuế','staff_id'=>'Nhân viên tạo','bonus'=>'Bonus','note'=>'Ghi chú',
+                                'tag'=>'Thẻ',
+                                'master' => 'Chủ sở hữu chính',
+                            );
                         }
                         $colum_2=array();
                         if(count($render_colum)>0){
@@ -132,7 +135,10 @@
                                         'fullname'=>'Tên Khách hàng','numberphone'=>'Số điện thoại','email'=>'Email','furniture_name'=>'Đồ nội thất',
                                         'convenient'=>'Tiện ích','characteristics'=>'Đặc điểm sản phẩm','date_update'=>'Ngày lọc',
                                         'exigency_name'=>'Nhu cầu','price'=>'Giá(VND)','cost'=>'Giá(USD)','status'=>'Tình trạng',
-                                        'detail_price'=>'Giá Gồm','deadline'=>'Thời gian thuế','code_tax'=>'Mã thuế','staff_id'=>'Nhân viên tạo','bonus'=>'Bonus','note'=>'Ghi chú','tag'=>'Thẻ');
+                                        'detail_price'=>'Giá Gồm','deadline'=>'Thời gian thuế','code_tax'=>'Mã thuế','staff_id'=>'Nhân viên tạo','bonus'=>'Bonus','note'=>'Ghi chú',
+                                        'tag'=>'Thẻ',
+                                        'master' => 'Chủ sở hữu chính',
+                                    );
                                 }
                             ?>
                             <?php

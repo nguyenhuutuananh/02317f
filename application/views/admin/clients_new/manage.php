@@ -21,6 +21,15 @@
         color: #0C508B;
         cursor: pointer;
     }
+    .custom-view-mode {
+        vertical-align: middle;
+        font-weight: bold;
+        word-wrap: break-word;
+    }
+    .custom-view-mode-middle {
+        padding-top: 7px;
+        position: absolute;
+    }
 </style>
 
 <style type="text/css"> 
@@ -149,6 +158,66 @@
                                             <?php } ?>
                                         </ul>
                                     </div>
+                                    <!-- Tuan Anh Custom -->
+                                    <div class="btn-group pull-right btn-with-tooltip-group _filter_data" data-toggle="tooltip" data-title="Lọc bởi">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fa fa-filter" aria-hidden="true"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-left" style="width:300px;">
+                                            <li class="active">
+                                                <a href="#" data-cview="all" onclick="return false;">Tất cả</a>
+                                            </li>
+                                            <div class="clearfix"></div>
+                                            <li class="divider"></li>
+                                            <li class="dropdown-submenu pull-left">
+                                                <a href="#" tabindex="-1">KH từ</a>
+                                                <ul class="dropdown-menu dropdown-menu-left">
+                                                    <li>
+                                                        <a href="#" data-cview="contract_type_1" onclick="setFilter('filterClientFrom',0, this);return false;">
+                                                            Tất cả                                   
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" data-cview="contract_type_1" onclick="setFilter('filterClientFrom',1, this);return false;">
+                                                            Honeycomb                                   
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" data-cview="contract_type_2" onclick="setFilter('filterClientFrom',2, this);return false;">
+                                                            Môi giới                                    
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <div class="clearfix"></div>
+                                            <li class="divider"></li>
+                                            <li class="dropdown-submenu pull-left">
+                                                <a href="#" tabindex="-1">Nguồn</a>
+                                                <ul class="dropdown-menu dropdown-menu-left">
+                                                    <li>
+                                                        <a href="#" data-cview="" onclick="setFilter('filterSource',0, this);return false;">
+                                                            Tất cả
+                                                        </a>
+                                                    </li>
+                                                    <?php
+                                                    foreach($source as $item) {
+                                                        ?>
+                                                    <li>
+                                                        <a href="#" data-cview="" onclick="setFilter('filterSource', <?=$item['id']?>, this);return false;">
+                                                            <?=$item['name']?>
+                                                        </a>
+                                                    </li>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                    
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Tuan Anh Custom -->
+
                                 </div>
                                 <div class="clearfix"></div>
                                 <?php if(has_permission('customers','','view') || have_assigned_customers()) {
@@ -186,7 +255,8 @@
                                 </div>
                             </div>
                             <div class="_filters _hidden_inputs hidden">
-                            
+                            <input type="hidden" name="filterClientFrom" value="" />
+                            <input type="hidden" name="filterSource" value="" />
                         </div>
                         <div class="panel_s">
                             <div class="panel-body">
@@ -249,22 +319,78 @@ var new_payment,view_payment = function() {};
 var new_period,send_data_period_form = function() {};
 // init for contacts
 var contact = function(){};
-//format currency
-function formatNumber(nStr, decSeperate=".", groupSeperate=",") {
-    nStr += '';
-    x = nStr.split(decSeperate);
-    x1 = x[0];
-    x2 = x.length > 1 ? '.' + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-    while (rgx.test(x1)) {
-        x1 = x1.replace(rgx, '$1' + groupSeperate + '$2');
+// function switch view
+$(document).on('click', '.btn-switchToEdit', function () {
+    // console.log($('#modalClient .modal-body #view_project .custom-view-mode'));
+    let rollback = $('#modalClient .modal-body #view_project .custom-view-mode').length;
+    // console.log(rollback);
+    // Input
+    $('#modalClient .modal-body #view_project').find('input[type="text"]').each((index,val) => {
+        if($(val).hasClass('tagit-hidden-field') || $(val).attr('data-role') == 'tagsinput') return false; // break
+        $(val).next('span.custom-view-mode').remove();
+        if(!rollback) {
+            $(val).hide().after('<span class="custom-view-mode custom-view-mode-middle">'+$(val).val()+'</span>');
+        }
+        else {
+            $(val).show();
+        }
+    });
+    // Select
+    $('#modalClient .modal-body #view_project').find('div.bootstrap-select').each((index,val) => {
+        $(val).next('span.custom-view-mode').remove();
+        if(!rollback) {
+            $(val).hide().after('<span class="custom-view-mode custom-view-mode-middle">'+$(val).find('select option:selected').text()+'</span>');
+        }
+        else {
+            $(val).show();
+        }
+    });
+    // Textarea
+    $('#modalClient .modal-body #view_project').find('textarea').each((index,val) => {
+        $(val).next('span.custom-view-mode').remove();
+        if(!rollback) {
+            $(val).hide().after('<span class="custom-view-mode">'+$(val).val()+'</span>').css('border', '1px solid red;');
+        }
+        else {
+            $(val).show();
+        }
+    });
+    
+    if(!rollback) {
+        // Input file
+        $('#modalClient .modal-body #view_project').find('input[type="file"]').hide();
+        // Tagit
+        // also handle in client view
+        $('#modalClient .modal-body #view_project .tagit input[type="text"]').hide();
+        //Button
+        $('#modalClient .modal-body #view_project .client-form-submiter').hide();
+        // This button
+        $(this).removeClass('btn-success').addClass('btn-warning').html(`<i class="fa fa-eye"></i> Chỉnh sửa`);
     }
-    return x1 + x2;
+    else {
+        // Input file
+        $('#modalClient .modal-body #view_project').find('input[type="file"]').show();
+        // Tagit
+        // also handle in client view
+        $('#modalClient .modal-body #view_project .tagit input[type="text"]').show();
+        //Button
+        $('#modalClient .modal-body #view_project .client-form-submiter').show();
+        // This button
+        $(this).removeClass('btn-warning').addClass('btn-success').html(`<i class="fa fa-pencil-square-o"></i> Trở lại chế độ xem`);
+    }
+});
+const filterList = {
+    'filterClientFrom': 'input[name="filterClientFrom"]',
+    'filterSource': 'input[name="filterSource"]',
+};
+const clientTable =  initDataTable('.table-clients', window.location.href, [], [], filterList, [0, 'DESC']);
+function setFilter(filterName, filterValue, element) {
+    console.log(element);
+    $(element).parents('ul').find('li.active').removeClass('active');
+    $(element).parents('li').addClass('active');
+    $(filterList[filterName]).val(filterValue);
+    clientTable.ajax.reload();
 }
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-const clientTable =  initDataTable('.table-clients', window.location.href, [], [], [], [0, 'DESC']);
 $(document).on('click', '.btn-edit-client', function(e) {
     $('#modalClient .modal-body').empty();
     let buttonEdit = $(this).button('loading');
@@ -273,10 +399,17 @@ $(document).on('click', '.btn-edit-client', function(e) {
         $('#modalClient').attr('data-userid', buttonEdit.attr('data-userid'));
         $('#modalClient').removeAttr('data-typeclient');
         $('#modalClient .modal-body').html(data);
-        buttonEdit.button('reset');
-        parentButton.button('reset');
+
         init_selectpicker();
         init_datepicker();
+
+        // Change to view mode before modal show up, after init
+        $('.btn-switchToEdit').trigger('click');
+        
+        
+        buttonEdit.button('reset');
+        parentButton.button('reset');
+        
         $('#modalClient').modal('show');
         $('td:has(".clientName")').removeAttr('style');
     });
@@ -287,7 +420,9 @@ $(function() {
     <?php
     if($autoOpenId!="") {
     ?>
-    $('a[href$="clients/client/<?=$autoOpenId?>"]').trigger('click');
+    clientTable.on( 'init.dt', function () {
+        $('a[href$="clients/client/<?=$autoOpenId?>"]').trigger('click');
+    });
     <?php
     }
     ?>

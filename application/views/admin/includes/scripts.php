@@ -92,6 +92,7 @@ if($alertclass != ''){
         $('body.hide-sidebar').find('ul').removeClass('in');
         $('.hide-sidebar #side-menu').find('li').removeClass('active');
     });
+    // Tuân anh custom
 
     // Custom form validation
     function _validate_form_edited(form, form_rules, submithandler, messages = { email: { remote: email_exists,}, }) {
@@ -137,6 +138,21 @@ if($alertclass != ''){
         });
 
         return f;
+    }
+    //format currency
+    function formatNumber(nStr, decSeperate=".", groupSeperate=",") {
+        nStr += '';
+        x = nStr.split(decSeperate);
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + groupSeperate + '$2');
+        }
+        return x1 + x2;
+    }
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 </script>
 

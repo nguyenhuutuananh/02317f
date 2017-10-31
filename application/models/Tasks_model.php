@@ -388,6 +388,13 @@ class Tasks_model extends CRM_Model
                 unset($data['rel_type']);
                 unset($data['rel_id']);
             }
+            // Custom by TA
+            else {
+                if($data['rel_type'] == 'customer') {
+                    // Get all staff
+                    $allStaffs = $this->db->where('idClient', $data['rel_id'])->order_by('type')->get('tblclients_assignment')->result();
+                }
+            }
         }
 
 
@@ -409,6 +416,24 @@ class Tasks_model extends CRM_Model
                 handle_custom_fields_post($insert_id, $custom_fields);
             }
             do_action('after_add_task', $insert_id);
+            // Custom TA
+            if(!empty($allStaffs)) {
+                foreach($allStaffs as $staff) {
+                    $data = array(
+                        'assigned_from' => 1,
+                        'staffid' => $staff->idStaff,
+                        'taskid' => $insert_id,
+                    );
+                    if($staff->type == 'sale') {
+                        $this->db->insert('tblstafftaskassignees', $data);
+                    }
+                    else if($staff->type == 'supporter') {
+                        $this->db->insert('tblstafftasksupporters', $data);
+                    }
+                }
+            }
+            
+
             logActivity('New Task Added [ID:' . $insert_id . ', Name: ' . $data['name'] . ']');
             return $insert_id;
         }

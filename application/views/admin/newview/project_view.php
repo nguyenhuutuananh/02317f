@@ -688,7 +688,21 @@
 
                                                                                     ?>
                                                                                     <?php
-                                                                                    if ($v->id == 'province_name') {
+                                                                                    if($v->id == 'master') {
+                                                                                        
+                                                                                        $primaryMaster = getMaster($rom['id_project'], array(
+                                                                                            'type_master>=' => 2
+                                                                                        ), false);
+                                                                                        if($primaryMaster) {
+                                                                                            echo "<td>".$primaryMaster->name."</td>";
+                                                                                        }
+                                                                                        else {
+                                                                                            echo "<td>Chưa có</td>";
+                                                                                        }
+                                                                                        // echo "<td>".$rom['id_project']."</td>";
+                                                                                        
+                                                                                    }
+                                                                                    else if ($v->id == 'province_name') {
                                                                                         if ($menu->province_table == 1) {
                                                                                             echo '<td class="province_name" title="' . $rom['province_name'] . '" >'; ?>
                                                                                                     <select style="border:0px;" onclick="addoption(this);return false;" field="<?= $_field ?>" data_id="<?= $rom['id_project'] ?>" data_name="<?= $v->id ?>">
@@ -696,8 +710,7 @@
                                                                                                     </select>
                                                                                                     <?= '</td>' ?>
                                                                                     <?php
-
-                                                                                }
+                                                                                    }
                                                                             }
                                                                             else if ($v->id == 'district_name') {
                                                                                 if ($menu->district_table == 1) {
@@ -1059,9 +1072,14 @@
 
                     // Remove footer
                     iframeContent.find('div#wrapper').css('min-height', '');
+                    // Remove chatbox
+                    iframeContent.find('div.chat-list-opener').remove();
 
                     $(this).show();
                     $('#modalPage').modal('show');
+                    console.log(iframeContent.find('table.table-master_bds_profile:first'));
+                    iframeContent.find('table.table-master_bds_profile:first').DataTable().columns.adjust()
+                    .responsive.recalc();
                     latestButton.button('reset');
                 });
             })(jQuery);

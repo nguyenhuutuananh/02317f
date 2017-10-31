@@ -154,6 +154,9 @@ class Clients_model extends CRM_Model
         if(isset($data['date_movein'])) {
             $data['date_movein'] = to_sql_date($data['date_movein']);
         }
+        if(isset($data['dateOfBirth'])) {
+            $data['dateOfBirth'] = to_sql_date($data['dateOfBirth']);
+        }
 
         if($data['type_client'] != 2) {
             $data['province'] = $items[0]['city'];
@@ -174,6 +177,57 @@ class Clients_model extends CRM_Model
             
             return $return_id;
         }
+        return false;
+    }
+    public function get_assignment($idClient) {
+        $this->db->select('
+        tblstaff.staffid,
+        tblstaff.firstname,
+        tblstaff.lastname,
+        tblstaff.profile_image,
+        tblclients_assignment.*');
+        $this->db->where('idClient', $idClient);
+        $this->db->join('tblstaff', 'tblstaff.staffid = tblclients_assignment.idStaff', 'left');
+        $all_staffs = $this->db->get('tblclients_assignment')->result();
+        $response = new stdClass();
+
+        foreach($all_staffs as $key=>$value) {
+            $type = $value->type;
+            if(!isset($response->$type)) 
+                $response->$type = array();
+            $value->avatar = staff_profile_image_url($value->staffid, array(
+                'staff-profile-image-small'
+            ));
+            array_push($response->$type, $value);
+        }
+        return $response;
+    }
+    public function add_assignment($idClient, $data) {
+        // Kiểm tra đã tồn tại hay chưa mới insert
+
+        $this->db->where('idClient', $idClient);
+        $this->db->where('idStaff', $data['idStaff']);
+        $this->db->where('type', $data['type']);
+
+        if(!$this->db->get('tblclients_assignment')->row()) {
+            $data['idClient'] = $idClient;
+            $this->db->insert('tblclients_assignment', $data);
+            if($this->db->affected_rows() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function remove_assignment($idClient, $data) {
+        $this->db->where('idClient', $idClient);
+        $this->db->where('idStaff', $data['idStaff']);
+        $this->db->where('type', $data['type']);
+        $this->db->delete('tblclients_assignment');
+        
+        if($this->db->affected_rows() > 0) {
+            return true;
+        }
+
         return false;
     }
     public function add_item($id_client, $data, $period = array()) {
@@ -426,13 +480,23 @@ class Clients_model extends CRM_Model
         unset($data['time_bonus']);
         unset($data['num_bonus']);
 
-
-        // if($data['type_client'] != 2) {
-        //     $data['province'] = $items[0]['city'];
-        //     $data['district'] = $items[0]['district'];
-        //     $data['type_bds'] = $items[0]['menuBdsId'];
-        //     $data['bds']      = $items[0]['projectBdsId'];
-        // }
+        // Format date
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
+        if(isset($data['date_deal'])) {
+            $data['date_deal'] = to_sql_date($data['date_deal']);
+        }
+        if(isset($data['expire_contract'])) {
+            $data['expire_contract'] = to_sql_date($data['expire_contract']);
+        }
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
+        if(isset($data['dateOfBirth'])) {
+            $data['dateOfBirth'] = to_sql_date($data['dateOfBirth']);
+        }
+        
         if(isset($data['clientType']) && $data['clientType'] == 'canhan') {
             $data['companyName'] = "";
             $data['companyOfficeAddress'] = "";

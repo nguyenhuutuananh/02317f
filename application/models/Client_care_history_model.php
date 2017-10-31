@@ -13,7 +13,22 @@ class Client_care_history_model extends CRM_Model
     public function saveActivity($idClient, $data) {
         $data['idClient'] = $idClient;
         if($this->db->insert('tblclient_care_history', $data)) {
-            return $this->db->affected_rows() > 0;
+            return ($this->db->affected_rows() > 0 ? $this->db->insert_id() : false);
+        }
+        return false;
+    }
+    public function updateActivity($idActivity, $data) {
+        $this->db->where('id', $idActivity);
+        if($this->db->update('tblclient_care_history', $data)) {
+            return true;
+        }
+        return false;
+    }
+    public function removeActivity($idActivity) {
+        $this->db->where('id', $idActivity);
+        $this->db->delete('tblclient_care_history');
+        if($this->db->affected_rows() > 0) {
+            return true;
         }
         return false;
     }

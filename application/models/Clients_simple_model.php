@@ -161,12 +161,20 @@ class Clients_simple_model extends CRM_Model
         unset($data['time_bonus']);
         unset($data['num_bonus']);
 
-        if($data['type_client'] != 2) {
-            $data['province'] = $items[0]['city'];
-            $data['district'] = $items[0]['district'];
-            $data['type_bds'] = $items[0]['menuBdsId'];
-            $data['bds']      = $items[0]['projectBdsId'];
+        // Format date
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
         }
+        if(isset($data['date_deal'])) {
+            $data['date_deal'] = to_sql_date($data['date_deal']);
+        }
+        if(isset($data['expire_contract'])) {
+            $data['expire_contract'] = to_sql_date($data['expire_contract']);
+        }
+        if(isset($data['date_movein'])) {
+            $data['date_movein'] = to_sql_date($data['date_movein']);
+        }
+
         $data['dkkh'] = get_staff_user_id();
         $this->db->insert('tblclients_simple',$data);
         $return_id=$this->db->insert_id();

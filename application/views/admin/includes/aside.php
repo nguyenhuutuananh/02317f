@@ -95,7 +95,7 @@ $menu_active2 = json_decode($menu_active2);
 
 $newmenu1 = $menu_active2->aside_menu_active[4];
 
-$newmenu1->name = 'Dạng bất động sản';
+$newmenu1->name = 'Danh sách bds';
 
 
 array_splice($menu_active->aside_menu_active,4,0,array(''));

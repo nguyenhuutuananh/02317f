@@ -33,6 +33,22 @@ $where = array(
 
 );
 
+if($CI->input->post()) {
+
+    $filterClientFrom = $CI->input->post('filterClientFrom');
+    if($filterClientFrom == 1) {
+        array_push($where, 'AND clientFrom="honeycomb"');
+    }
+    else if($filterClientFrom == 2) {
+        array_push($where, 'AND clientFrom="moigioi"');
+    }
+
+    $filterSource = $CI->input->post('filterSource');
+    if(is_numeric($filterSource) && $filterSource > 0) {
+        array_push($where, 'AND source='.$filterSource);
+    }
+}
+
 $additionalSelect = array(
     'userid',
     'type_client',

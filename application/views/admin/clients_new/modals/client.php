@@ -44,6 +44,13 @@ if(!is_null($convert_to)) {
         background-color: white;
         border: 1px solid black !important;
     }
+    .remove-task-user {
+        top: 40px !important;
+        left: 30px !important;
+    }
+    .task-user {
+        padding: 10px;
+    }
 </style>
 
 <input type="hidden" name="userid" id="userid" value="<?=$client->userid?>" />
@@ -144,16 +151,16 @@ if(!is_null($convert_to)) {
             <div role="tabpanel" class="tab-pane active" id="view_project">
                 <?php echo form_open_multipart('http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'], array('class' => 'clients-bds-form form-horizontal', 'autocomplete' => 'off')); ?>
                 
-                
                 <table class="table table-single-client table-bordered">
                     <tbody>
                         <tr>
                             <td colspan="2" style="background-color: #b3d7f5;">
-                                <b>KHÁCH HÀNG <?=(isset($client) ? "(MÃ KH: ".$client->userid.")" : "")?></b>
+                                <b class="pull-left">KHÁCH HÀNG <?=(isset($client) ? "(MÃ KH: ".$client->userid.")" : "")?></b>
+                                <b class="pull-right"><button class="btn btn-warning btn-switchToEdit" type="button"><i class="fa fa-pencil-square-o"></i> Chỉnh sửa</button></b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="width: 50%;">
                                 <fieldset>
                                     <legend>Khách hàng</legend>
                                     <?php
@@ -224,7 +231,7 @@ if(!is_null($convert_to)) {
                                         echo render_inline_input('hobbies', 'Sở thích', $value); 
                                     ?>
                                     <?php 
-                                        $value = (isset($client) ? $client->dateOfBirth : ''); 
+                                        $value = (isset($client) ? _d($client->dateOfBirth) : ''); 
                                         echo render_inline_date_input('dateOfBirth', 'Ngày sinh', $value); 
                                     ?>
                                     <?php 
@@ -409,7 +416,7 @@ if(!is_null($convert_to)) {
                             <td>
                                 <fieldset>
                                         <legend>Nhận xét KH</legend>
-                                        <textarea style="width: 100%;border: none;" rows="10" name=""><?=(isset($client) ? $client->review : '')?></textarea>
+                                        <textarea style="width: 100%;border: none;" rows="10" name="review" id="review"><?=(isset($client) ? $client->review : '')?></textarea>
                                 </fieldset>
                             </td>
                         </tr>
@@ -443,7 +450,7 @@ if(!is_null($convert_to)) {
                                                 <?php echo render_inline_select('purpose', $purpose, array('id', 'name'), 'Mục đích', $selected, array()); ?>
                                                 
                                                 <?php
-                                                    if(isset($client) && $type_client != 2) {
+                                                    if(isset($client) /*&& $type_client != 2*/) {
                                                         $type_bds_selected = $client->type_bds;
                                                         $id_project_bds = get_project_from_type($type_bds_selected);
                                                     }
@@ -532,6 +539,27 @@ if(!is_null($convert_to)) {
                                                 ?>
                                                 
                                             </fieldset>
+                                            <?php if($type_client == 3) { ?>
+                                            <fieldset>
+                                                <legend>Các thông tin đặc trưng</legend>
+                                                <?php
+                                                if($type_client == 1) {
+                                                    $value = (isset($client) ? $client->date_contact : '');
+                                                    echo render_inline_date_input('date_contact', 'Ngày liên hệ', $value);
+                                                }
+                                                else if($type_client == 3 || ($type_client == 2 && $convert)) {
+                                                    $value = (isset($client) ? $client->rent_project_name : '');
+                                                    echo render_inline_input('rent_project_name', 'DA/KV đã thuê', $value);
+                                                    
+                                                    $value = (isset($client) ? $client->duration_of_contract_expiration : '');
+                                                    echo render_inline_input('duration_of_contract_expiration', 'Khoảng Thời hạn HHD', $value); 
+
+                                                    $value = (isset($client) ? $client->reason_fail : ''); 
+                                                    echo render_inline_input('reason_fail', 'Lý do Fail', $value); 
+                                                }
+                                                ?>
+                                            </fieldset>
+                                            <?php } ?>
                                         </td>
 
                                         <td style="width: 33%">
@@ -564,6 +592,7 @@ if(!is_null($convert_to)) {
                         </tr>
                     </tbody>
                 </table>
+                
                 <button type="button" class="btn btn-info mtop20 only-save client-form-submiter">
                     <?php echo _l('submit'); ?>
                 </button>
@@ -602,9 +631,75 @@ if(!is_null($convert_to)) {
                         padding: 10px;
                     }
                 </style>
+                <div class="row">
+                    <div class="col-md-1">
+                        
+                    </div>
+                    <div class="col-md-5">                                            
+                        <b>                                            
+                            TÌNH HÌNH KHÁCH HÀNG
+                        </b>
+                    </div>
+                    <div class="col-md-5">
+                        <b>
+                            HƯỚNG GIẢI QUYẾT
+                        </b>
+                    </div>
+                </div>
                 <div class="activity-feed">
                     
                 </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="permission">
+                
+                <div id="wrapAssign" class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="border-right: 1px solid black;">
+                    <div class="row">
+                        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                            <?php
+                            echo render_select('staffid', $staff, array('staffid', 'lastname', 'firstname'), 'Nhân viên đăng ký KH');
+                            ?>
+                        </div>
+                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <button class="btn btn-info btn-add-assign" data-type="dangky" style="margin-top: 25px;"><i class="fa fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="task_users_wrapper">
+                        
+                    </div>
+                </div>
+
+                <div id="wrapSale" class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="border-right: 1px solid black;">
+                    <div class="row">
+                        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                            <?php
+                            echo render_select('staffid', $staff, array('staffid', 'lastname', 'firstname'), 'Nhân viên phụ trách KH');
+                            ?>
+                        </div>
+                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <button class="btn btn-info btn-add-assign" data-type="sale" style="margin-top: 25px;"><i class="fa fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="task_users_wrapper">
+
+                    </div>
+                </div>
+
+                <div id="wrapSupporters" class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                    <div class="row">
+                        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                            <?php
+                            echo render_select('staffid', $staff, array('staffid', 'lastname', 'firstname'), 'Người hỗ trợ');
+                            ?>
+                        </div>
+                        <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <button class="btn btn-info btn-add-assign" data-type="supporter" style="margin-top: 25px;"><i class="fa fa-check"></i></button>
+                        </div>
+                    </div>
+                    <div class="task_users_wrapper">
+
+                    </div>
+                </div>
+                
             </div>
             <div role="tabpanel" class="tab-pane" id="task">
                 <h4 class="no-mtop bold"><?php echo _l('tasks'); ?></h4>
@@ -1090,12 +1185,14 @@ if(!is_null($convert_to)) {
 
 
 <script>
+// function
+var removeStaff;
     $(function() {
         // init tag input
         $('#tags').tagit();
-
-        // Task
-        initDataTable('.table-rel-tasks','<?= admin_url() ?>tasks/init_relation_tasks/<?= $client->userid ?>/customer' , [0], [3]);
+        // first view is edit view
+        $('#modalClient .modal-body .tagit input[type="text"]').hide();
+        
         var submitFlag = false;
         // Profile
         $(document).on('click', '.client-form-submiter', function(e) {
@@ -1106,10 +1203,6 @@ if(!is_null($convert_to)) {
             e.preventDefault();
             let buttonSubmit = $(this).button('loading');
             const data = $('.client-form-submiter').parents('form').serialize();
-
-            jQuery.each(jQuery('#avatar')[0].files, function(i, file) {
-                data.append('file-'+i, file);
-            });
 
             $.ajax({
                 url: $(this).parents('form').attr('action'),
@@ -1150,6 +1243,9 @@ if(!is_null($convert_to)) {
         <?php
             if($client) {
         ?>
+        // Task
+        initDataTable('.table-rel-tasks','<?= admin_url() ?>tasks/init_relation_tasks/<?=$client->userid?>/customer' , [0], [3]);
+
         // Attachment
         Dropzone.options.clientAttachmentsUpload = false;
         var customer_id = $('input[name="userid"]').val();
@@ -1179,47 +1275,49 @@ if(!is_null($convert_to)) {
         }
 
         // client care history
-        $.ajax({
-            url: admin_url + 'clients/activityClient/<?=(isset($client) ? $client->userid : '')?>',
-            method: 'GET',
-            dataType: 'json',
-        }).done((data) => {
-            data.forEach((obj) => {
-                $('.activity-feed').prepend(`
-                        <div class="feed-item">
-                            <div class="date text text-primary">
-                                <a data-toggle="tooltip" data-title="<?=get_staff_full_name(isset($client) ? $client->userid : '')?>" href="<?=admin_url('profile/' . isset($client) ? $client->userid : '')?>">
-                                <?=staff_profile_image(isset($client) ? $client->userid : '', array('staff-profile-image-small')) . ' ' . get_staff_full_name(isset($client) ? $client->userid : '')?></a>
-                                
-                                <span class="badge">${obj.dateMeeting}</span> <a href="#" style="color: red;font-size: 13px"><i class="fa fa-times"></i></a>
-                            </div>
-                            <div class="text">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h5>Tình hình khách hàng: </h5>
-                                        <p class="bold no-mbot well">
-                                        <button type="button" class="btn btn-info"><i class="fa fa-pencil-square-o"></i></button>
-                                            ${obj.status}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5>Hướng giải quyết:</h5> 
-                                        <p class="bold no-mbot well">
-                                            ${obj.solutions}
-                                        </p>
+        let initCareHistory;
+        (initCareHistory = () => {
+            $.ajax({
+                url: admin_url + 'clients/activityClient/<?=(isset($client) ? $client->userid : '')?>',
+                method: 'GET',
+                dataType: 'json',
+            }).done((data) => {
+                $('.activity-feed').html('');
+                data.forEach((obj) => {
+                    
+                    $('.activity-feed').prepend(`
+                            <div class="feed-item">
+                                <div class="date text text-primary">
+                                    <a data-toggle="tooltip" data-title="<?=get_staff_full_name(isset($client) ? $client->userid : '')?>" href="<?=admin_url('profile/' . isset($client) ? $client->userid : '')?>">
+                                    <?=staff_profile_image(isset($client) ? $client->userid : '', array('staff-profile-image-small')) . ' ' . get_staff_full_name(isset($client) ? $client->userid : '')?></a>
+                                    
+                                    <span>${obj.dateMeeting}</span> <a href="#" data-id="${obj.id}" class="btn-removeActivity" style="color: red;font-size: 13px"><i class="fa fa-times"></i></a>
+                                </div>
+                                <div class="text">
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <button data-toggle="tooltip" title="Chỉnh sửa" type="button" data-id="${obj.id}" class="btn btn-info btn-editActivity"><i class="fa fa-pencil-square-o"></i></button>
+                                        </div>
+                                        <div class="col-md-5">                                            
+                                            <p class="bold no-mbot well">${obj.status}</p>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <p class="bold no-mbot well">${obj.solutions}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `);
+                        `);
+                });
+                $('#clientHistory [data-toggle="tooltip"]').tooltip(); 
             });
-            $('#clientHistory [data-toggle="tooltip"]').tooltip(); 
-        });
+        })();
+        
         let inSaveProcess = false;
         $(document).on('click', '#btnSave', function() {
             if(inSaveProcess) return;
-            console.log(inSaveProcess);
-            inSaveProcess = true;
+            
+            
             let saveButton = $(this);
             let dateMeeting = $('#clientHistory #dateMeeting');
             let historyStatus = $('#clientHistory #status');
@@ -1234,7 +1332,17 @@ if(!is_null($convert_to)) {
                 }, 2000);
                 return;
             }
-            
+            if(!historyStatus.val() && !historySolutions.val()) {
+                alert_float('danger', 'Vui lòng nhập "Tình hình khách hàng" hoặc "Hướng giải quyết"');
+                historyStatus.focus();
+                // Clear Float message
+                setTimeout(()=>{
+                    $('#alert_float_1').remove();
+                }, 2000);
+                return;
+            }
+
+            inSaveProcess = true;
             // disable all element
             dateMeeting.attr('disabled', 'disabled');
             historyStatus.attr('disabled', 'disabled');
@@ -1255,21 +1363,18 @@ if(!is_null($convert_to)) {
                                 <a data-toggle="tooltip" title="<?=get_staff_full_name(isset($client) ? $client->userid : '')?>" href="<?=admin_url('profile/' . isset($client) ? $client->userid : '')?>">
                                 <?=staff_profile_image(isset($client) ? $client->userid : '', array('staff-profile-image-small'), 'small', array('alt' => get_staff_full_name(isset($client) ? $client->userid : '') ))?></a>
                                 
-                                <span class="badge">${dateMeeting.val()}</span>
+                                <span>${dateMeeting.val()}</span> <a href="#" data-id="${data.success}" class="btn-removeActivity" style="color: red;font-size: 13px"><i class="fa fa-times"></i></a>
                             </div>
                             <div class="text">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <h5>Tình hình khách hàng:</h5>
-                                        <p class="bold no-mbot well">
-                                            ${historyStatus.val()}
-                                        </p>
+                                    <div class="col-md-1">
+                                        <button data-toggle="tooltip" title="Chỉnh sửa" type="button" data-id="${data.success}" class="btn btn-info btn-editActivity"><i class="fa fa-pencil-square-o"></i></button>
                                     </div>
-                                    <div class="col-md-6">
-                                        <h5>Hướng giải quyết:</h5> 
-                                        <p class="bold no-mbot well">
-                                            ${historySolutions.val()}
-                                        </p>
+                                    <div class="col-md-5">
+                                        <p class="bold no-mbot well">${historyStatus.val()}</p>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <p class="bold no-mbot well">${historySolutions.val()}</p>
                                     </div>
                                 </div>
                             </div>
@@ -1300,6 +1405,90 @@ if(!is_null($convert_to)) {
                 }, 2000);
             });
         });
+        let inRemoveProcess = false;
+        $(document).on('click', '.btn-removeActivity', function() {
+            if(inRemoveProcess) return;
+            inRemoveProcess = true;
+            if($(this).attr('data-id')) {
+                $.ajax({
+                    url: admin_url + 'clients/removeActivityClient/' + $(this).attr('data-id'),
+                    dataType: 'json',
+                })
+                .done(data => {
+                    initCareHistory();
+                })
+                .always(() => {
+                    inRemoveProcess = false;
+                });
+            }
+        });
+        let inEditProcess = false;
+        $(document).on('click', '.btn-editActivity', function(e) {
+            e.preventDefault();
+            let buttonEdit = $(this);
+            if(buttonEdit.find('i').hasClass('fa-pencil-square-o')) {
+                buttonEdit.removeClass('btn-info');
+                buttonEdit.addClass('btn-success');
+
+                buttonEdit.find('i').removeClass('fa-pencil-square-o');
+                buttonEdit.find('i').addClass('fa-check');
+
+                // edit mode
+                let statusCustomer = buttonEdit.parents('.col-md-1')
+                .next().find('.bold.no-mbot.well');
+                let solutionCustomer = buttonEdit.parents('.col-md-1')
+                .next().next().find('.bold.no-mbot.well');
+
+                statusCustomer.hide();
+                statusCustomer.after('<textarea style="width:100%">'+statusCustomer.text().trim()+'</textarea>');
+
+                solutionCustomer.hide();
+                solutionCustomer.after('<textarea style="width:100%">'+solutionCustomer.text().trim()+'</textarea>');
+            }
+            else {
+                // save
+                let statusCustomer = buttonEdit.parents('.col-md-1')
+                .next().find('.bold.no-mbot.well');
+                let solutionCustomer = buttonEdit.parents('.col-md-1')
+                .next().next().find('.bold.no-mbot.well');
+
+                statusCustomer.attr('disabled', 'disabled');
+                solutionCustomer.attr('disabled', 'disabled');
+
+                $.ajax({
+                    url: admin_url + 'clients/editActivityClient/' + customer_id,
+                    dataType: 'json',
+                    method: 'post',
+                    data: {
+                        status: statusCustomer.val(),
+                        solutions: solutionCustomer.val(),
+                    },
+                })
+                .done(data => {
+                    if(data.success) {
+                        statusCustomer.text(statusCustomer.next('textarea').val());
+                        solutionCustomer.text(solutionCustomer.next('textarea').val());
+                        alert_float('success', data.message);
+                    }
+                    else {
+                        alert_float('danger', data.message);
+                    }
+                })
+                .always(() => {
+                    buttonEdit.addClass('btn-info');
+                    buttonEdit.removeClass('btn-success');
+
+                    buttonEdit.find('i').addClass('fa-pencil-square-o');
+                    buttonEdit.find('i').removeClass('fa-check');
+
+                    statusCustomer.show().next('textarea').remove();
+                    solutionCustomer.show().next('textarea').remove();
+                });
+
+                
+
+            }
+        });
         $(document).on('keydown', function(e) {
             if(e.key == 's' && e.ctrlKey == true) {
                 e.preventDefault();
@@ -1308,6 +1497,129 @@ if(!is_null($convert_to)) {
             }
             
         });
+
+        // Permission
+        let initUserData = (user, userAssignType) => {
+            const userPlace = $(`
+                <div class="task-user" data-toggle="tooltip" title="">
+                    <a style="display: inline-flex;" href="http://192.168.1.18/02317f/admin/profile/4" target="_blank">
+                        <img src="http://192.168.1.18/02317f/assets/images/user-placeholder.jpg" class="staff-profile-image-small" alt=" Linh">
+                        <br>
+                        <span style="vertical-align: middle;margin-top: 7px;margin-left: 2px;">
+                            Linh
+                        </span>
+                        
+                    </a>  
+                    <a href="#" class="remove-task-user text-danger" onclick="removeStaff(4,5); return false;">
+                        <i class="fa fa-remove"></i>
+                    </a>
+                </div>`);
+            let userData = userPlace.clone()
+            .attr('title', user.firstname + ' ' + user.lastname);
+            userData.find('span').text(user.firstname + ' ' + user.lastname);
+            userData.find('a:first').attr('href', admin_url + 'profile/' + user.staffid);
+            userData.find('a:last').attr('onclick', `removeStaff(${user.staffid},'${userAssignType}'); return false;`);
+            userData.find('img').attr('src', user.avatar);
+            
+            return userData;
+        };
+        let initLoadAssign;
+        (initLoadAssign = () => {
+            $.ajax({
+                url: admin_url + 'clients/getAssignment/<?=$client->userid?>',
+                dataType: 'json'  
+            })
+            .done(data => {
+                
+                $('#wrapAssign, #wrapSale, #wrapSupporters').find('.task_users_wrapper').html('');
+                data.dangky.forEach(val => {
+                    $('#wrapAssign .task_users_wrapper').append(initUserData(val, 'dangky'));
+                });
+                data.sale.forEach(val => {
+                    $('#wrapSale .task_users_wrapper').append(initUserData(val, 'sale'));
+                });
+                data.supporter.forEach(val => {
+                    $('#wrapSupporters .task_users_wrapper').append(initUserData(val, 'supporter'));
+                });
+            });
+        })();
+        
+        // add staff
+        let progressAdding = false;
+        $(document).on('click', '.btn-add-assign', function(e) {
+            if(progressAdding) return;
+            let buttonAdd = $(this);
+
+            let selectStaff = buttonAdd.parents('.row:first').find('select#staffid');
+            
+            if(!selectStaff.val()) {
+                alert_float('danger', 'Hãy chọn nhân viên để thêm!');
+                return;
+            }
+
+            // Prevent multi click
+            progressAdding = true;
+            buttonAdd.button('loading');
+            
+            let data = {
+                idStaff: selectStaff.val(),
+                type: buttonAdd.attr('data-type'),
+            }
+            $.ajax({
+                url: admin_url + 'clients/addAssignment/' + customer_id,
+                data,
+                method: 'post',
+                dataType: 'json',
+            })
+            .done(data => {
+                if(data.success) {
+                    initLoadAssign();
+                    selectStaff.val('').selectpicker('refresh');
+                    // alert_float('success', data.message);
+                }
+                else {
+                    alert_float('danger', data.message);
+                }
+                console.log(data);
+            })
+            .always(() => {
+                progressAdding = false;
+                buttonAdd.button('reset');
+            });
+        });
+        let progressDeleting = false;
+        removeStaff = (idStaff, staffAssignType) => {
+            if(progressAdding) return;
+
+            // Prevent multi click
+            progressAdding = true;
+            
+            let data = {
+                idStaff: idStaff,
+                type: staffAssignType,
+            }
+            $.ajax({
+                url: admin_url + 'clients/removeAssignment/' + customer_id,
+                data,
+                method: 'post',
+                dataType: 'json',
+            })
+            .done(data => {
+                if(data.success) {
+                    initLoadAssign();
+                    alert_float('success', data.message);
+                }
+                else {
+                    alert_float('danger', data.message);
+                }
+                console.log(data);
+            })
+            .always(() => {
+                progressAdding = false;
+            });
+        }
+        // ------------------------------------------------------------
+        
 
         // Reminders
         /* Custome profile reminders table */
@@ -1820,7 +2132,6 @@ if(!is_null($convert_to)) {
                 companyElements.attr('disabled', 'disabled');
             }
             else if(currentValue == "congty") {
-
                 // 
                 let fieldsetPartner = $('[for="id_partner"]').text('Thư ký/trợ lý').parents('fieldset');
 

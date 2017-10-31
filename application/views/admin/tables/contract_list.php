@@ -18,8 +18,7 @@ $aColumns = array(
     'commissionPartner',
     'otherCosts',
     'noteOtherCosts',
-    '2',
-    '1',
+    '(select sum(tblclient_bds_payment_details.realValue) from tblclient_bds_payment_details where tblclient_bds_payment_details.idClientBdsPayment in (select tblclient_bds_payment.id from tblclient_bds_payment where tblclient_bds_payment.idClientBds = tblclient_bds.id)) as DaNhan',
 );
 
 $sIndexColumn = "id";
@@ -36,6 +35,8 @@ $where = array(
 $additionalSelect = array(
     'projectBdsId',
     'menuBdsId',
+    'clientId',
+    '(select tblclients.dkkh from tblclients where tblclients.userid=tblclient_bds.clientId)',
 );
 
 $result = data_tables_init($aColumns,$sIndexColumn,$sTable, $join, $where, $additionalSelect);
@@ -81,11 +82,34 @@ foreach ( $rResult as $aRow )
             case '(select tblprojectmenu.code from tblprojectmenu where tblprojectmenu.id=tblclient_bds.projectBdsId)':
                 $_data = '<a href="'.admin_url().'newview/project/'.$aRow['menuBdsId'].'/'.$aRow['projectBdsId'].'" target="_blank" onclick="">' . $_data . '</a>'; 
                 break;
+            case '(select tblclients.company from tblclients where tblclients.userid=tblclient_bds.clientId)':
+                $_data = '<a href="'.admin_url() . 'clients/index/'. $aRow['clientId'] .'" target="_blank">'.$_data.'</a>';
+                break;
+            case '(select tblclients.clientType from tblclients where tblclients.userid=tblclient_bds.clientId)':
+                if($_data == 'canhan') {
+                    $_data = 'Cá nhân';
+                }
+                else if($_data == 'congty') {
+                    $_data = "Công ty";
+                }
+                break;
+            case '(select tblclients.dkkh from tblclients where tblclients.userid=tblclient_bds.clientId)':
+                $_data = '<a target="_blank" data-toggle="tooltip" title="'.get_staff_full_name($_data).'" href="' . admin_url('staff/profile/' . $_data) . '">' . staff_profile_image($_data, array(
+                        'staff-profile-image-small'
+                    )) . '</a>';
+                break;
+            case 'id_partner':
+                $_data = '<a target="_blank" href="'.admin_url() . 'partner/index/'.$_data.'">'.get_partner_full_name($_data).'</a>';
+                break;
         }
-
+        // Không thể dùng switch vì truy vấn lồng
+        if($i == 15) {
+            $_data = number_format($aRow['DaNhan']);
+        }
         $row[] = $_data;
     }
-    // $options = icon_btn('#', 'pencil-square-o', 'btn-default', array('data-id' => $aRow['id'], 'onclick' => 'return _edit('.$aRow['id'].')'));
+    $options = icon_btn('#', 'list', 'btn-default btn-billingperiod', array('data-idproduct' => $aRow['id'], 'data-idclient' => $aRow['clientId']));
+    $row[] = $options;
     // $row[]  = $options .= icon_btn('#','remove','btn-danger delete-reminder-client', array('onclick' => 'return _delete('.$aRow['id'].')'));
 
     $output['aaData'][] = $row;

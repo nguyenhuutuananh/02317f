@@ -76,7 +76,7 @@
         <li><a href="http://192.168.1.17/02317F/admin/newview"><i class="fa fa-balance-scale menu-icon" aria-hidden="true"></i>Danh sách loại BĐS</a></li>
         <li class="menu-item-sales">
             <a href="#" aria-expanded="false"><i class="fa fa-balance-scale menu-icon"></i>
-                Dạng bất động sản      <span class="fa arrow"></span>
+                Danh sách bất động sản      <span class="fa arrow"></span>
             </a>
             <ul class="nav nav-second-level collapse" aria-expanded="false" style="height: 0px;">
                 <li class="sub-menu-item-58"><a href="http://192.168.1.17/02317F/admin/newview/indexproject/58">

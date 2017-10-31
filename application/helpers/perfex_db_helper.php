@@ -313,7 +313,16 @@ function get_staff_full_name($userid = '')
     } else {
         return '';
     }
-
+}
+function get_partner_full_name($partnerId) {
+    $CI =& get_instance();
+    $CI->db->where('id_partner', $partnerId);
+    $partner = $CI->db->select('name_partner')->from('tblpartner')->get()->row();
+    if ($partner) {
+        return $partner->name_partner;
+    } else {
+        return '';
+    }
 }
 function get_name_menu_project($id_menu = '')
 {
@@ -1643,7 +1652,7 @@ function get_tasks_where_string()
     return $_tasks_where;
 }
 
-/*Cong*/
+/*Cong bê đê*/
 function get_name_lable_row($field=""){
     $CI = &get_instance();
     if($field!="")
@@ -1694,3 +1703,17 @@ function customGetPaymentMethods() {
     $CI = &get_instance();
     return $CI->db->get('tblinvoicepaymentsmodes')->result_array();
 }
+/* Tuan Anh */
+function getMaster($idProject, $whereConditions = '', $multiRows = true) {
+    $CI = &get_instance();
+    if(!empty($whereConditions)) {
+        $CI->db->where($whereConditions);
+    }
+    $CI->db->where('idproject', $idProject);
+    if($multiRows) {
+        return $CI->db->get('tblmaster_bds')->result();
+    }
+    else {
+        return $CI->db->get('tblmaster_bds')->row();
+    }
+} 

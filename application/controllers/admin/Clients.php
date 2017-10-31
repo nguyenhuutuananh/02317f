@@ -584,6 +584,7 @@ class Clients extends Admin_controller
         $data['table_heads_clients_care'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=1')->value);
         $data['table_heads_clients_buy'] = json_decode($this->clients_model->get_table('tblorder_table_clients', 'id=2')->value);
         $data['table_heads_clients_fail'] = json_decode($this->clients_model->get_table('tblorder_table_clients','id=3')->value);
+        $data['source']=$this->clients_model->get_table_array('tblleadssources');
         // $data['table_heads'] = $this->clientTakeCareColumns;
 
         $data['autoOpenId'] = $id;
@@ -727,14 +728,39 @@ class Clients extends Admin_controller
             $result->success = false;
             $result->message = 'Tạo thất bại!';
             $data = $this->input->post();
-            
-            if($this->client_care_history_model->saveActivity($id, $data)) {
-                $result->success = true;
+            $result->success = $this->client_care_history_model->saveActivity($id, $data);
+            if($result->success) {
                 $result->message = 'Tạo thành công!';
             }
             exit(json_encode($result));
         }
         exit(json_encode($this->client_care_history_model->getActivities($id)));
+    }
+    public function editActivityClient($idActivity) {
+        $res = new stdClass();
+        $res->success = false;
+        $res->message = 'Chỉnh sửa thất bại!';
+        $data = $this->input->post();
+        if($data) {
+            if($this->client_care_history_model->updateActivity($idActivity, $data)) {
+                $res->success = true;
+                $res->message = 'Chỉnh sửa thành công!';
+            }
+        }
+        
+        exit(json_encode($res));
+    }
+    public function removeActivityClient($idActivity) {
+        $res = new stdClass();
+        $res->success = false;
+        $res->message = 'Xóa thất bại!';
+        
+        if($this->client_care_history_model->removeActivity($idActivity)) {
+            $res->success = true;
+            $res->message = 'Xóa thành công!';
+        }
+
+        exit(json_encode($res));
     }
     public function modal_client($id) {
         $data['type_client']=$this->input->get('type_client');
@@ -886,6 +912,37 @@ class Clients extends Admin_controller
         else {
             exit($this->load->view('admin/clients_new/modals/convert', $data, true));
         }
+    }
+    public function getAssignment($idClient) {
+        if($this->input->is_ajax_request()) {
+            exit(json_encode($this->clients_model->get_assignment($idClient)));
+        }
+    }
+    public function addAssignment($idClient) {
+        $res = new stdClass();
+        $res->success = false;
+        $res->message = 'Tạo thất bại!';
+        if($this->input->post()) {
+            $data = $this->input->post();
+            if($this->clients_model->add_assignment($idClient, $data)) {
+                $res->success = true;
+                $res->message = 'Tạo thành công!';
+            }
+        }
+        exit(json_encode($res));
+    }
+    public function removeAssignment($idClient) {
+        $res = new stdClass();
+        $res->success = false;
+        $res->message = 'Xóa thất bại!';
+        if($this->input->post()) {
+            $data = $this->input->post();
+            if($this->clients_model->remove_assignment($idClient, $data)) {
+                $res->success = true;
+                $res->message = 'Xóa thành công!';
+            }
+        }
+        exit(json_encode($res));
     }
     public function updateAvatar($idClient) {
         $result = new stdClass();

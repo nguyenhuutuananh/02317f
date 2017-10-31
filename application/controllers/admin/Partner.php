@@ -10,12 +10,19 @@ class Partner extends Admin_controller
     }
     public function index()
     {
-//        if ($this->input->is_ajax_request()) {
-//            $this->perfex_base->get_table_data('partner', array(
-//                'status' => 1,
-//            ));
-//        }
-        $data['title']    = _l('Danh sách đối tác');
+        $type = 0;
+        if($this->input->get('type'))
+        {
+            $type = $this->input->get('type');
+        }
+        $data['title']    = _l('Danh sách môi giới chuyên dự án');
+        if($type==1) {
+            $data['title']    = _l('Danh sách môi giới không hợp tác');
+        }
+        else if($type==3) {
+            $data['title']    = _l('Danh sách môi giới giao dịch thành công');
+        }
+        $data['type'] = $type;
         $this->load->view('admin/partner/managa', $data);
     }
     public function init_relation_partner_project($status="")

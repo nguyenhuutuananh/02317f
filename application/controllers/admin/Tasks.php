@@ -198,6 +198,8 @@ class Tasks extends Admin_controller
                     ));
                     die;
                 }
+                // print_r($data);
+                // exit();
                 $id      = $this->tasks_model->add($data);
                 $_id     = false;
                 $success = false;

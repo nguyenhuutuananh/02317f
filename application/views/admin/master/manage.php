@@ -290,12 +290,10 @@
     }
     function view_update_or_add(id,type)
     {
-
         $('#update-master #div_isset_master').hide();
         $('#update-master .view_file').html('');
         if(id!=0)
         {
-            
             $('#div_isset_master').hide();
             $('#phonenumber').tagit('removeAll');
             $('.title-master').html('Cập nhật chủ sở hữu');
@@ -335,7 +333,7 @@
                     $('#update-master #type_master').val(type);
                     if(type=='1') {
                         $('#update-master #type_master').val('1')
-                    };
+                    }
                     var datafile=data._file;
                     if(datafile!=""&&datafile!=null) {
                         var _array = datafile.split(',');
@@ -401,7 +399,7 @@
                 });
                 if(obj!=null)
                 {
-                    console.log($('#update-master #code_master').val());
+                    // console.log($('#update-master #code_master').val());
                     if($('#update-master #code_master').val()=="")
                     {
                         $('#update-master #div_isset_master').show();
@@ -470,7 +468,7 @@
             $('#update-master-company #name').val('');
             $('#update-master-company #_file').val('');
             $('#update-master-company #type_master').val(type); 
-            console.log($('#update-master-company'));
+            // console.log($('#update-master-company'));
             alert(type);
         }
     }
