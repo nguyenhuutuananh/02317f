@@ -688,19 +688,32 @@
 
                                                                                     ?>
                                                                                     <?php
-                                                                                    if($v->id == 'master') {
-                                                                                        
-                                                                                        $primaryMaster = getMaster($rom['id_project'], array(
-                                                                                            'type_master>=' => 2
-                                                                                        ), false);
+                                                                                    $primaryMaster = getMaster($rom['id_project'], array(
+                                                                                        'type_master>=' => 2
+                                                                                    ), false);
+                                                                                    if($v->id == 'master_email') {
+                                                                                        if($primaryMaster) {
+                                                                                            echo "<td>".$primaryMaster->email_master."</td>";
+                                                                                        }
+                                                                                        else {
+                                                                                            echo "<td></td>";
+                                                                                        } 
+                                                                                    }
+                                                                                    else if($v->id == 'master_phone') {
+                                                                                        if($primaryMaster) {
+                                                                                            echo "<td>".$primaryMaster->phonenumber."</td>";
+                                                                                        }
+                                                                                        else {
+                                                                                            echo "<td></td>";
+                                                                                        } 
+                                                                                    }
+                                                                                    else if($v->id == 'master') {
                                                                                         if($primaryMaster) {
                                                                                             echo "<td>".$primaryMaster->name."</td>";
                                                                                         }
                                                                                         else {
-                                                                                            echo "<td>Chưa có</td>";
-                                                                                        }
-                                                                                        // echo "<td>".$rom['id_project']."</td>";
-                                                                                        
+                                                                                            echo "<td></td>";
+                                                                                        } 
                                                                                     }
                                                                                     else if ($v->id == 'province_name') {
                                                                                         if ($menu->province_table == 1) {

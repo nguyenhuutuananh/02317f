@@ -533,4 +533,55 @@ class Newview_model extends CRM_Model
         }
         return false;
     }
+
+    // TA Custom add file to database
+    public function addFileToMaster($idProjectMenu, $filepath) {
+        $this->db->where('id', $idProjectMenu);
+        $projectMenu = $this->db->get('tblprojectmenu')->row();
+        if($projectMenu) {
+            $files = json_decode($projectMenu->masterFiles);
+            if(!$files) {
+                $files = array();
+            }
+            $image = new stdClass();
+            $image->path = $filepath;
+            $image->filename = basename($filepath);
+            array_unshift($files, $image);
+            
+            $this->db->where('id', $idProjectMenu);
+            $data = array(
+                'masterFiles' => json_encode($files),
+            );
+            $this->db->update('tblprojectmenu', $data);
+            if($this->db->affected_rows() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function removeFileFromMaster($idProjectMenu, $filename) {
+        $this->db->where('id', $idProjectMenu);
+        $projectMenu = $this->db->get('tblprojectmenu')->row();
+        if($projectMenu) {
+            $files = json_decode($projectMenu->masterFiles);
+            if(!empty($files) && count($files) > 0) {
+                $files = (array)$files;
+                foreach($files as $key=>$file) {
+                    if($file->filename == $filename) {
+                        unlink($file->path);
+                        unset($files[$key]);
+                        $this->db->where('id', $idProjectMenu);
+                        $data = array(
+                            'masterFiles' => json_encode((array)$files),
+                        );
+                        $this->db->update('tblprojectmenu', $data);
+                        if($this->db->affected_rows() > 0) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

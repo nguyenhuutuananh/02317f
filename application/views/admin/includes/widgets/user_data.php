@@ -6,18 +6,21 @@
           <i class="fa fa-tasks menu-icon text-info"></i><?php echo _l('home_my_tasks'); ?>
         </a>
       </li>
-      <li role="presentation">
+
+      <!-- <li role="presentation">
         <a href="#home_my_projects" onclick="init_table_staff_projects(true);" aria-controls="home_my_projects" role="tab" data-toggle="tab">
           <i class="fa fa-bars menu-icon text-info"></i><?php echo _l('home_my_projects'); ?>
         </a>
-      </li>
+      </li> -->
       <?php if((get_option('access_tickets_to_none_staff_members') == 1 && !is_staff_member()) || is_staff_member()){ ?>
-      <li role="presentation">
+      <!-- <li role="presentation">
         <a href="#home_tab_tickets" onclick="init_table_tickets(true);" aria-controls="home_tab_tickets" role="tab" data-toggle="tab">
           <i class="fa fa-ticket menu-icon text-info"></i><?php echo _l('home_tickets'); ?>
         </a>
-      </li>
+      </li> -->
       <?php } ?>
+
+
       <?php if(is_staff_member()){ ?>
       <li role="presentation">
         <a href="#home_announcements" onclick="init_table_announcements(true);" aria-controls="home_announcements" role="tab" data-toggle="tab">
@@ -67,6 +70,7 @@
      <?php echo AdminTicketsTableStructure(); ?>
    </div>
    <?php } ?>
+   
    <div role="tabpanel" class="tab-pane" id="home_my_projects">
     <a href="<?php echo admin_url('projects'); ?>" class="mbot20 inline-block full-width"><?php echo _l('home_widget_view_all'); ?></a>
     <div class="clearfix"></div>

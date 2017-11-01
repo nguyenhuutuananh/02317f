@@ -498,6 +498,51 @@
 <?php include_once(APPPATH . 'views/admin/newview/model_project.php');?>
 <script src="//cdn.datatables.net/plug-ins/1.10.16/features/pageResize/dataTables.pageResize.min.js"></script>
 <script>
+    // TA add new
+    if ($('#upload_file_master_summary').length > 0) {
+        new Dropzone('#upload_file_master_summary', {
+            paramName: "file",
+            dictDefaultMessage:drop_files_here_to_upload,
+            dictFallbackMessage:browser_not_support_drag_and_drop,
+            dictRemoveFile:remove_file,
+            dictFileTooBig: file_exceds_maxfile_size_in_form,
+            dictMaxFilesExceeded:you_can_not_upload_any_more_files,
+            maxFilesize: max_php_ini_upload_size.replace(/\D/g, ''),
+            addRemoveLinks: false,
+            accept: function(file, done) {
+                done();
+            },
+            acceptedFiles: allowed_files,
+            error: function(file, response) {
+                alert_float('danger', response);
+            },
+            success: function(file, response) {
+                $('.dz-preview').remove();
+                $('.dz-default').show();
+                const objResponse = JSON.parse(response);
+                alert_float('success', 'Upload đính kèm thành công!');
+                $('.view_attachments').prepend(`<li><span class="btnRemoveFileMaster" data-filename="${objResponse.filename}"><i class="fa fa-times text-danger"></i> </span> <a target="blank" href="${objResponse.path}">${objResponse.filename}</a></li>`)
+            }
+        });
+    }
+    $(document).on('click', '.btnRemoveFileMaster', function(e) {
+        $.ajax({
+            url: admin_url + 'newview/remove_file_project/<?=$id_bds?>/'+encodeURI($(this).attr('data-filename')),
+            method: 'GET',
+            dataType: 'json',
+        })
+        .done((data) => {
+            if(data.success) {
+                alert_float('success', 'Xóa tập tin đính kèm thành công!');
+                $(this).parents('li').remove();
+            }
+            else {
+                alert_float('danger', 'Xóa tập tin thất bại!');
+            }
+            
+        });
+    });
+    // 0--------------------------------------------0
     init_editor('.content_email',{height:200});
     $(function() {
         _validate_form($('#send_email_images'), {

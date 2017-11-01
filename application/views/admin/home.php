@@ -8,7 +8,7 @@
                 <?php $this->load->view('admin/includes/widgets/top_stats'); ?>
             </div>
             <div class="col-md-8">
-                <?php $this->load->view('admin/includes/widgets/finance_overview'); ?>
+                <?php /*$this->load->view('admin/includes/widgets/finance_overview');*/ ?>
                 <?php $this->load->view('admin/includes/widgets/user_data'); ?>
                 <?php $this->load->view('admin/includes/widgets/calendar'); ?>
                  <div class="row">

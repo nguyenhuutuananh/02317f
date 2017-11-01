@@ -207,6 +207,7 @@
 </div>
 <script>
     Dropzone.options.clientAttachmentsUpload = false;
+    
     if ($('#upload_file_master').length > 0) {
         new Dropzone('#upload_file_master', {
             paramName: "file",
@@ -227,14 +228,7 @@
             success: function(file, response) {
                 $('.dz-preview').remove();
                 $('.dz-default').show();
-                if($('#update-master input[name="_file"]').val()!="")
-                {
-                    $('#update-master input[name="_file"]').val($('#update-master input[name="_file"]').val()+','+response);
-                }
-                else
-                {
-                    $('#update-master input[name="_file"]').val(response);
-                }
+                console.log(file);
                 console.log(response);
             }
         });

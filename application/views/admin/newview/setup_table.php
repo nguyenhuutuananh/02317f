@@ -37,6 +37,8 @@
                                 'detail_price'=>'Giá Gồm','deadline'=>'Thời gian thuế','code_tax'=>'Mã thuế','staff_id'=>'Nhân viên tạo','bonus'=>'Bonus','note'=>'Ghi chú',
                                 'tag'=>'Thẻ',
                                 'master' => 'Chủ sở hữu chính',
+                                'master_phone' => 'Phone chủ sở hữu',
+                                'master_email' => 'Email chủ sở hữu',
                             );
                         }
                         $colum_2=array();
@@ -138,6 +140,8 @@
                                         'detail_price'=>'Giá Gồm','deadline'=>'Thời gian thuế','code_tax'=>'Mã thuế','staff_id'=>'Nhân viên tạo','bonus'=>'Bonus','note'=>'Ghi chú',
                                         'tag'=>'Thẻ',
                                         'master' => 'Chủ sở hữu chính',
+                                        'master_phone' => 'Phone chủ sở hữu',
+                                        'master_email' => 'Email chủ sở hữu',
                                     );
                                 }
                             ?>

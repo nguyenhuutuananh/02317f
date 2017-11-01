@@ -385,7 +385,6 @@ const filterList = {
 };
 const clientTable =  initDataTable('.table-clients', window.location.href, [], [], filterList, [0, 'DESC']);
 function setFilter(filterName, filterValue, element) {
-    console.log(element);
     $(element).parents('ul').find('li.active').removeClass('active');
     $(element).parents('li').addClass('active');
     $(filterList[filterName]).val(filterValue);
@@ -405,7 +404,6 @@ $(document).on('click', '.btn-edit-client', function(e) {
 
         // Change to view mode before modal show up, after init
         $('.btn-switchToEdit').trigger('click');
-        
         
         buttonEdit.button('reset');
         parentButton.button('reset');
@@ -482,7 +480,6 @@ $(document).on('click', '.bmd-modalButton', function(e) {
         $('td:has(".clientName")').removeAttr('style');
     });
 });
-
 </script>
 </body>
 </html>

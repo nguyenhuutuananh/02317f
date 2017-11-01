@@ -1282,9 +1282,45 @@ class Newview extends Admin_controller
 
                 }
                 echo $filename;
-
             }
         }
+    }
+
+    // TA Custom
+    public function upload_file_project($idProjectMenu)
+    {
+        $path = get_upload_path_by_type('project_bds');
+         
+        if (isset($_FILES['file']['name'])) {
+            $tmpFilePath = $_FILES['file']['tmp_name'];
+            if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                if (!file_exists($path)) {
+                    mkdir($path);
+                    fopen($path . 'index.html', 'w');
+                }
+                $filename = unique_filename($path, $_FILES['file']['name']);
+                $newFilePath = $path . $filename;
+                $img_url = str_replace(FCPATH, "", $path) . $filename;
+
+                if (move_uploaded_file($tmpFilePath, $newFilePath) && $this->newview_model->addFileToMaster($idProjectMenu, $img_url)) {
+                    $attachment = array();
+                    $attachment[] = array(
+                        'file_name' => $filename,
+                        'filetype' => $_FILES["file"]["type"],
+                    );
+                    $image = new stdClass();
+                    $image->path = $img_url;
+                    $image->filename = basename($filename);
+                    exit(json_encode($image));
+                }
+            }
+        }
+    }
+    public function remove_file_project($idProjectMenu, $filename) {
+        $filename = urldecode($filename);
+        $response = new stdClass();
+        $response->success = $this->newview_model->removeFileFromMaster($idProjectMenu, $filename);
+        exit(json_encode($response));
     }
 
     public function delete_file($id)

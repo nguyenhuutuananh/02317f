@@ -1,8 +1,9 @@
 
 <div class="">
     <ul class="nav nav-tabs">
-        <li  class="active"><a data-toggle="tab" href="#profile">Cá nhân</a></li>
+        <li class="active"><a data-toggle="tab" href="#profile">Cá nhân</a></li>
         <li><a data-toggle="tab" href="#company">Công ty</a></li>
+        <li><a data-toggle="tab" href="#attachments">Đính kèm</a></li>
     </ul>
     <div class="tab-content mtop20">
         <div id="profile" class="tab-pane fade in active">
@@ -98,6 +99,40 @@
 
             render_datatable($table_data,'master_bds_company', 'pageResize');
             ?>
+        </div>
+        <div id="attachments" class="tab-pane fade">
+            <div class="col-md-12">
+                <form action="<?=admin_url()?>newview/upload_file_project/<?=$id_bds?>" class="dropzone drop-master dz-clickable" id="upload_file_master_summary" onchange="get_delete(this)" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+                    <input type="file" name="file" multiple="">
+                    <div class="dz-default dz-message">
+                        <span>Thả file vào đây để upload</span>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="clearfix">
+            
+            </div>
+            
+            <div class="col-md-12">
+                <h4>Danh sách tập tin chủ sở hữu</h4>
+                <ul class="view_attachments">
+                    <?php
+                        $objectFiles = json_decode($project->masterFiles);
+                        if(!empty($objectFiles))
+                        {
+                            foreach($objectFiles as $filePath) 
+                            {
+                            ?>
+                    <li>
+                        <span class="btnRemoveFileMaster" data-filename="<?=$filePath->filename?>"><i class="fa fa-times text-danger"></i> </span> <a target="blank" href="<?=base_url($filePath->path)?>"><?=$filePath->filename?></a>
+                    </li>
+                            <?php
+                            } 
+                        }
+                    ?>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
