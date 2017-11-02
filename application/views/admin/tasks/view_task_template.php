@@ -11,6 +11,7 @@
  <?php } ?>
 </small>
 <?php } ?>
+
 <?php if($task->billed == 1){ ?>
 <?php  echo '<p class="text-success no-margin">'._l('task_is_billed','<a href="'.admin_url('invoices/list_invoices/'.$task->invoice_id).'" target="_blank">'.format_invoice_number($task->invoice_id)). '</a></p>'; ?>
 <?php } ?>

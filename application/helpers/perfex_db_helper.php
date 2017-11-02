@@ -1717,3 +1717,38 @@ function getMaster($idProject, $whereConditions = '', $multiRows = true) {
         return $CI->db->get('tblmaster_bds')->row();
     }
 } 
+function get_table_where($table, $where = array(),$order_by="",$result='result_array')
+{
+    $CI =&get_instance();
+    if($where!=array())
+    {
+        $CI->db->where($where);
+    }
+    if($order_by!="")
+    {
+        $CI->db->order_by($order_by);
+    }
+    $result=$CI->db->get($table)->$result();
+    if ($result) {
+        return $result;
+    } else {
+        return array();
+    }
+}
+function format_status_email($id)
+{
+    $label = get_status_label($id);
+    if ($id == 2) {
+        $label = 'light-green';
+        $status_name="Email được xem";
+    }
+    else if ($id == 1) {
+        $label = 'info';
+        $status_name="Email chết";
+    } else if ($id == 0) {
+        $label = 'warning';
+        $status_name="Email được gửi";
+    }
+    $class = 'label label-' . $label;
+    return '<span class="inline-block ' . $class . '">' . $status_name . '</span>';
+}

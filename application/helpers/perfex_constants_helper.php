@@ -49,3 +49,5 @@ define('PROJECT_DISCUSSION_ATTACHMENT_FOLDER',FCPATH . 'uploads/discussions' . '
 //PROJECT BAT DONG SAN
 define('PROJECT_BDS_ATTACHMENTS_FOLDER',FCPATH . 'uploads/project_bds' . '/');
 define('WATRTMART_ATTACHMENTS_FOLDER',FCPATH . 'uploads/watermark' . '/');
+
+define('EMAIL_FOLDER',FCPATH . 'uploads/email' . '/');

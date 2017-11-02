@@ -3514,3 +3514,9 @@ $lang['client_contract_expirydate'] = "Ngày hết hạn hợp đồng";
 
 $lang['client_contract_list'] = "Kho hợp đồng";
 $lang['price'] = "Giá trị";
+
+
+$lang['als_email_marketing'] = 'Email Marketing';
+$lang['___email_marketing'] = 'Gửi mail';
+$lang['been_send_email'] = 'Mail đã gửi';
+$lang['template_mail'] = 'Mẫu mail';

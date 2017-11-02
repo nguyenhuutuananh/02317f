@@ -884,6 +884,9 @@ function get_upload_path_by_type($type){
         case 'newsfeed':
         return NEWSFEED_FOLDER;
         break;
+        case 'email':
+        return EMAIL_FOLDER;
+        break;
         default:
         return false;
     }

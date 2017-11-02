@@ -108,6 +108,7 @@
 <?php init_tail(); ?>
 <script>
   taskid = '<?php echo $taskid; ?>';
+  const clients = <?=json_encode($clients)?>;
   $(function(){
     tasks_kanban();
   });

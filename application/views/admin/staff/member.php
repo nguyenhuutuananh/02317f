@@ -293,6 +293,10 @@
     </select>
     </div>
     <i class="fa fa-question-circle" data-toggle="tooltip" data-title="<?php echo _l('staff_email_signature_help'); ?>"></i>
+    <?php $value = (isset($member) ? $member->email_marketing : ''); ?>
+    <?php echo render_input('_email_marketing','email_marketing',$value); ?>
+    <?php $value = (isset($member) ? $member->password_email_marketing : ''); ?>
+    <?php echo render_input('password_email_marketing','password_email_marketing',$value,'password'); ?>
     <?php $value = (isset($member) ? $member->email_signature : ''); ?>
     <?php echo render_textarea('email_signature', 'settings_email_signature', $value); ?>
     <div class="form-group">

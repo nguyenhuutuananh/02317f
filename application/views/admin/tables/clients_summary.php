@@ -36,16 +36,43 @@ $where = array(
 if($CI->input->post()) {
 
     $filterClientFrom = $CI->input->post('filterClientFrom');
-    if($filterClientFrom == 1) {
-        array_push($where, 'AND clientFrom="honeycomb"');
+    if($filterClientFrom != '') {
+        array_push($where, "AND clientFrom='$filterClientFrom'");
     }
-    else if($filterClientFrom == 2) {
-        array_push($where, 'AND clientFrom="moigioi"');
-    }
-
     $filterSource = $CI->input->post('filterSource');
     if(is_numeric($filterSource) && $filterSource > 0) {
         array_push($where, 'AND source='.$filterSource);
+    }
+    $filterClientName = $CI->input->post('filterClientName');
+    if($filterClientName != '') {
+        array_push($where, "AND company='%$filterClientName%'");
+    }
+
+    $filterPhone = $CI->input->post('filterPhone');
+    if($filterPhone != '') {
+        array_push($where, "AND company='%$filterPhone%'");
+    }
+
+    $filterEmail = $CI->input->post('filterEmail');
+    if($filterEmail != '') {
+        array_push($where, "AND company='%$filterEmail%'");
+    }
+
+    $filterClientType = $CI->input->post('filterClientType');
+    if($filterClientType != '') {
+        array_push($where, "AND clientFrom='$filterClientType'");
+    }
+
+    $filterFromRegisterDate = $CI->input->post('filterFromRegisterDate');
+    if($filterFromRegisterDate != '') {
+        $filterFromRegisterDate = to_sql_date($filterFromRegisterDate);
+        array_push($where, "AND datecreated>='$filterFromRegisterDate 00:00:00'");
+    }
+
+    $filterToRegisterDate = $CI->input->post('filterToRegisterDate');
+    if($filterToRegisterDate != '') {
+        $filterToRegisterDate = to_sql_date($filterToRegisterDate);
+        array_push($where, "AND datecreated<='$filterToRegisterDate 23:59:59'");
     }
 }
 
@@ -66,9 +93,9 @@ foreach ( $rResult as $aRow )
         $_data = $aRow[$aColumns[$i]];
         $array_staff = array('nvgd', 'dkkh');
         if($_data && in_array($aColumns[$i], $array_staff)) {
-            $_data = '<a href="' . admin_url('staff/profile/' . $_data) . '">' . staff_profile_image($_data, array(
+            $_data = '<a data-toggle="tooltip" title="'.get_staff_full_name($_data).'" href="' . admin_url('staff/profile/' . $_data) . '">' . staff_profile_image($_data, array(
                 'staff-profile-image-small'
-            )) . '</a>';
+            )) . " " . get_staff_full_name($_data).'</a>';
         } else if ($aColumns[$i] == 'phonenumber') {
             $_data = '<a href="tel:' . $_data . '">' . $_data . '</a>';
         } else if ($aColumns[$i] == 'email') {

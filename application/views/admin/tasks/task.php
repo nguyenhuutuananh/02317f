@@ -36,6 +36,7 @@
                 echo '<p class="text-success no-margin">' . _l('task_is_billed', '<a href="' . admin_url('invoices/list_invoices/' . $task->invoice_id) . '" target="_blank">' . format_invoice_number($task->invoice_id)) . '</a></p><br />';
               }
               ?>
+<!--               
              <div class="checkbox checkbox-primary no-mtop checkbox-inline">
               <input type="checkbox" id="task_is_public" name="is_public" <?php if (isset($task)) {
                                                                             if ($task->is_public == 1) {
@@ -43,7 +44,22 @@
                                                                             }
                                                                           }; ?>>
               <label for="task_is_public" data-toggle="tooltip" data-placement="bottom" title="<?php echo _l('task_public_help'); ?>"><?php echo _l('task_public'); ?></label>
+              
+            </div> -->
+            <?php if(!isset($client)) { ?>
+            <div class="">
+              <label>
+                <input type="radio" class="taskType" value="cty">
+                  Công ty
+              </label>
             </div>
+            <div class="">
+              <label>
+                <input type="radio" class="taskType" value="kh">
+                Khách hàng
+              </label>
+            </div>
+            <?php } ?>
             <div class="task-visible-to-customer checkbox checkbox-inline checkbox-primary<?php if ( (isset($task) && $task->rel_type != 'project') || !isset($task) || (isset($task) && $task->rel_type == 'project' && total_rows('tblprojectsettings', array('project_id' => $task->rel_id, 'name' => 'view_tasks', 'value' => 0)) > 0)) {
                                                                                             echo ' hide';
                                                                                           } ?>">
@@ -59,6 +75,9 @@
             <?php echo render_input('name', 'task_add_edit_subject', $value); ?>
             <div class="row">
               <div class="col-md-6">
+                <?php
+                  echo render_select('rel_id2', array(), array('id', 'value'), 'Khách hàng', '', array('disabled' => 'disabled'), array('style' => 'display: none'));
+                  ?>
                 <div class="form-group<?php if ($rel_id == '') {
                                         echo ' hide';
                                       } ?>" id="rel_id_wrapper">
@@ -173,7 +192,7 @@
         <div class="form-group">
           <label for="time_taken" class="control-label ">Thời gian làm</label>
           <div class="input-group">
-            <input name="time_taken" value="<?=(isset($task) ? $task->time_taken : set_value('time_taken', 0))?>" id="time_taken" type="text" class="form-control" placeholder="Thực trong bao nhiêu" aria-describedby="basic-addon2">
+            <input name="time_taken" value="<?= (isset($task) ? $task->time_taken : set_value('time_taken', 0)) ?>" id="time_taken" type="text" class="form-control" placeholder="Thực trong bao nhiêu" aria-describedby="basic-addon2">
             <span class="input-group-addon" id="basic-addon2">giờ</span>
           </div>
         </div>
@@ -422,4 +441,32 @@
       }
     }
   }
+  $(document).on('click', '.taskType', function(e) {
+    $('.taskType').each(function(index, value) {
+      $(value)[0].checked = false;
+    });
+    $(this)[0].checked = true;
+    if($(this).val() == 'cty') {
+      $('#rel_id_wrapper').hide().addClass('hide');
+      $('#rel_id2').attr('disabled', 'disabled').removeAttr('name').parents('div.form-group').hide();
+      $('#rel_id').removeAttr('disabled').attr('name', 'rel_id').parents('div.form-group').show();
+      $('#rel_type').val('');
+    }
+    else
+    {
+      $('#rel_id_wrapper').show().removeClass('hide');
+      $('#rel_id2').html('');
+      $('#rel_id2').removeAttr('disabled').attr('name', 'rel_id').parents('div.form-group').show();
+      $('#rel_id').attr('disabled', 'disabled').removeAttr('name').parents('div.form-group').hide();
+
+      $.each(clients, function(index, value) {
+        $('#rel_id2').append(`<option value="${value.userid}">${value.company}</option>`);
+      });
+      $('#rel_id2').selectpicker('refresh');
+
+      
+
+      $('#rel_type').val('customer');
+    }
+  });
 </script>

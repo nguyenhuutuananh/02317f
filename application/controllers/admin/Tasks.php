@@ -46,7 +46,7 @@ class Tasks extends Admin_controller
             $data['switch_kanban'] = true;
             $data['bodyclass']     = 'tasks_page kan-ban-body';
         }
-
+        $data['clients'] = $this->tasks_model->getClients();
         $data['custom_view'] = $_custom_view;
         $data['title']       = _l('tasks');
         $this->load->view('admin/tasks/manage', $data);

@@ -1211,7 +1211,7 @@ var removeStaff;
                 dataType: 'json',
             }).done(function(data) {
                 if(data.success) {
-                    $('.table-clients').DataTable().ajax.reload();
+                    clientTable.DataTable().ajax.reload();
                     alert_float('success', data.message);
                     if(!$('#modalClient').attr('data-userid')) {
                         $('#modalClient').modal('hide');

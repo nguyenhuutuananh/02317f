@@ -119,7 +119,10 @@ class Tasks_model extends CRM_Model
             'billed' => 1
         )) > 0 ? TRUE : FALSE);
     }
-
+    public function getClients() {
+        $this->db->select('userid, company');
+        return $this->db->get('tblclients')->result();
+    }
 
     public function copy($data, $overwrites = array())
     {

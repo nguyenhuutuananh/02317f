@@ -159,62 +159,7 @@
                                         </ul>
                                     </div>
                                     <!-- Tuan Anh Custom -->
-                                    <div class="btn-group pull-right btn-with-tooltip-group _filter_data" data-toggle="tooltip" data-title="Lọc bởi">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fa fa-filter" aria-hidden="true"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-left" style="width:300px;">
-                                            <li class="active">
-                                                <a href="#" data-cview="all" onclick="return false;">Tất cả</a>
-                                            </li>
-                                            <div class="clearfix"></div>
-                                            <li class="divider"></li>
-                                            <li class="dropdown-submenu pull-left">
-                                                <a href="#" tabindex="-1">KH từ</a>
-                                                <ul class="dropdown-menu dropdown-menu-left">
-                                                    <li>
-                                                        <a href="#" data-cview="contract_type_1" onclick="setFilter('filterClientFrom',0, this);return false;">
-                                                            Tất cả                                   
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" data-cview="contract_type_1" onclick="setFilter('filterClientFrom',1, this);return false;">
-                                                            Honeycomb                                   
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" data-cview="contract_type_2" onclick="setFilter('filterClientFrom',2, this);return false;">
-                                                            Môi giới                                    
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <div class="clearfix"></div>
-                                            <li class="divider"></li>
-                                            <li class="dropdown-submenu pull-left">
-                                                <a href="#" tabindex="-1">Nguồn</a>
-                                                <ul class="dropdown-menu dropdown-menu-left">
-                                                    <li>
-                                                        <a href="#" data-cview="" onclick="setFilter('filterSource',0, this);return false;">
-                                                            Tất cả
-                                                        </a>
-                                                    </li>
-                                                    <?php
-                                                    foreach($source as $item) {
-                                                        ?>
-                                                    <li>
-                                                        <a href="#" data-cview="" onclick="setFilter('filterSource', <?=$item['id']?>, this);return false;">
-                                                            <?=$item['name']?>
-                                                        </a>
-                                                    </li>
-                                                        <?php
-                                                    }
-                                                    ?>
-                                                    
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                   
 
                                     <!-- Tuan Anh Custom -->
 
@@ -255,8 +200,6 @@
                                 </div>
                             </div>
                             <div class="_filters _hidden_inputs hidden">
-                            <input type="hidden" name="filterClientFrom" value="" />
-                            <input type="hidden" name="filterSource" value="" />
                         </div>
                         <div class="panel_s">
                             <div class="panel-body">
@@ -273,6 +216,92 @@
                                 <a href="<?=admin_url()?>clients/settup_table_clients?type_client=1" class="btn btn-default mbot20 btn-icon">
                                     <i class="fa fa-cogs menu-icon"></i>
                                 </a>
+                                
+                                
+                                <hr />
+                                <div class="row">
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_select('filterClientFrom', array(
+                                                array(
+                                                    'id' => 'honeycomb',
+                                                    'value' => 'Honeycomb'
+                                                ),
+                                                array(
+                                                    'id' => 'moigioi',
+                                                    'value' => 'Môi giới'
+                                                )
+                                                ), array('id','value'), 'Lọc theo KH Từ');
+                                        ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_input('filterClientName', 'Tên KH');
+                                        ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                        echo render_inline_select('filterSource', $source, array('id','name'), 'Lọc theo nguồn');
+                                        ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_input('filterPhone', 'Số điện thoại');
+                                        ?>
+                                    </div>
+                                    
+                                    <div class="clearfix">
+                                    
+                                    </div>
+                                    
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_input('filterEmail', 'Email');
+                                        ?>
+                                    </div>
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_select('filterClientType', array(
+                                                array(
+                                                    'id' => '1',
+                                                    'value' => 'Khách hàng đang quan tâm'
+                                                ),
+                                                array(
+                                                    'id' => '2',
+                                                    'value' => 'Khách hàng đã thuê mua'
+                                                ),
+                                                array(
+                                                    'id' => '3',
+                                                    'value' => 'Khách hàng đã fail'
+                                                )
+                                                ), array('id','value'), 'Tình trạng');
+                                        ?>
+                                    </div>
+
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_date_input('filterFromRegisterDate', 'Đăng ký sau ngày');
+                                        ?>
+                                    </div>
+
+                                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                                        <?php
+                                            echo render_inline_date_input('filterToRegisterDate', 'Đăng ký trước ngày');
+                                        ?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    
+                                    <div class="text-center col-xs-4 col-sm-4 col-md-4 col-lg-4 col-xs-offset-4 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+                                        <button class="btn btn-warning btnClearFilter"><i class="fa fa-window-close"></i> Xóa bộ lọc</button>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                                
+                                <hr />
+                                
                                 <?php
                                 $table_data = array(
                                     _l('ID'),
@@ -380,10 +409,34 @@ $(document).on('click', '.btn-switchToEdit', function () {
     }
 });
 const filterList = {
-    'filterClientFrom': 'input[name="filterClientFrom"]',
-    'filterSource': 'input[name="filterSource"]',
+    'filterClientFrom': '[name="filterClientFrom"]',
+    'filterSource': '[name="filterSource"]',
+    'filterClientName': '[name="filterClientName"]',
+    'filterPhone': '[name="filterPhone"]',
+    'filterEmail': '[name="filterEmail"]',
+    'filterClientType': '[name="filterClientType"]',
+    'filterFromRegisterDate': '[name="filterFromRegisterDate"]',
+    'filterToRegisterDate': '[name="filterToRegisterDate"]',
 };
-const clientTable =  initDataTable('.table-clients', window.location.href, [], [], filterList, [0, 'DESC']);
+
+
+const clientTable =  initDataTableCustom('.table-clients', window.location.href, [], [], filterList, [0, 'DESC']);
+$.each(filterList, (index, value) => {
+    $(value).on('change', function() {
+        clientTable.ajax.reload();
+    });
+});
+$('.btnClearFilter').on('click', function(e) {
+    $.each(filterList, (index, value) => {
+        if($(value).hasClass('selectpicker')) {
+            $(value).selectpicker('val', '');
+        }
+        else {
+            $(value).val('');
+        }
+    });
+    clientTable.ajax.reload();
+});
 function setFilter(filterName, filterValue, element) {
     $(element).parents('ul').find('li.active').removeClass('active');
     $(element).parents('li').addClass('active');
